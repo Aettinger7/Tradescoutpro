@@ -4,6 +4,10 @@ import datetime
 
 app = Flask(__name__)
 
+# Your CoinGecko Demo API key
+CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"
+
+# List of coins to track
 COINS = ["bitcoin", "ethereum", "solana", "ripple", "cardano", "dogecoin", "litecoin", "polygon"]
 
 def fetch_crypto_data():
@@ -13,7 +17,8 @@ def fetch_crypto_data():
         "vs_currencies": "usd",
         "include_24hr_change": "true",
         "include_market_cap": "true",
-        "include_24h_vol": "true"
+        "include_24h_vol": "true",
+        "x_cg_demo_api_key": CG_API_KEY  # This uses your dedicated key
     }
     
     try:
@@ -48,7 +53,6 @@ def index():
     for coin in crypto_data:
         change_class = "positive" if coin["change_24h"] > 0 else "negative"
         
-        # Handle market cap and volume safely outside format specifier
         market_cap_display = f"${coin['market_cap']:,.0f}" if coin["market_cap"] else "N/A"
         volume_display = f"${coin['volume_24h']:,.0f}" if coin["volume_24h"] else "N/A"
         
