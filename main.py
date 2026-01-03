@@ -89,13 +89,7 @@ def index():
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
         <style>
-            body {{
-                font-family: 'Inter', sans-serif;
-                margin: 0;
-                overflow-x: hidden;
-                background: url('https://i.ibb.co/0Vc5Z28b/image.jpg') no-repeat center center fixed;
-                background-size: cover;
-            }}
+            body {{ font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; background: url('https://i.ibb.co/0Vc5Z28b/image.jpg') no-repeat center center fixed; background-size: cover; }}
             .light-mode {{ background: #f1f5f9 url('https://i.ibb.co/0Vc5Z28b/image.jpg') no-repeat center center fixed !important; background-size: cover !important; }}
             .light-mode .bg-gray-900\\/90 {{ background: rgba(241,245,249,0.9) !important; }}
             .light-mode .text-white {{ color: #000000 !important; }}
@@ -134,7 +128,7 @@ def index():
             </footer>
         </div>
         
-        <!-- Modal with full data + chart -->
+        <!-- Modal -->
         <div id="detailModal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50" onclick="closeModal()">
             <div class="bg-gray-900/95 backdrop-blur-xl rounded-3xl p-10 max-w-lg w-full mx-4 shadow-2xl border border-[#0052FF]/50" onclick="event.stopPropagation()">
                 <div class="flex items-center space-x-6 mb-6">
@@ -163,41 +157,44 @@ def index():
         </div>
         
         <script>
-            document.getElementById('searchInput').addEventListener('input', function(e) {
+            // Fixed search syntax
+            document.getElementById('searchInput').addEventListener('input', function(e) {{
                 const term = e.target.value.toLowerCase();
-                document.querySelectorAll('.crypto-card').forEach(card => {
+                document.querySelectorAll('.crypto-card').forEach(card => {{
                     const text = card.textContent.toLowerCase();
                     card.style.display = text.includes(term) ? 'block' : 'none';
-                });
-            });
+                }});
+            }});
             
-            document.getElementById('themeToggle').addEventListener('click', function() {
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', function() {{
                 document.body.classList.toggle('light-mode');
                 this.innerHTML = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
-            });
+            }});
             
-            function openModal(id, name, price, change, sign, mcap, logo, volume, high24h, low24h, ath, supply) {
+            // Modal
+            function openModal(id, name, price, change, sign, mcap, logo, volume, high24h, low24h, ath, supply) {{
                 document.getElementById('modalName').textContent = name;
-                document.getElementById('modalPrice').textContent = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 8}).format(price);
+                document.getElementById('modalPrice').textContent = new Intl.NumberFormat('en-US', {{style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 8}}).format(price);
                 const changeEl = document.getElementById('modalChange');
                 changeEl.textContent = sign + change + '%';
                 changeEl.className = change > 0 ? 'text-green-400 text-3xl font-bold mb-8' : 'text-red-400 text-3xl font-bold mb-8';
                 document.getElementById('modalMCap').textContent = 'Market Cap: ' + mcap;
                 document.getElementById('modalVolume').textContent = '24h Volume: $' + volume.toLocaleString();
-                document.getElementById('modalHigh24h').textContent = '24h High: $' + high24h.toLocaleString(undefined, {minimumFractionDigits: 2});
-                document.getElementById('modalLow24h').textContent = '24h Low: $' + low24h.toLocaleString(undefined, {minimumFractionDigits: 2});
-                document.getElementById('modalATH').textContent = 'All-Time High: $' + ath.toLocaleString(undefined, {minimumFractionDigits: 2});
+                document.getElementById('modalHigh24h').textContent = '24h High: $' + high24h.toLocaleString(undefined, {{minimumFractionDigits: 2}});
+                document.getElementById('modalLow24h').textContent = '24h Low: $' + low24h.toLocaleString(undefined, {{minimumFractionDigits: 2}});
+                document.getElementById('modalATH').textContent = 'All-Time High: $' + ath.toLocaleString(undefined, {{minimumFractionDigits: 2}});
                 document.getElementById('modalSupply').textContent = 'Circulating Supply: ' + supply.toLocaleString();
                 document.getElementById('modalLogo').src = logo;
                 document.getElementById('modalChart').src = 'https://www.coingecko.com/coins/' + id + '/sparkline.svg';
                 document.getElementById('detailModal').classList.remove('hidden');
                 document.getElementById('detailModal').classList.add('flex');
-            }
+            }}
             
-            function closeModal() {
+            function closeModal() {{
                 document.getElementById('detailModal').classList.add('hidden');
                 document.getElementById('detailModal').classList.remove('flex');
-            }
+            }}
         </script>
     </body>
     </html>
