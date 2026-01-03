@@ -8,6 +8,18 @@ CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"
 
 COINS = ["bitcoin", "ethereum", "solana", "ripple", "cardano", "dogecoin", "litecoin", "polygon"]
 
+# CoinGecko logo URLs (reliable and high-quality)
+COIN_LOGOS = {
+    "bitcoin": "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
+    "ethereum": "https://assets.coingecko.com/coins/images/279/large/ethereum.png",
+    "solana": "https://assets.coingecko.com/coins/images/4128/large/solana.png",
+    "ripple": "https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png",
+    "cardano": "https://assets.coingecko.com/coins/images/975/large/cardano.png",
+    "dogecoin": "https://assets.coingecko.com/coins/images/5/large/dogecoin.png",
+    "litecoin": "https://assets.coingecko.com/coins/images/2/large/litecoin.png",
+    "polygon": "https://assets.coingecko.com/coins/images/4713/large/polygon.png"
+}
+
 def fetch_crypto_data():
     url = "https://api.coingecko.com/api/v3/simple/price"
     params = {
@@ -30,7 +42,8 @@ def fetch_crypto_data():
             formatted_data.append({
                 "id": coin,
                 "name": coin.capitalize(),
-                "symbol": coin.upper()[:4],  # Simplified
+                "symbol": coin.upper(),
+                "logo": COIN_LOGOS.get(coin, ""),
                 "price": info.get("usd", 0),
                 "change_24h": info.get("usd_24h_change", 0),
                 "market_cap": info.get("usd_market_cap", 0),
@@ -48,71 +61,134 @@ def fetch_crypto_data():
 def index():
     crypto_data, last_update = fetch_crypto_data()
     
-    # Build cards
+    # Generate card HTML
     cards = ""
     for coin in crypto_data:
         change_class = "text-green-400" if coin["change_24h"] > 0 else "text-red-400"
         change_sign = "+" if coin["change_24h"] > 0 else ""
-        
         market_cap_display = f"${coin['market_cap']:,.0f}" if coin["market_cap"] else "N/A"
         
-        cards += f"""
-        <div class="bg-gray-800/60 backdrop-blur-md rounded-2xl p-6 border border-gray-700 hover:border-gray-600 transition-all hover:scale-105 hover:shadow-2xl shadow-lg">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center space-x-4">
-                    <img src="https://assets.coingecko.com/coins/images/{coin['id']}/large/{coin['id']}.png?fallback=https://assets.coingecko.com/coins/images/1/large/bitcoin.png" 
-                         alt="{coin['name']}" class="w-12 h-12 rounded-full">
-                    <div>
-                        <h3 class="text-xl font-bold text-white">{coin['name']}</h3>
-                        <p class="text-gray-400 uppercase text-sm">{coin['id']}</p>
-                    </div>
+        cards += f'''
+        <div class="crypto-card bg-gray-800/80 backdrop-blur-lg rounded-2xl p-6 border border-gray-700 hover:border-blue-500 transition-all hover:scale-105 cursor-pointer shadow-xl"
+             onclick="openModal('{coin['id']}', '{coin['name']}', '${coin['price']:,.2f}', '{coin['change_24h']:.2f}', '{change_sign}', '{market_cap_display}')">
+            <div class="flex items-center space-x-4 mb-4">
+                <img src="{coin['logo']}" alt="{coin['name']}" class="w-12 h-12 rounded-full">
+                <div>
+                    <h3 class="text-xl font-bold text-white">{coin['name']}</h3>
+                    <p class="text-gray-400 text-sm uppercase">{coin['id']}</p>
                 </div>
-                <span class="{change_class} text-2xl font-bold">{change_sign}{coin['change_24h']:.2f}%</span>
             </div>
             <div class="text-3xl font-extrabold text-white mb-2">${coin['price']:,.2f}</div>
-            <div class="text-sm text-gray-400">MCap: {market_cap_display}</div>
+            <div class="{change_class} text-xl font-bold">{change_sign}{coin['change_24h']:.2f}%</div>
+            <div class="text-sm text-gray-400 mt-2">MCap: {market_cap_display}</div>
         </div>
-        """
+        '''
     
-    status_message = '<p class="text-center text-red-400 text-xl col-span-full">Failed to load data — retrying soon...</p>' if not crypto_data else ""
+    status_message = '<p class="col-span-full text-center text-red-400 text-2xl">Failed to load data — retrying soon...</p>' if not crypto_data else ""
     
-    html = f"""
+    html = f'''
     <!DOCTYPE html>
-    <html lang="en" class="bg-gray-900">
+    <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>TradeScout Pro — Live Crypto Prices</title>
-        <meta http-equiv="refresh" content="60"> <!-- Auto-refresh every 60s -->
+        <meta http-equiv="refresh" content="60">
         <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <style>
-            body {{ font-family: 'Roboto', sans-serif; }}
-            h1 {{ font-family: 'Orbitron', sans-serif; }}
+            body {{ font-family: 'Inter', sans-serif; }}
+            .dark-mode {{ background: linear-gradient(135deg, #000000, #0f172a, #1e293b); }}
+            .light-mode {{ background: #f8fafc; color: #0f172a; }}
+            .light-mode .crypto-card {{ background: rgba(255,255,255,0.9); border-color: #cbd5e1; }}
+            .light-mode .text-white {{ color: #0f172a; }}
+            .light-mode .text-gray-400 {{ color: #64748b; }}
         </style>
     </head>
-    <body class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
-        <div class="container mx-auto px-4 py-12 max-w-7xl">
-            <header class="text-center mb-12">
-                <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent mb-4">
-                    TradeScout Pro
-                </h1>
-                <p class="text-xl text-gray-300">Live Cryptocurrency Prices</p>
-                <p class="text-gray-400 mt-4">Last updated: {last_update} • Auto-refreshes every minute</p>
+    <body class="min-h-screen dark-mode text-white transition-all duration-500">
+        <div class="container mx-auto px-6 py-10 max-w-7xl">
+            <!-- Header -->
+            <header class="flex justify-between items-center mb-10">
+                <div class="flex items-center space-x-4">
+                    <!-- REPLACE THIS URL WITH YOUR ACTUAL LOGO -->
+                    <img src="https://via.placeholder.com/60x60/1e40af/ffffff?text=TS" alt="TradeScout Pro Logo" class="w-12 h-12 rounded-lg">
+                    <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                        TradeScout Pro
+                    </h1>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <input type="text" id="searchInput" placeholder="Search cryptos..." 
+                           class="px-6 py-3 rounded-full bg-gray-800/70 border border-gray-700 focus:border-blue-500 focus:outline-none text-white w-64">
+                    <button onclick="toggleTheme()" class="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition">
+                        <span id="themeIcon">🌙</span>
+                    </button>
+                </div>
             </header>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <p class="text-center text-gray-400 text-lg mb-8">
+                Live Cryptocurrency Prices • Last updated: {last_update} • Auto-refreshes every minute
+            </p>
+            
+            <!-- Crypto Grid -->
+            <div id="cryptoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {cards}
                 {status_message}
             </div>
             
-            <footer class="text-center mt-16 text-gray-500">
-                <p>Powered by CoinGecko API • TradeScout Pro © 2026</p>
+            <footer class="text-center mt-16 text-gray-500 text-sm">
+                Powered by CoinGecko API • TradeScout Pro © 2026
             </footer>
         </div>
+        
+        <!-- Modal -->
+        <div id="detailModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50" onclick="closeModal()">
+            <div class="bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+                <h2 id="modalName" class="text-3xl font-bold mb-4"></h2>
+                <p class="text-4xl font-extrabold text-blue-400 mb-6" id="modalPrice">$0.00</p>
+                <p class="text-2xl mb-4" id="modalChange"></p>
+                <p class="text-lg text-gray-400" id="modalMCap"></p>
+            </div>
+        </div>
+        
+        <script>
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function(e) {{
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.crypto-card').forEach(card => {{
+                    const name = card.querySelector('h3').textContent.toLowerCase();
+                    const symbol = card.querySelector('p').textContent.toLowerCase();
+                    card.style.display = (name.includes(term) || symbol.includes(term)) ? 'block' : 'none';
+                }});
+            }});
+            
+            // Theme toggle
+            function toggleTheme() {{
+                document.body.classList.toggle('light-mode');
+                document.body.classList.toggle('dark-mode');
+                document.getElementById('themeIcon').textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+            }}
+            
+            // Modal functions
+            function openModal(id, name, price, change, sign, mcap) {{
+                document.getElementById('modalName').textContent = name;
+                document.getElementById('modalPrice').textContent = '$' + parseFloat(price).toLocaleString();
+                const changeEl = document.getElementById('modalChange');
+                changeEl.textContent = sign + change + '%';
+                changeEl.className = parseFloat(change) > 0 ? 'text-green-400 text-2xl mb-4' : 'text-red-400 text-2xl mb-4';
+                document.getElementById('modalMCap').textContent = 'Market Cap: ' + mcap;
+                document.getElementById('detailModal').classList.remove('hidden');
+                document.getElementById('detailModal').classList.add('flex');
+            }}
+            
+            function closeModal() {{
+                document.getElementById('detailModal').classList.add('hidden');
+                document.getElementById('detailModal').classList.remove('flex');
+            }}
+        </script>
     </body>
     </html>
-    """
+    '''
     
     return html
 
