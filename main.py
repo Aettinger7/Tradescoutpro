@@ -7,10 +7,12 @@ app = Flask(__name__)
 CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"
 
 COINS = [
-    "bitcoin", "ethereum", "binancecoin", "ripple", "solana", "cardano",
-    "dogecoin", "tron", "avalanche-2", "shiba-inu", "chainlink", "polkadot",
-    "litecoin", "bitcoin-cash", "near", "polygon",
-    "toshi", "degen-base", "based-brett"
+    "bitcoin", "ethereum", "tether", "xrp", "bnb", "usdc", "solana", "tron", "lido-staked-ether", "dogecoin",
+    "figure-heloc", "cardano", "bitcoin-cash", "whitebit", "wrapped-steth", "wrapped-bitcoin", "wrapped-beacon-eth", "usds", "wrapped-eeth", "chainlink",
+    "binance-bridged-usdt-bnb-smart-chain", "leo-token", "zcash", "weth", "monero", "stellar", "coinbase-wrapped-btc", "litecoin", "ethena-usde", "sui",
+    "avalanche", "hyperliquid", "canton", "hedera", "world-liberty-financial", "shiba-inu", "susds", "toncoin", "usdt0", "dai",
+    "cronos", "uniswap", "paypal-usd", "polkadot", "ethena-staked-usde", "usd1-wlfi", "mantle", "memecore", "rain", "pepe",
+    "brett", "degen", "toshi", "ponke", "mochi-thecatcoin", "keycat", "normie", "benji", "doginme", "brian"
 ]
 
 def fetch_crypto_data():
@@ -93,8 +95,8 @@ def index():
                 font-family: 'Inter', sans-serif;
                 margin: 0;
                 overflow-x: hidden;
-                background: linear-gradient(to right, #000000, #0052FF);
                 min-height: 100vh;
+                background: linear-gradient(to right, #000000, #0052FF);
             }}
             .light-mode {{ background: linear-gradient(to right, #f1f5f9, #e0e7ff) !important; }}
             .light-mode .bg-gray-900\\/90 {{ background: rgba(241,245,249,0.9) !important; }}
