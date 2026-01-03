@@ -89,8 +89,14 @@ def index():
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
         <style>
-            body {{ font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; background: url('https://i.ibb.co/0Vc5Z28b/image.jpg') no-repeat center center fixed; background-size: cover; }}
-            .light-mode {{ background: #f1f5f9 url('https://i.ibb.co/0Vc5Z28b/image.jpg') no-repeat center center fixed !important; background-size: cover !important; }}
+            body {{
+                font-family: 'Inter', sans-serif;
+                margin: 0;
+                overflow-x: hidden;
+                background: url('https://i.imgur.com/2J5y3zL.jpg') no-repeat center center fixed;
+                background-size: cover;
+            }}
+            .light-mode {{ background: #f1f5f9 url('https://i.imgur.com/2J5y3zL.jpg') no-repeat center center fixed !important; background-size: cover !important; }}
             .light-mode .bg-gray-900\\/90 {{ background: rgba(241,245,249,0.9) !important; }}
             .light-mode .text-white {{ color: #000000 !important; }}
             .light-mode .text-gray-400 {{ color: #64748b !important; }}
@@ -157,7 +163,6 @@ def index():
         </div>
         
         <script>
-            // Fixed search syntax
             document.getElementById('searchInput').addEventListener('input', function(e) {{
                 const term = e.target.value.toLowerCase();
                 document.querySelectorAll('.crypto-card').forEach(card => {{
@@ -166,13 +171,11 @@ def index():
                 }});
             }});
             
-            // Theme toggle
             document.getElementById('themeToggle').addEventListener('click', function() {{
                 document.body.classList.toggle('light-mode');
                 this.innerHTML = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
             }});
             
-            // Modal
             function openModal(id, name, price, change, sign, mcap, logo, volume, high24h, low24h, ath, supply) {{
                 document.getElementById('modalName').textContent = name;
                 document.getElementById('modalPrice').textContent = new Intl.NumberFormat('en-US', {{style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 8}}).format(price);
