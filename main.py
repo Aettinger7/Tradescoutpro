@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"
 
-# Top coins + requested Base memecoins
 COINS = [
  "bitcoin", "ethereum", "binancecoin", "ripple", "solana", "cardano",
  "dogecoin", "tron", "avalanche-2", "shiba-inu", "chainlink", "polkadot",
@@ -52,7 +51,7 @@ def fetch_crypto_data():
  
  except Exception as e:
  print(f"Error fetching data: {e}")
- return [], datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+ return [], datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC") # Properly indented!
 
 @app.route('/')
 def index():
@@ -61,21 +60,19 @@ def index():
  cards = ""
  for coin in crypto_data:
  change_class = "text-green-400" if coin["change_24h"] > 0 else "text-red-400"
- change_sign = "+" if coin["change_24 h"] > 0 else ""
+ change_sign = "+" if coin["change_24h"] > 0 else ""
  mcap = f"${coin['market_cap']:,.0f}" if coin['market_cap'] else "N/A"
  
  cards += f'''
- <div class="crypto-card bg-gray-900/80 backdrop-blur-md rounded-2xl p-6 border border-gray-800 hover:border-blue-500 transition-all hover:scale-105 cursor-pointer shadow-2xl"
- onclick="openModal('{coin['id']}', '{coin['name']}', {coin['price']}, {coin['change_24h']}, '{change_sign}', '{mcap}', '{coin['logo']}', {coin['volume_24h']}, {coin['high_24h']}, {coin['low_24h']}, {coin['ath']}, {coin['circulating_supply']})">
+ <div class="crypto-card bg-gray-900/90 backdrop-blur-md rounded-2xl p-6 border border-gray-800 hover:border-blue-500 transition-all hover:scale-105 cursor-pointer shadow-xl"
+ onclick="openModal('{coin['id']}', '{coin['name']}', {coin['price']}, {coin['change_24h']}, '{change_sign}', '{mcap}', '{coin['logo']}', {coin['volume_24h'] or 0}, {coin['high_24h'] or 0}, {coin['low_24h'] or 0}, {coin['ath'] or 0}, {coin['circulating_supply'] or 0})">
  <div class="flex items-center space-x-4 mb-4">
- <img src="{coin['logo']}" alt="{coin['name']}" class="w-12 h-12 rounded-full">
- <div>
- <h3 class="text-xl font-bold text-white">{coin['name']}</h3>
- </div>
+ <img src="{coin['logo']}" alt="{coin['name']}" class="w-12 h-12 rounded-full flex-shrink-0">
+ <h3 class="text-xl font-bold text-white truncate">{coin['name']}</h3>
  </div>
  <div class="text-3xl font-extrabold text-white mb-2">${coin['price']:,.2f}</div>
  <div class="{change_class} text-xl font-bold mb-2">{change_sign}{coin['change_24h']}%</div>
- <div class="text-sm text-gray-400">MCap: {mcap}</div>
+ <div class="text-sm text-gray-400 truncate">MCap: {mcap}</div>
  </div>
  '''
  
@@ -86,71 +83,73 @@ def index():
  <html lang="en">
  <head>
  <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
  <title>TradeScout Pro — Live Crypto Prices</title>
  <meta http-equiv="refresh" content="60">
  <script src="https://cdn.tailwindcss.com"></script>
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
  <style>
- body {{ font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #000000, #05172a, #000000); min-height: 100vh; }}
- .light-mode {{ background: #f1f5f9; }}
- .light-mode .bg-gray-900\\/80 {{ background: rgba(241,245,249,0.8) !important; }}
+ body {{ font-family: 'Inter', sans-serif; background: #000000; min-height: 100vh; margin: 0; }}
+ .light-mode {{ background: #f1f5f9 !important; }}
+ .light-mode .bg-gray-900\\/90 {{ background: rgba(241,245,249,0.9) !important; }}
  .light-mode .text-white {{ color: #000000 !important; }}
  .light-mode .text-gray-400 {{ color: #64748b !important; }}
  .light-mode .border-gray-800 {{ border-color: #cbd5e1 !important; }}
  </style>
  </head>
- <body class="text-white transition-all duration-500">
- <div class="container mx-auto px-6 py-10 max-w-7xl">
- <header class="flex justify-between items-center mb-10">
- <div class="flex items-center space-x-5">
- <img src="https://i.ibb.co/tPJ79Fnf/image.png" alt="TradeScout Pro Logo" class="w-16 h-16 rounded-xl shadow-2xl">
- <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent">
+ <body class="text-white">
+ <div class="container mx-auto px-4 py-8 max-w-7xl">
+ <!-- Mobile-Optimized Header -->
+ <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+ <div class="flex items-center space-x-4">
+ <img src="https://i.ibb.co/tPJ79Fnf/image.png" alt="TradeScout Pro Logo" class="w-14 h-14 rounded-xl shadow-lg">
+ <h1 class="text-3xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent">
  TradeScout Pro
  </h1>
  </div>
- <div class="flex items-center space-x-6">
+ <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
  <input type="text" id="searchInput" placeholder="Search cryptos..." 
- class="px-6 py-3 rounded-full bg-gray-900/70 border border-gray-800 focus:border-blue-500 focus:outline-none text-white w-64">
- <button id="themeToggle" class="p-3 rounded-full bg-gray-900 hover:bg-gray-800 transition text-2xl">
+ class="px-5 py-3 rounded-full bg-gray-900/70 border border-gray-800 focus:border-blue-500 focus:outline-none text-white w-full">
+ <button id="themeToggle" class="px-6 py-3 rounded-full bg-gray-900 hover:bg-gray-800 transition text-2xl self-center">
  🌙
  </button>
  </div>
  </header>
  
- <p class="text-center text-gray-400 text-lg mb-8">
+ <p class="text-center text-gray-400 text-base mb-8">
  Live Cryptocurrency Prices • Last updated: {last_update} • Auto-refreshes every minute
  </p>
  
- <div id="cryptoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+ <div id="cryptoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
  {cards}
  {status_message}
  </div>
+ 
+ <footer class="text-center mt-16 text-gray-500 text-sm">
+ Powered by CoinGecko API • TradeScout Pro © 2026
+ </footer>
  </div>
  
- <!-- Detailed Modal -->
- <div id="detailModal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50" onclick="closeModal()">
- <div class="bg-gray-900/95 backdrop-blur-xl rounded-3xl p-10 max-w-2xl w-full mx-6 shadow-2xl border border-blue-600/50" onclick="event.stopPropagation()">
- <div class="flex items-center space-x-8 mb-8">
- <img id="modalLogo" src="" class="w-24 h-24 rounded-full shadow-xl">
- <h2 id="modalName" class="text-4xl font-extrabold text-white"></h2>
+ <!-- Rich Modal (same as before) -->
+ <div id="detailModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-50" onclick="closeModal()">
+ <div class="bg-gray-900/95 backdrop-blur-xl rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-blue-600/50" onclick="event.stopPropagation()">
+ <div class="flex items-center space-x-6 mb-6">
+ <img id="modalLogo" src="" class="w-20 h-20 rounded-full">
+ <h2 id="modalName" class="text-4xl font-bold text-white"></h2>
  </div>
- <div class="text-5xl font-extrabold text-white mb-6" id="modalPrice">$0.00</div>
- <div id="modalChange" class="text-3xl font-bold mb-8"></div>
- <div class="text-xl text-gray-300 mb-4" id="modalMCap"></div>
- <div class="text-xl text-gray-300 mb-4" id="modalVolume"></div>
+ <p class="text-5xl font-extrabold text-white mb-4" id="modalPrice">$0.00</p>
+ <p id="modalChange" class="text-3xl mb-4"></p>
+ <p class="text-xl text-gray-300 mb-4" id="modalMCap"></p>
+ <p class="text-xl text-gray-300 mb-4" id="modalVolume"></p>
  <div class="grid grid-cols-2 gap-4 text-xl text-gray-300 mb-8">
  <div id="modalHigh24h"></div>
  <div id="modalLow24h"></div>
  </div>
- <div class="text-xl text-gray-300 mb-8" id="modalATH"></div>
- <div class="text-xl text-gray-300 mb-8" id="modalSupply"></div>
- 
- <!-- Live 7-day Sparkline Chart -->
+ <p class="text-xl text-gray-300 mb-8" id="modalATH"></p>
+ <p class="text-xl text-gray-300 mb-8" id="modalSupply"></p>
  <div class="w-full h-48 bg-gray-800/50 rounded-2xl overflow-hidden border border-gray-700">
- <img id="modalChart" src="" class="w-full h-full object-contain" alt="7-day price chart">
+ <img id="modalChart" src="" class="w-full h-full object-contain">
  </div>
- 
  <button onclick="closeModal()" class="mt-8 px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-bold transition">
  Close
  </button>
@@ -158,7 +157,6 @@ def index():
  </div>
  
  <script>
- // Search
  document.getElementById('searchInput').addEventListener('input', function(e) {{
  const term = e.target.value.toLowerCase();
  document.querySelectorAll('.crypto-card').forEach(card => {{
@@ -167,19 +165,17 @@ def index():
  }});
  }});
  
- // Light/Dark Toggle
  document.getElementById('themeToggle').addEventListener('click', function() {{
  document.body.classList.toggle('light-mode');
  this.innerHTML = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
  }});
  
- // Modal
  function openModal(id, name, price, change, sign, mcap, logo, volume, high24h, low24h, ath, supply) {{
  document.getElementById('modalName').textContent = name;
- document.getElementById('modalPrice').textContent = new Intl.NumberFormat('en-US', {{style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 8}}).format(price);
+ document.getElementById('modalPrice').textContent = new Intl.NumberFormat('en-US', {{style: 'currency', currency: 'USD'}}).format(price);
  const changeEl = document.getElementById('modalChange');
  changeEl.textContent = sign + change + '%';
- changeEl.className = change > 0 ? 'text-green-400 text-3xl font-bold mb-8' : 'text-red-400 text-3xl font-bold mb-8';
+ changeEl.className = change > 0 ? 'text-green-400 text-3xl font-bold mb-4' : 'text-red-400 text-3xl font-bold mb-4';
  document.getElementById('modalMCap').textContent = 'Market Cap: ' + mcap;
  document.getElementById('modalVolume').textContent = '24h Volume: $' + volume.toLocaleString();
  document.getElementById('modalHigh24h').textContent = '24h High: $' + high24h.toLocaleString(undefined, {{minimumFractionDigits: 2}});
