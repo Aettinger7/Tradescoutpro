@@ -93,10 +93,10 @@ def index():
                 font-family: 'Inter', sans-serif;
                 margin: 0;
                 overflow-x: hidden;
-                background: url('https://i.imgur.com/2J5y3zL.jpg') no-repeat center center fixed;
-                background-size: cover;
+                background: linear-gradient(to right, #000000, #0052FF);
+                min-height: 100vh;
             }}
-            .light-mode {{ background: #f1f5f9 url('https://i.imgur.com/2J5y3zL.jpg') no-repeat center center fixed !important; background-size: cover !important; }}
+            .light-mode {{ background: linear-gradient(to right, #f1f5f9, #e0e7ff) !important; }}
             .light-mode .bg-gray-900\\/90 {{ background: rgba(241,245,249,0.9) !important; }}
             .light-mode .text-white {{ color: #000000 !important; }}
             .light-mode .text-gray-400 {{ color: #64748b !important; }}
