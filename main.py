@@ -4,7 +4,6 @@ import datetime
 
 app = Flask(__name__)
 
-# List of coins to track
 COINS = ["bitcoin", "ethereum", "solana", "ripple", "cardano", "dogecoin", "litecoin", "polygon"]
 
 def fetch_crypto_data():
@@ -44,19 +43,42 @@ def fetch_crypto_data():
 def index():
     crypto_data, last_update = fetch_crypto_data()
     
-    # Build HTML safely using f-strings and multi-line without triple quotes
+    # Build table rows safely
     rows = ""
     for coin in crypto_data:
         change_class = "positive" if coin["change_24h"] > 0 else "negative"
+        
+        # Handle market cap and volume safely outside format specifier
+        market_cap_display = f"${coin['market_cap']:,.0f}" if coin["market_cap"] else "N/A"
+        volume_display = f"${coin['volume_24h']:,.0f}" if coin["volume_24h"] else "N/A"
+        
         rows += f"""
         <tr>
             <td>{coin["name"]}</td>
             <td>${coin["price"]:,.2f}</td>
             <td class="{change_class}">{coin["change_24h"]:.2f}%</td>
-            <td>${coin["market_cap"]:,.0f} if coin["market_cap"] else "N/A"}</td>
-            <td>${coin["volume_24h"]:,.0f} if coin["volume_24h"] else "N/A"}</td>
+            <td>{market_cap_display}</td>
+            <td>{volume_display}</td>
         </tr>
         """
+    
+    # Main HTML template
+    table_section = """
+    <table>
+        <thead>
+            <tr>
+                <th>Coin</th>
+                <th>Price (USD)</th>
+                <th>24h Change</th>
+                <th>Market Cap</th>
+                <th>24h Volume</th>
+            </tr>
+        </thead>
+        <tbody>
+            """ + rows + """
+        </tbody>
+    </table>
+    """ if crypto_data else '<p style="text-align:center;color:#ff5555;">Failed to load data. Please try refreshing.</p>'
     
     html = f"""
     <!DOCTYPE html>
@@ -83,22 +105,7 @@ def index():
             <h1>Live Cryptocurrency Prices</h1>
             <div class="update">Last updated: {last_update}</div>
             
-            {"""
-            <table>
-                <thead>
-                    <tr>
-                        <th>Coin</th>
-                        <th>Price (USD)</th>
-                        <th>24h Change</th>
-                        <th>Market Cap</th>
-                        <th>24h Volume</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    """ + rows + """
-                </tbody>
-            </table>
-            """ if crypto_data else "<p style='text-align:center;color:#ff5555;'>Failed to load data. Please try refreshing.</p>"}
+            {table_section}
             
             <div class="update">Refresh the page to update prices</div>
         </div>
