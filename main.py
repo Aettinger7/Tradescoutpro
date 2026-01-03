@@ -1,24 +1,45 @@
 from flask import Flask, render_template_string
+from time import sleep
+import threading
+from coingecko import CoinGeckoAPI
 
 app = Flask(__name__)
 
-# Dummy top crypto data (real would come from API)
-crypto_list = [
-    {"rank": 1, "name": "Bitcoin", "symbol": "BTC", "price": "$90,123", "change_24h": "+1.23%", "change_class": "green", "market_cap": "$1.79T", "volume": "$45.2B", "sparkline": [85000, 86000, 88000, 89000, 90000, 90123]},
-    {"rank": 2, "name": "Ethereum", "symbol": "ETH", "price": "$3,106", "change_24h": "+0.45%", "change_class": "green", "market_cap": "$374B", "volume": "$23.8B", "sparkline": [3000, 3050, 3080, 3100, 3106]},
-    {"rank": 3, "name": "Tether", "symbol": "USDT", "price": "$1.00", "change_24h": "0.00%", "change_class": "gray", "market_cap": "$187B", "volume": "$94B", "sparkline": [1,1,1,1,1]},
-    {"rank": 4, "name": "BNB", "symbol": "BNB", "price": "$873", "change_24h": "-1.39%", "change_class": "red", "market_cap": "$120B", "volume": "$829M", "sparkline": [880, 870, 875, 873]},
-    {"rank": 5, "name": "Solana", "symbol": "SOL", "price": "$142", "change_24h": "+0.26%", "change_class": "green", "market_cap": "$71B", "volume": "$3.2B", "sparkline": [140, 141, 142]},
-    {"rank": 6, "name": "XRP", "symbol": "XRP", "price": "$2.01", "change_24h": "+2.29%", "change_class": "green", "market_cap": "$121B", "volume": "$2.65B", "sparkline": [1.9, 1.95, 2.01]},
-    {"rank": 7, "name": "Dogecoin", "symbol": "DOGE", "price": "$0.35", "change_24h": "+3.5%", "change_class": "green", "market_cap": "$51B", "volume": "$2.1B", "sparkline": [0.32, 0.34, 0.35]},
-    {"rank": 8, "name": "Cardano", "symbol": "ADA", "price": "$0.85", "change_24h": "-0.8%", "change_class": "red", "market_cap": "$30B", "volume": "$1.2B", "sparkline": [0.86, 0.85]},
-    {"rank": 9, "name": "TRON", "symbol": "TRX", "price": "$0.22", "change_24h": "+1.1%", "change_class": "green", "market_cap": "$19B", "volume": "$900M", "sparkline": [0.21, 0.22]},
-    {"rank": 10, "name": "Avalanche", "symbol": "AVAX", "price": "$45", "change_24h": "+2.4%", "change_class": "green", "market_cap": "$18B", "volume": "$800M", "sparkline": [43, 44, 45]}
-]
+cg = CoinGeckoAPI()
+
+# Global data
+crypto_list = []
+last_update = "Loading..."
+
+def update_data():
+    global crypto_list, last_update
+    while True:
+        try:
+            data = cg.get_coins_markets(vs_currency='usd', per_page=50, page=1, sparkline=True)
+            table = []
+            for i, coin in enumerate(data, 1):
+                table.append({
+                    "rank": i,
+                    "name": coin['name'],
+                    "symbol": coin['symbol'].upper(),
+                    "price": f"${coin['current_price']:.2f}",
+                    "change_24h": f"{coin['price_change_percentage_24h']:+.2f}%" if coin['price_change_percentage_24h'] is not None else "N/A",
+                    "change_class": "green" if coin['price_change_percentage_24h'] and coin['price_change_percentage_24h'] > 0 else "red",
+                    "market_cap": f"${coin['market_cap']:,.0f}",
+                    "volume": f"${coin['total_volume']:,.0f}",
+                    "sparkline": coin['sparkline_in_7d']['price'] if coin['sparkline_in_7d'] else [coin['current_price']]*50
+                })
+            crypto_list = table
+            last_update = datetime.now().strftime("%b %d, %Y %H:%M")
+        except:
+            crypto_list = []
+        sleep(60)
+
+threading.Thread(target=update_data, daemon=True).start()
 
 @app.route('/')
 def home():
-    return render_template_string(HTML, crypto_list=crypto_list)
+    return render_template_string(HTML, crypto_list=crypto_list, last_update=last_update)
 
 HTML = """
 <!DOCTYPE html>
@@ -27,25 +48,27 @@ HTML = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeScout Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { margin: 0; font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; }
-        .header { text-align: center; padding: 40px 20px; background: #1e293b; }
-        .logo { height: 80px; vertical-align: middle; border-radius: 12px; }
-        h1 { display: inline; font-size: 3em; margin-left: 20px; vertical-align: middle; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th { background: #1e293b; padding: 20px; text-align: left; font-weight: 600; }
-        td { padding: 20px; border-bottom: 1px solid #334155; }
-        .rank { text-align: center; width: 80px; }
-        .name { font-weight: 600; font-size: 1.2em; }
-        .price { text-align: right; font-weight: 600; font-size: 1.2em; }
-        .change { text-align: right; font-size: 1.1em; }
-        .green { color: #10b981; }
-        .red { color: #ef4444; }
-        .gray { color: #64748b; }
-        .chart { height: 60px; width: 150px; }
-        .no-data { text-align: center; padding: 100px; color: #64748b; font-size: 1.6em; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .header { text-align: left; padding: 15px 25px; background: #121212; display: flex; align-items: center; gap: 10px; }
+        .logo { height: 40px; }
+        h1 { font-size: 1.4em; margin: 0; color: #ffffff; font-weight: 500; }
+        .last-update { text-align: center; color: #808080; margin: 10px 0; font-size: 0.9em; }
+        table { width: 100%; border-collapse: collapse; margin: 0 auto; font-size: 0.85em; max-width: 1200px; }
+        th { background: #181818; padding: 8px 12px; text-align: left; font-weight: 500; color: #b0b0b0; font-size: 0.9em; }
+        td { padding: 8px 12px; border-bottom: 1px solid #242424; text-align: left; font-weight: 400; }
+        .rank { width: 40px; text-align: center; color: #b0b0b0; }
+        .name { display: flex; align-items: center; gap: 8px; font-weight: 500; color: #ffffff; font-size: 0.95em; }
+        .symbol { color: #808080; font-size: 0.85em; }
+        .price { text-align: right; color: #ffffff; font-weight: 500; font-size: 0.95em; }
+        .change { text-align: right; font-size: 0.9em; }
+        .green { color: #00cc88; }
+        .red { color: #ff4d4d; }
+        .market-cap, .volume { text-align: right; color: #b0b0b0; font-size: 0.9em; }
+        .chart { height: 40px; width: 100px; margin: 0 auto; }
+        .no-data { text-align: center; padding: 80px; color: #808080; font-size: 1.2em; }
     </style>
 </head>
 <body>
@@ -53,6 +76,7 @@ HTML = """
         <img src="https://i.ibb.co/tPJ79Fnf/image.png" alt="TradeScout Pro Logo" class="logo">
         <h1>TradeScout Pro</h1>
     </div>
+    <div class="last-update">Last updated: {{ last_update }}</div>
     <table>
         <thead>
             <tr>
@@ -61,36 +85,50 @@ HTML = """
                 <th>Price</th>
                 <th>24h %</th>
                 <th>Market Cap</th>
-                <th>Volume (24h)</th>
+                <th>Volume</th>
                 <th>Last 7 Days</th>
             </tr>
         </thead>
         <tbody>
-            {% for coin in crypto_list %}
-                <tr>
-                    <td class="rank">{{ coin.rank }}</td>
-                    <td class="name">{{ coin.name }} <span style="color:#64748b;">{{ coin.symbol }}</span></td>
-                    <td class="price">{{ coin.price }}</td>
-                    <td class="change {{ coin.change_class }}">{{ coin.change_24h }}</td>
-                    <td>{{ coin.market_cap }}</td>
-                    <td>{{ coin.volume }}</td>
-                    <td><canvas class="chart" id="chart{{ coin.rank }}"></canvas></td>
-                </tr>
-            {% endfor %}
+            {% if crypto_list %}
+                {% for coin in crypto_list %}
+                    <tr>
+                        <td class="rank">{{ coin.rank }}</td>
+                        <td class="name">{{ coin.name }} <span class="symbol">{{ coin.symbol }}</span></td>
+                        <td class="price">{{ coin.price }}</td>
+                        <td class="change {{ coin.change_class }}">{{ coin.change_24h }}</td>
+                        <td class="market-cap">{{ coin.market_cap }}</td>
+                        <td class="volume">{{ coin.volume }}</td>
+                        <td class="chart"><canvas id="chart{{ coin.rank }}"></canvas></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="7" class="no-data">Loading top 50 cryptocurrencies...</td></tr>
+            {% endif %}
         </tbody>
     </table>
     <script>
         {% for coin in crypto_list %}
             new Chart(document.getElementById('chart{{ coin.rank }}'), {
                 type: 'line',
-                data: { labels: ['', '', '', '', '', '', ''], datasets: [{ data: {{ coin.sparkline }}, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.4, pointRadius: 0 }] },
-                options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+                data: {
+                    labels: new Array({{ coin.sparkline | length }}).fill(''),
+                    datasets: [{
+                        data: {{ coin.sparkline }},
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59,130,246,0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { display: false } }
+                }
             });
         {% endfor %}
     </script>
 </body>
 </html>
-"""
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
