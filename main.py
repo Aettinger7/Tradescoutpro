@@ -64,7 +64,7 @@ def index():
         mcap = f"${coin['market_cap']:,.0f}" if coin['market_cap'] else "N/A"
         
         cards += f'''
-        <div class="crypto-card bg-gray-900/90 backdrop-blur-md rounded-2xl p-6 border border-gray-800 hover:border-[#0052FF] transition-all hover:scale-105 cursor-pointer shadow-xl"
+        <div class="crypto-card bg-gray-900/90 backdrop-blur-md rounded-2xl p-6 border border-gray-800 hover:border-[#0052FF] transition-all hover:scale-105 cursor-pointer shadow-xl z-20"
              onclick="openModal('{coin['id']}', '{coin['name']}', {coin['price']}, {coin['change_24h']}, '{change_sign}', '{mcap}', '{coin['logo']}', {coin['volume_24h']}, {coin['high_24h']}, {coin['low_24h']}, {coin['ath']}, {coin['circulating_supply']})">
             <div class="flex items-center space-x-4 mb-4">
                 <img src="{coin['logo']}" alt="{coin['name']}" class="w-12 h-12 rounded-full flex-shrink-0">
@@ -76,7 +76,7 @@ def index():
         </div>
         '''
     
-    status_message = '<p class="col-span-full text-center text-red-400 text-2xl mt-20">Failed to load data — retrying soon...</p>' if not crypto_data else ""
+    status_message = '<p class="col-span-full text-center text-red-400 text-2xl mt-20 z-20">Failed to load data — retrying soon...</p>' if not crypto_data else ""
     
     html = f'''
     <!DOCTYPE html>
@@ -89,8 +89,14 @@ def index():
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
         <style>
-            body {{ font-family: 'Inter', sans-serif; background: #000000; min-height: 100vh; margin: 0; overflow-x: hidden; }}
-            .light-mode {{ background: #f1f5f9 !important; }}
+            body {{
+                font-family: 'Inter', sans-serif;
+                margin: 0;
+                overflow-x: hidden;
+                background: url('https://i.ibb.co/Q7YLHB45/abstract-blue-circuit-board-background.jpg') no-repeat center center fixed;
+                background-size: cover;
+            }}
+            .light-mode {{ background: #f1f5f9 url('https://i.ibb.co/Q7YLHB45/abstract-blue-circuit-board-background.jpg') no-repeat center center fixed !important; background-size: cover !important; }}
             .light-mode .bg-gray-900\\/90 {{ background: rgba(241,245,249,0.9) !important; }}
             .light-mode .text-white {{ color: #000000 !important; }}
             .light-mode .text-gray-400 {{ color: #64748b !important; }}
@@ -128,6 +134,7 @@ def index():
             </footer>
         </div>
         
+        <!-- Modal with full data + chart -->
         <div id="detailModal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50" onclick="closeModal()">
             <div class="bg-gray-900/95 backdrop-blur-xl rounded-3xl p-10 max-w-lg w-full mx-4 shadow-2xl border border-[#0052FF]/50" onclick="event.stopPropagation()">
                 <div class="flex items-center space-x-6 mb-6">
