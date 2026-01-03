@@ -61,10 +61,10 @@ def index():
  for coin in crypto_data:
  change_class = "text-green-400" if coin["change_24h"] > 0 else "text-red-400"
  change_sign = "+" if coin["change_24h"] > 0 else ""
- mcap = f"${coin['market_cap']:,.0f}" if coin['market_cap'] else "N/A"
+ mcap = f"${coin['market_cap']:,.0f}" if coin['market_cap'] else "N/A "
  
  cards += f'''
- <div class="crypto-card relative bg-gray-900/90 backdrop-blur-md rounded-2xl p-6 border border-gray-800 hover:border-[#0052FF] transition-all hover:scale-105 cursor-pointer shadow-xl z-20"
+ <div class="crypto-card bg-gray-900/90 backdrop-blur-md rounded-2xl p-6 border border-gray-800 hover:border-[#0052FF] transition-all hover:scale-105 cursor-pointer shadow-xl"
  onclick="openModal('{coin['id']}', '{coin['name']}', {coin['price']}, {coin['change_24h']}, '{change_sign}', '{mcap}', '{coin['logo']}', {coin['volume_24h']}, {coin['high_24h']}, {coin['low_24h']}, {coin['ath']}, {coin['circulating_supply']})">
  <div class="flex items-center space-x-4 mb-4">
  <img src="{coin['logo']}" alt="{coin['name']}" class="w-12 h-12 rounded-full flex-shrink-0">
@@ -76,7 +76,7 @@ def index():
  </div>
  '''
  
- status_message = '<p class="col-span-full text-center text-red-400 text-2xl mt-20 z-20">Failed to load data — retrying soon...</p>' if not crypto_data else ""
+ status_message = '<p class="col-span-full text-center text-red-400 text-2xl mt-20">Failed to load data — retrying soon...</p>' if not crypto_data else ""
  
  html = f'''
  <!DOCTYPE html>
@@ -88,12 +88,8 @@ def index():
  <meta http-equiv="refresh" content="60">
  <script src="https://cdn.tailwindcss.com"></script>
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
- <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
  <style>
- body {{ font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; position: relative; background: #000000; }}
- #tsparticles {{ position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }}
- .container {{ position: relative; z-index: 10; }}
- .crypto-card, header, footer, input, button {{ position: relative; z-index: 20; }}
+ body {{ font-family: 'Inter', sans-serif; background: #000000; min-height: 100vh; margin: 0; overflow-x: hidden; }}
  .light-mode {{ background: #f1f5f9 !important; }}
  .light-mode .bg-gray-900\\/90 {{ background: rgba(241,245,249,0.9) !important; }}
  .light-mode .text-white {{ color: #000000 !important; }}
@@ -101,8 +97,6 @@ def index():
  </style>
  </head>
  <body class="text-white">
- <div id="tsparticles"></div>
- 
  <div class="container mx-auto px-4 py-8 max-w-7xl">
  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
  <div class="flex items-center space-x-5">
@@ -131,7 +125,7 @@ def index():
  
  <footer class="text-center mt-20 text-gray-500 text-sm">
  Powered by CoinGecko API • TradeScout Pro © 2026
- </footer >
+ </footer>
  </div>
  
  <div id="detailModal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50" onclick="closeModal()">
@@ -162,27 +156,6 @@ def index():
  </div>
  
  <script>
- tsParticles.load("tsparticles", {
- background: { color: { value: "transparent" } },
- fpsLimit: 120,
- particles: {
- color: { value: ["#0052FF", "#00C6FF", "#ffffff"] },
- links: { enable: false },
- move: {
- enable: true,
- speed: 0.8,
- direction: "top",
- random: true,
- straight: false
- },
- number: { value: 40, density: { enable: true, area: 800 } },
- opacity: { value: 0.3, random: true },
- shape: { type: "circle" },
- size: { value: { min: 1, max: 3 } }
- },
- detectRetina: true
- });
- 
  document.getElementById('searchInput').addEventListener('input', function(e) {
  const term = e.target.value.toLowerCase();
  document.querySelectorAll('.crypto-card').forEach(card => {
