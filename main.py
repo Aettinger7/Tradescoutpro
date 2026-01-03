@@ -136,7 +136,7 @@ def index():
         
         <!-- Modal -->
         <div id="detailModal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50" onclick="closeModal()">
-            <div class="bg-gray-900/95 backdrop-blur-xl rounded-3xl p-10 max-w-lg w-full mx-4 shadow-2xl border border-[#0052FF]/50 z-50" onclick="event.stopPropagation()">
+            <div class="bg-gray-900/95 backdrop-blur-xl rounded-3xl p-10 max-w-lg w-full mx-4 shadow-2xl border border-[#0052FF]/50" onclick="event.stopPropagation()">
                 <div class="flex items-center space-x-6 mb-6">
                     <img id="modalLogo" src="" class="w-20 h-20 rounded-full shadow-xl">
                     <h2 id="modalName" class="text-4xl font-bold text-white"></h2>
@@ -163,7 +163,7 @@ def index():
         </div>
         
         <script>
-            // Particles (subtle, behind content)
+            // Particles config moved out of f-string to avoid nesting error
             tsParticles.load("tsparticles", {
               background: { color: { value: "transparent" } },
               fpsLimit: 120,
