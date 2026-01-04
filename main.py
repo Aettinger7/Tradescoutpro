@@ -7,39 +7,46 @@ app = Flask(__name__)
 CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu" # Keep your Pro key
 
 def fetch_crypto_data():
- url = "https://api.coingecko.com/api/v3/coins/markets"
- params = {
- "vs_currency": "usd",
- "order": "market_cap_desc",
- "per_page": 100,
- "page": 1,
- "price_change_percentage": "1h,24h,7d",
- "sparkline": True,
- }
- headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
+    url = "https://api.coingecko.com/api/v3/coins/markets"
+    params = {
+        "vs_currency": "usd",
+        "order": "market_cap_desc",
+        "per_page": 100,
+        "page": 1,
+        "price_change_percentage": "1h,24h,7d",
+        "sparkline": True,
+    }
+    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
 
- try:
- response = requests.get(url, params=params, headers=headers, timeout=15)
- response.raise_for_status()
- data = response.json()
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=15)
+        response.raise_for_status()
+        data = response.json()
 
- formatted_data = []
- for rank, coin in enumerate(data, 1):
- sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
- formatted_data.append({
- "rank": rank,
- "id": coin["id"],
- "name": coin["name"],
- "symbol": coin["symbol"].upper(),
- "logo": coin["image"],
- "price": coin["current_price"] or 0,
- "change_1h": round(coin.get("price_change_percentage_1h_in_currency") or 0, 2),
- "change_24h": round(coin.get("price_change_percentage_24h_in_currency") or 0, 2),
- "change_7d": round(coin.get("price_change_percentage_7d_in_currency") or 0, 2),
- "market_cap": coin["market_cap"] or 0,
- "volume_24h": coin["total_volume"] or 0,
- "sparkline_prices": sparkline_prices,
- })
+        formatted_data = []
+        for rank, coin in enumerate(data, 1):
+            sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
+            formatted_data.append({
+                "rank": rank,
+                "id": coin["id"],
+                "name": coin["name"],
+                "symbol": coin["symbol"].upper(),
+                "logo": coin["image"],
+                "price": coin["current_price"] or 0,
+                "change_1h": round(coin.get("price_change_percentage_1h_in_currency") or 0, 2),
+                "change_24h": round(coin.get("price_change_percentage_24h_in_currency") or 0, 2),
+                "change_7d": round(coin.get("price_change_percentage_7d_in_currency") or 0, 2),
+                "market_cap": coin["market_cap"] or 0,
+                "volume_24h": coin["total_volume"] or 0,
+                "sparkline_prices": sparkline_prices,
+            })
+
+        last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+        return formatted_data, last_update
+
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return [], "Error"
 
  last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
  return formatted_data, last_update
