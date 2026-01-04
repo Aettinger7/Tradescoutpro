@@ -117,7 +117,7 @@ def index():
                         Follow on X
                     </a>
                     <!-- ToshiMart Website Button -->
-                    <a href="https://toshimart.com.xyz" target="_blank" 
+                    <a href="https://toshimart.xyz" target="_blank" 
                        class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg text-center">
                         ToshiMart Website
                     </a>
