@@ -40,6 +40,8 @@ def fetch_crypto_data():
                 "market_cap": coin["market_cap"] or 0,
                 "volume_24h": coin["total_volume"] or 0,
                 "sparkline_prices": sparkline_prices,
+                "circulating_supply": coin["circulating_supply"] or 0,
+                "max_supply": coin["max_supply"] or 0,
             })
 
         last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -59,6 +61,22 @@ def fetch_trending_data():
         trending_items = trending_json.get('coins', [])
         ids = [item['item']['id'] for item in trending_items]
 
+        # Fill to 25 with top 24h gainers
+        if len(ids) < 25:
+            top_gainers_url = "https://api.coingecko.com/api/v3/coins/markets"
+            top_gainers_params = {
+                "vs_currency": "usd",
+                "order": "price_change_percentage_24h_desc",
+                "per_page": 25 - len(ids),
+                "page": 1,
+                "sparkline": True,
+                "price_change_percentage": "1h,24h,7d",
+            }
+            top_gainers_res = requests.get(top_gainers_url, params=top_gainers_params, headers=headers, timeout=15)
+            top_gainers_res.raise_for_status()
+            top_gainers = top_gainers_res.json()
+            ids.extend([coin['id'] for coin in top_gainers if coin['id'] not in ids])
+
         if ids:
             markets_url = "https://api.coingecko.com/api/v3/coins/markets"
             markets_params = {
@@ -74,12 +92,12 @@ def fetch_trending_data():
             markets_res.raise_for_status()
             full_data = markets_res.json()
 
-            # Preserve trending order
+            # Preserve order
             order_map = {item['item']['id']: idx for idx, item in enumerate(trending_items)}
             full_data.sort(key=lambda c: order_map.get(c['id'], 999))
 
             formatted_data = []
-            for rank, coin in enumerate(full_data, 1):
+            for rank, coin in enumerate(full_data[:25], 1):
                 sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
                 formatted_data.append({
                     "rank": rank,
@@ -94,6 +112,8 @@ def fetch_trending_data():
                     "market_cap": coin["market_cap"] or 0,
                     "volume_24h": coin["total_volume"] or 0,
                     "sparkline_prices": sparkline_prices,
+                    "circulating_supply": coin["circulating_supply"] or 0,
+                    "max_supply": coin["max_supply"] or 0,
                 })
             last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
             return formatted_data, last_update
@@ -110,7 +130,7 @@ def index():
 @app.route('/trending')
 def trending():
     trending_data, last_update = fetch_trending_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data, last_update=last_update, title="Trending Coins", page="trending")
+    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data, last_update=last_update, title="Top 25 Trending Coins", page="trending")
 
 @app.route('/api/data')
 def api_data():
@@ -190,8 +210,9 @@ HTML_TEMPLATE = '''
         [data-theme="dark"] {
             --bg: #000000;
             --text: #ffffff;
-            --table-bg: #111111;
-            --table-header: #1e1e1e;
+            --table-bg: #000000;
+            --table-header-bg: #111111;
+            --table-header-text: #9ca3af;
             --hover: #222222;
             --border: #333333;
             --green: #00ff99;
@@ -200,10 +221,11 @@ HTML_TEMPLATE = '''
         [data-theme="light"] {
             --bg: #ffffff;
             --text: #000000;
-            --table-bg: #f8f9fa;
-            --table-header: #e9ecef;
-            --hover: #e9ecef;
-            --border: #dee2e6;
+            --table-bg: #ffffff;
+            --table-header-bg: #f3f4f6;
+            --table-header-text: #374151;
+            --hover: #f3f4f6;
+            --border: #d1d5db;
             --green: #00aa66;
             --red: #cc3333;
         }
@@ -213,10 +235,11 @@ HTML_TEMPLATE = '''
         .text-red { color: var(--red); }
         .hover-row:hover { background-color: var(--hover) !important; }
         .sparkline { height: 60px; width: 140px; }
-        .navbar-blue { background-color: #0066ff; }
+        .navbar-blue { background-color: #0066ff; transition: background 0.3s; }
+        [data-theme="light"] .navbar-blue { background-color: #005edc; }
         .active-link { color: #00ff99; border-bottom: 3px solid #00ff99; padding-bottom: 4px; }
-        table { background-color: var(--table-bg); }
-        thead { background-color: var(--table-header); color: var(--text); }
+        table { background-color: var(--table-bg); transition: background 0.3s; }
+        thead { background-color: var(--table-header-bg); color: var(--table-header-text); transition: background 0.3s, color 0.3s; }
         .divide-y > tr { border-bottom: 1px solid var(--border); }
     </style>
 </head>
@@ -244,7 +267,7 @@ HTML_TEMPLATE = '''
         
         <div class="overflow-x-auto rounded-2xl shadow-2xl">
             <table class="w-full text-left">
-                <thead class="text-gray-300 uppercase text-sm">
+                <thead class="uppercase text-sm">
                     <tr>
                         <th class="px-6 py-5">#</th>
                         <th class="px-6 py-5">Name</th>
@@ -252,8 +275,9 @@ HTML_TEMPLATE = '''
                         <th class="px-6 py-5 text-right">1h %</th>
                         <th class="px-6 py-5 text-right">24h %</th>
                         <th class="px-6 py-5 text-right">7d %</th>
-                        <th class="px-6 py-5 text-right">24h Volume</th>
                         <th class="px-6 py-5 text-right">Market Cap</th>
+                        <th class="px-6 py-5 text-right">Volume(24h)</th>
+                        <th class="px-6 py-5 text-right">Circulating Supply</th>
                         <th class="px-6 py-5 text-center">Last 7 Days</th>
                     </tr>
                 </thead>
@@ -264,9 +288,9 @@ HTML_TEMPLATE = '''
         <p class="text-center text-gray-500 mt-8 text-sm">Last update: <span id="lastUpdate">{{ last_update }}</span> • Auto-refreshes every 60s • Powered by CoinGecko</p>
     </div>
 
-    <!-- Modal -->
+    <!-- Coin Detail Modal -->
     <div class="fixed inset-0 hidden flex items-center justify-center bg-black/90 z-50" id="modal">
-        <div class="bg-current rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl mx-4" style="background-color: var(--table-bg);">
+        <div class="rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl mx-4" style="background-color: var(--table-bg); color: var(--text);">
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-4">
                     <img id="modalLogo" src="" class="w-16 h-16 rounded-full">
@@ -284,7 +308,7 @@ HTML_TEMPLATE = '''
                 <div><strong>24h Change:</strong> <span id="modalChange24h"></span></div>
             </div>
             <h3 class="text-2xl font-bold mb-4">30 Day Candlestick Chart</h3>
-            <div class="bg-gray-800 rounded-lg p-4">
+            <div class="rounded-lg p-4" style="background-color: var(--table-header-bg);">
                 <canvas id="detailChart"></canvas>
             </div>
         </div>
@@ -298,6 +322,12 @@ HTML_TEMPLATE = '''
             if (num >= 1e9) return '$' + (num / 1e9).toFixed(2) + 'B';
             if (num >= 1e6) return '$' + (num / 1e6).toFixed(2) + 'M';
             return '$' + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 8});
+        }
+
+        function formatSupply(num, max, symbol) {
+            const supply = num ? formatNumber(num) : 'N/A';
+            const maxSupply = max ? '/' + formatNumber(max) : '';
+            return `${supply}${maxSupply} ${symbol}`;
         }
 
         function formatPercent(pct) {
@@ -339,14 +369,14 @@ HTML_TEMPLATE = '''
                         <td class="px-6 py-5 text-right">${formatPercent(coin.change_1h)}</td>
                         <td class="px-6 py-5 text-right">${formatPercent(coin.change_24h)}</td>
                         <td class="px-6 py-5 text-right">${formatPercent(coin.change_7d)}</td>
-                        <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.volume_24h)}</td>
                         <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.market_cap)}</td>
+                        <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.volume_24h)}</td>
+                        <td class="px-6 py-5 text-right text-gray-400">${formatSupply(coin.circulating_supply, coin.max_supply, coin.symbol)}</td>
                         <td class="px-6 py-5 text-center"><canvas class="sparkline" data-prices="${pricesJson}"></canvas></td>
                     `;
                     tbody.appendChild(tr);
                 });
 
-                // Render sparklines
                 document.querySelectorAll('.sparkline').forEach(canvas => {
                     let prices = [];
                     try { prices = JSON.parse(canvas.dataset.prices); } catch(e) {}
@@ -366,7 +396,6 @@ HTML_TEMPLATE = '''
         }
 
         async function openModal(id) {
-            // Same as before...
             try {
                 const detailRes = await fetch(`/api/coin_detail/${id}`);
                 const detail = await detailRes.json();
@@ -390,19 +419,15 @@ HTML_TEMPLATE = '''
                 detailChart = new Chart(document.getElementById('detailChart'), {
                     type: 'candlestick',
                     data: { datasets: [{ label: detail.symbol?.toUpperCase() + '/USD', data: candles }] },
-                    options: { responsive: true }
+                    options: { responsive: true, maintainAspectRatio: false }
                 });
             } catch (e) { console.error(e); }
 
             document.getElementById('modal').classList.remove('hidden');
         }
 
-        // Search fixed with debug
+        // Search...
         let searchTimeout;
-        const searchInput = document.getElementById('searchInput');
-        const dropdown = document.getElementById('searchDropdown');
-        const resultsDiv = document.getElementById('searchResults');
-
         searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
             const q = searchInput.value.trim();
@@ -412,9 +437,9 @@ HTML_TEMPLATE = '''
             searchTimeout = setTimeout(async () => {
                 try {
                     const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-                    console.log("Search response status:", res.status);
+                    console.log("Search status:", res.status);
                     const json = await res.json();
-                    console.log("Search results:", json);
+                    console.log("Search json:", json);
                     const results = json.results || [];
 
                     resultsDiv.innerHTML = '';
@@ -423,14 +448,14 @@ HTML_TEMPLATE = '''
                     } else {
                         results.forEach(coin => {
                             const div = document.createElement('div');
-                            div.className = 'p-4 hover:bg-gray-700 cursor-pointer flex items-center gap-4';
+                            div.className = 'p-4 hover:bg-gray-800 cursor-pointer flex items-center gap-4';
                             div.onclick = () => {
                                 openModal(coin.id);
                                 searchInput.value = '';
                                 dropdown.classList.add('hidden');
                             };
                             div.innerHTML = `
-                                <img src="${coin.logo || ''}" class="w-10 h-10 rounded-full">
+                                <img src="${coin.logo}" class="w-10 h-10 rounded-full">
                                 <div>
                                     <div class="font-semibold">${coin.name}</div>
                                     <div class="text-sm text-gray-500">${coin.symbol}</div>
@@ -440,9 +465,7 @@ HTML_TEMPLATE = '''
                         });
                     }
                     dropdown.classList.remove('hidden');
-                } catch (e) {
-                    console.error("Search error:", e);
-                }
+                } catch (e) { console.error(e); }
             }, 300);
         });
 
@@ -454,10 +477,8 @@ HTML_TEMPLATE = '''
 
         document.getElementById('themeToggle').addEventListener('click', () => {
             const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            const newTheme = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
-            document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            document.getElementById('themeToggle').textContent = html.getAttribute('data-theme') === 'dark' ? '🌙' : '☀️';
         });
 
         loadCoins();
