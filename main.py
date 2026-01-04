@@ -68,7 +68,7 @@ def fetch_crypto_data():
 @app.route('/')
 def index():
     crypto_data, last_update = fetch_crypto_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=crypto_data, last_update=last_update)
+    return render_template_string(HTML_TEMPLATE, crypto_data=crypto_data, last_update=last_update, format_number=format_number, format_supply=format_supply)
 
 @app.route('/api/data')
 def api_data():
@@ -162,7 +162,7 @@ HTML_TEMPLATE = '''
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6 text-right font-medium">${{ '%.2f' % coin.price if coin.price else '0.00' }}</td>
+                            <td class="py-4 px-6 text-right font-medium">${{ format_number(coin.price) }}</td>
                             <td class="py-4 px-6 text-right {% if coin.change_1h > 0 %}text-green-500{% elif coin.change_1h < 0 %}text-red-500{% endif %}">
                                 {% if coin.change_1h > 0 %}+{% endif %}{{ coin.change_1h }}%
                             </td>
@@ -279,7 +279,7 @@ HTML_TEMPLATE = '''
                                 </div>
                             </div>
                         </td>
-                        <td class="py-4 px-6 text-right font-medium">$${parseFloat(coin.price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 8})}</td>
+                        <td class="py-4 px-6 text-right font-medium">${formatNumber(coin.price)}</td>
                         <td class="py-4 px-6 text-right ${change1hClass}">${coin.change_1h > 0 ? '+' : ''}${coin.change_1h}%</td>
                         <td class="py-4 px-6 text-right ${change24hClass}">${coin.change_24h > 0 ? '+' : ''}${coin.change_24h}%</td>
                         <td class="py-4 px-6 text-right ${change7dClass}">${coin.change_7d > 0 ? '+' : ''}${coin.change_7d}%</td>
@@ -292,7 +292,7 @@ HTML_TEMPLATE = '''
                     `;
                     tbody.appendChild(row);
                 });
-                renderSparklines();  // Re-render sparklines after update
+                renderSparklines();  # Re-render sparklines after update
             } catch (e) {
                 console.error('Refresh failed:', e);
             }
@@ -316,5 +316,4 @@ HTML_TEMPLATE = '''
 </body>
 </html>
 '''
-
 
