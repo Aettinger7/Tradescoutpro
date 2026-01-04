@@ -88,10 +88,6 @@ def index():
         <meta http-equiv="refresh" content="60">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-        <!-- Simple Wallet Connect (supports MetaMask, Coinbase Wallet, Trust, Phantom, etc.) -->
-        <script src="https://unpkg.com/@web3-onboard/core@2/dist/index.js"></script>
-        <script src="https://unpkg.com/@web3-onboard/injected-wallets@2/dist/index.js"></script>
-        <script src="https://unpkg.com/@web3-onboard/walletconnect@2/dist/index.js"></script>
         <style>
             body {{ font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; background: linear-gradient(to right, #000000, #0052FF); min-height: 100vh; }}
             .light-mode {{ background: linear-gradient(to right, #f1f5f9, #e0e7ff) !important; }}
@@ -115,7 +111,7 @@ def index():
                     <button id="themeToggle" class="p-2 rounded-full bg-gray-900 hover:bg-gray-800 transition text-xl">
                         🌙
                     </button>
-                    <button id="connectButton" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg">
+                    <button id="connectWalletBtn" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg">
                         Connect Wallet
                     </button>
                 </div>
@@ -179,43 +175,20 @@ def index():
                 this.innerHTML = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
             }});
             
-            // Wallet Connect with multiple options
-            const injected = injectedWallets();
-            const walletConnect = walletConnect();
-            const onboard = Onboard({
-                wallets: [injected, walletConnect],
-                chains: [
-                    {
-                        id: '0x1',
-                        token: 'ETH',
-                        label: 'Ethereum Mainnet',
-                        rpcUrl: 'https://eth.llamarpc.com'
-                    },
-                    {
-                        id: '0x2105',
-                        token: 'ETH',
-                        label: 'Base',
-                        rpcUrl: 'https://mainnet.base.org'
-                    }
-                ],
-                appMetadata: {
-                    name: "TradeScout Pro",
-                    icon: "https://i.ibb.co/tPJ79Fnf/image.png",
-                    description: "Live Crypto Prices Dashboard"
-                }
-            });
-            
-            const connectButton = document.getElementById('connectButton');
-            connectButton.addEventListener('click', async () => {{
-                try {{
-                    const wallets = await onboard.connectWallet();
-                    if (wallets.length > 0) {{
-                        const address = wallets[0].accounts[0].address;
-                        connectButton.textContent = address.substring(0, 6) + '...' + address.substring(address.length - 4);
-                        connectButton.disabled = true;
+            // Wallet Connect (supports MetaMask, Coinbase Wallet, Phantom, Trust Wallet, etc.)
+            document.getElementById('connectWalletBtn').addEventListener('click', async function() {{
+                if (typeof window.ethereum !== 'undefined') {{
+                    try {{
+                        const accounts = await window.ethereum.request({{ method: 'eth_requestAccounts' }});
+                        const address = accounts[0];
+                        this.textContent = address.substring(0, 6) + '...' + address.substring(address.length - 4);
+                        this.disabled = true;
+                        alert('Wallet connected: ' + address);
+                    }} catch (error) {{
+                        alert('Connection failed: ' + error.message);
                     }}
-                }} catch (err) {{
-                    console.error(err);
+                }} else {{
+                    alert('No Ethereum wallet detected. Install MetaMask, Coinbase Wallet, or Phantom!');
                 }}
             }});
             
