@@ -88,8 +88,9 @@ def index():
         <meta http-equiv="refresh" content="60">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-        <!-- Web3Modal v4 CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/@web3modal/ethers@4.1.1/dist/index.js"></script>
+        <!-- Web3Modal + ethers.js CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/@web3modal/ethers@4.1.1/dist/web3modal.min.js"></script>
+        <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
         <style>
             body {{ font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; background: linear-gradient(to right, #000000, #0052FF); min-height: 100vh; }}
             .light-mode {{ background: linear-gradient(to right, #f1f5f9, #e0e7ff) !important; }}
@@ -107,7 +108,7 @@ def index():
                         TradeScout Pro
                     </h1>
                 </div>
-                <div class="flex items-center space-x-4 w-full md:w-auto">
+                <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full md:w-auto">
                     <input type="text" id="searchInput" placeholder="Search cryptos..." 
                            class="px-5 py-3 rounded-full bg-gray-900/70 border border-gray-800 focus:border-[#0052FF] focus:outline-none text-white w-full">
                     <button id="themeToggle" class="p-2 rounded-full bg-gray-900 hover:bg-gray-800 transition text-xl">
@@ -177,28 +178,28 @@ def index():
                 this.innerHTML = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
             }});
             
-            // Web3Modal Wallet Connect (supports MetaMask, Coinbase Wallet, Trust, Phantom, Rainbow, etc.)
+            // Web3Modal Wallet Connect (multiple wallets)
             const connectButton = document.getElementById('connectButton');
-            let web3Modal;
+            let modal;
             
-            async function initWeb3Modal() {{
-                web3Modal = new Web3Modal.default({{
+            async function initModal() {{
+                modal = new Web3Modal({{
                     cacheProvider: true,
-                    providerOptions: {{}},
-                    theme: "dark"
+                    projectId: "YOUR_PROJECT_ID_IF_NEEDED", // Optional for WalletConnect v2 (free at cloud.walletconnect.com)
+                    themeMode: "dark"
                 }});
             }}
             
-            connectButton.addEventListener('click', async function() {{
-                if (!web3Modal) await initWeb3Modal();
+            connectButton.addEventListener('click', async () => {{
+                if (!modal) await initModal();
                 try {{
-                    const provider = await web3Modal.connect();
+                    const provider = await modal.connect();
                     const ethersProvider = new ethers.providers.Web3Provider(provider);
                     const signer = ethersProvider.getSigner();
                     const address = await signer.getAddress();
                     connectButton.textContent = address.substring(0, 6) + '...' + address.substring(address.length - 4);
                     connectButton.disabled = true;
-                    alert('Wallet connected: ' + address);
+                    alert('Connected: ' + address);
                 }} catch (err) {{
                     console.error(err);
                     alert('Connection failed');
