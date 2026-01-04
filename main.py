@@ -59,22 +59,6 @@ def fetch_trending_data():
         trending_items = trending_json.get('coins', [])
         ids = [item['item']['id'] for item in trending_items]
 
-        # To make 25, fetch top 25 by 24h change if trending <25
-        if len(ids) < 25:
-            top_url = "https://api.coingecko.com/api/v3/coins/markets"
-            top_params = {
-                "vs_currency": "usd",
-                "order": "percent_change_24h_desc",
-                "per_page": 25 - len(ids),
-                "page": 1,
-                "sparkline": True,
-                "price_change_percentage": "1h,24h,7d",
-            }
-            top_res = requests.get(top_url, params=top_params, headers=headers, timeout=15)
-            top_res.raise_for_status()
-            top_data = top_res.json()
-            ids.extend([coin['id'] for coin in top_data if coin['id'] not in ids])
-
         if ids:
             markets_url = "https://api.coingecko.com/api/v3/coins/markets"
             markets_params = {
@@ -90,12 +74,12 @@ def fetch_trending_data():
             markets_res.raise_for_status()
             full_data = markets_res.json()
 
-            # Preserve original trending order + append extras
+            # Preserve trending order
             order_map = {item['item']['id']: idx for idx, item in enumerate(trending_items)}
             full_data.sort(key=lambda c: order_map.get(c['id'], 999))
 
             formatted_data = []
-            for rank, coin in enumerate(full_data[:25], 1):
+            for rank, coin in enumerate(full_data, 1):
                 sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
                 formatted_data.append({
                     "rank": rank,
@@ -126,7 +110,7 @@ def index():
 @app.route('/trending')
 def trending():
     trending_data, last_update = fetch_trending_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data, last_update=last_update, title="Top 25 Trending Coins", page="trending")
+    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data, last_update=last_update, title="Trending Coins", page="trending")
 
 @app.route('/api/data')
 def api_data():
@@ -203,25 +187,37 @@ HTML_TEMPLATE = '''
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
+        [data-theme="dark"] {
+            --bg: #000000;
+            --text: #ffffff;
+            --table-bg: #111111;
+            --table-header: #1e1e1e;
+            --hover: #222222;
+            --border: #333333;
+            --green: #00ff99;
+            --red: #ff4444;
+        }
+        [data-theme="light"] {
+            --bg: #ffffff;
+            --text: #000000;
+            --table-bg: #f8f9fa;
+            --table-header: #e9ecef;
+            --hover: #e9ecef;
+            --border: #dee2e6;
+            --green: #00aa66;
+            --red: #cc3333;
+        }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s; }
         .logo-font { font-family: 'Orbitron', sans-serif; }
-        .text-green { color: #00ff99; }
-        .text-red { color: #ff4444; }
-        .hover-row:hover { background-color: #111 !important; }
+        .text-green { color: var(--green); }
+        .text-red { color: var(--red); }
+        .hover-row:hover { background-color: var(--hover) !important; }
         .sparkline { height: 60px; width: 140px; }
         .navbar-blue { background-color: #0066ff; }
         .active-link { color: #00ff99; border-bottom: 3px solid #00ff99; padding-bottom: 4px; }
-        [data-theme="light"] { background-color: #f8f9fa; color: #000; }
-        [data-theme="light"] .navbar-blue { background-color: #005edc; }
-        [data-theme="light"] .hover-row:hover { background-color: #e9ecef !important; }
-        [data-theme="light"] .text-green { color: #00aa66; }
-        [data-theme="light"] .text-red { color: #cc3333; }
-        [data-theme="light"] .bg-gray-900 { background-color: #fff; }
-        [data-theme="light"] .bg-gray-800 { background-color: #e5e7eb; }
-        [data-theme="light"] .divide-gray-800 { divide-color: #d1d5db; }
-        [data-theme="light"] .text-gray-400 { color: #6b7280; }
-        [data-theme="light"] .text-gray-300 { color: #9ca3af; }
-        [data-theme="light"] .text-gray-500 { color: #6b7280; }
+        table { background-color: var(--table-bg); }
+        thead { background-color: var(--table-header); color: var(--text); }
+        .divide-y > tr { border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -246,9 +242,9 @@ HTML_TEMPLATE = '''
     <div class="container mx-auto px-6 py-10 max-w-7xl">
         <h1 class="text-4xl font-bold text-center mb-10 logo-font">{{ title }}</h1>
         
-        <div class="overflow-x-auto rounded-2xl shadow-2xl bg-gray-900/50">
+        <div class="overflow-x-auto rounded-2xl shadow-2xl">
             <table class="w-full text-left">
-                <thead class="bg-gray-800/80 text-gray-300 uppercase text-sm">
+                <thead class="text-gray-300 uppercase text-sm">
                     <tr>
                         <th class="px-6 py-5">#</th>
                         <th class="px-6 py-5">Name</th>
@@ -261,16 +257,16 @@ HTML_TEMPLATE = '''
                         <th class="px-6 py-5 text-center">Last 7 Days</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody" class="divide-y divide-gray-800"></tbody>
+                <tbody id="tableBody" class="divide-y"></tbody>
             </table>
         </div>
         
         <p class="text-center text-gray-500 mt-8 text-sm">Last update: <span id="lastUpdate">{{ last_update }}</span> • Auto-refreshes every 60s • Powered by CoinGecko</p>
     </div>
 
-    <!-- Coin Detail Modal -->
+    <!-- Modal -->
     <div class="fixed inset-0 hidden flex items-center justify-center bg-black/90 z-50" id="modal">
-        <div class="bg-gray-900 rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl mx-4">
+        <div class="bg-current rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl mx-4" style="background-color: var(--table-bg);">
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-4">
                     <img id="modalLogo" src="" class="w-16 h-16 rounded-full">
@@ -289,7 +285,7 @@ HTML_TEMPLATE = '''
             </div>
             <h3 class="text-2xl font-bold mb-4">30 Day Candlestick Chart</h3>
             <div class="bg-gray-800 rounded-lg p-4">
-                <canvas id="detailChart" height="300"></canvas>
+                <canvas id="detailChart"></canvas>
             </div>
         </div>
     </div>
@@ -345,25 +341,21 @@ HTML_TEMPLATE = '''
                         <td class="px-6 py-5 text-right">${formatPercent(coin.change_7d)}</td>
                         <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.volume_24h)}</td>
                         <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.market_cap)}</td>
-                        <td class="px-6 py-5 text-center"><canvas class="sparkline" width="140" height="60" data-prices="${pricesJson}"></canvas></td>
+                        <td class="px-6 py-5 text-center"><canvas class="sparkline" data-prices="${pricesJson}"></canvas></td>
                     `;
                     tbody.appendChild(tr);
                 });
 
+                // Render sparklines
                 document.querySelectorAll('.sparkline').forEach(canvas => {
                     let prices = [];
-                    try { prices = JSON.parse(canvas.dataset.prices); } catch(e) { console.error(e); }
+                    try { prices = JSON.parse(canvas.dataset.prices); } catch(e) {}
                     if (prices.length < 2) return;
                     const up = prices[prices.length - 1] >= prices[0];
                     new Chart(canvas, {
                         type: 'line',
-                        data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2.5 }] },
-                        options: { 
-                            responsive: false,  // Fixed size for consistency
-                            scales: { x: { display: false }, y: { display: false } }, 
-                            plugins: { legend: { display: false } },
-                            animation: false
-                        }
+                        data: { datasets: [{ data: prices, borderColor: up ? 'var(--green)' : 'var(--red)', tension: 0.4, pointRadius: 0, borderWidth: 2.5 }] },
+                        options: { responsive: true, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
                     });
                 });
 
@@ -374,6 +366,7 @@ HTML_TEMPLATE = '''
         }
 
         async function openModal(id) {
+            // Same as before...
             try {
                 const detailRes = await fetch(`/api/coin_detail/${id}`);
                 const detail = await detailRes.json();
@@ -397,15 +390,19 @@ HTML_TEMPLATE = '''
                 detailChart = new Chart(document.getElementById('detailChart'), {
                     type: 'candlestick',
                     data: { datasets: [{ label: detail.symbol?.toUpperCase() + '/USD', data: candles }] },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { responsive: true }
                 });
             } catch (e) { console.error(e); }
 
             document.getElementById('modal').classList.remove('hidden');
         }
 
-        // Search...
+        // Search fixed with debug
         let searchTimeout;
+        const searchInput = document.getElementById('searchInput');
+        const dropdown = document.getElementById('searchDropdown');
+        const resultsDiv = document.getElementById('searchResults');
+
         searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
             const q = searchInput.value.trim();
@@ -415,7 +412,9 @@ HTML_TEMPLATE = '''
             searchTimeout = setTimeout(async () => {
                 try {
                     const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+                    console.log("Search response status:", res.status);
                     const json = await res.json();
+                    console.log("Search results:", json);
                     const results = json.results || [];
 
                     resultsDiv.innerHTML = '';
@@ -424,14 +423,14 @@ HTML_TEMPLATE = '''
                     } else {
                         results.forEach(coin => {
                             const div = document.createElement('div');
-                            div.className = 'p-4 hover:bg-gray-800 cursor-pointer flex items-center gap-4';
+                            div.className = 'p-4 hover:bg-gray-700 cursor-pointer flex items-center gap-4';
                             div.onclick = () => {
                                 openModal(coin.id);
                                 searchInput.value = '';
                                 dropdown.classList.add('hidden');
                             };
                             div.innerHTML = `
-                                <img src="${coin.logo}" class="w-10 h-10 rounded-full">
+                                <img src="${coin.logo || ''}" class="w-10 h-10 rounded-full">
                                 <div>
                                     <div class="font-semibold">${coin.name}</div>
                                     <div class="text-sm text-gray-500">${coin.symbol}</div>
@@ -441,7 +440,9 @@ HTML_TEMPLATE = '''
                         });
                     }
                     dropdown.classList.remove('hidden');
-                } catch (e) { console.error(e); }
+                } catch (e) {
+                    console.error("Search error:", e);
+                }
             }, 300);
         });
 
