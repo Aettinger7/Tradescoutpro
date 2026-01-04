@@ -88,6 +88,8 @@ def index():
         <meta http-equiv="refresh" content="60">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+        <!-- Web3Modal v4 CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/@web3modal/ethers@4.1.1/dist/index.js"></script>
         <style>
             body {{ font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; background: linear-gradient(to right, #000000, #0052FF); min-height: 100vh; }}
             .light-mode {{ background: linear-gradient(to right, #f1f5f9, #e0e7ff) !important; }}
@@ -105,13 +107,13 @@ def index():
                         TradeScout Pro
                     </h1>
                 </div>
-                <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full md:w-auto">
+                <div class="flex items-center space-x-4 w-full md:w-auto">
                     <input type="text" id="searchInput" placeholder="Search cryptos..." 
                            class="px-5 py-3 rounded-full bg-gray-900/70 border border-gray-800 focus:border-[#0052FF] focus:outline-none text-white w-full">
                     <button id="themeToggle" class="p-2 rounded-full bg-gray-900 hover:bg-gray-800 transition text-xl">
                         🌙
                     </button>
-                    <button id="connectWalletBtn" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg">
+                    <button id="connectButton" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg">
                         Connect Wallet
                     </button>
                 </div>
@@ -175,20 +177,31 @@ def index():
                 this.innerHTML = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
             }});
             
-            // Wallet Connect (MetaMask or Coinbase Wallet on Base)
-            document.getElementById('connectWalletBtn').addEventListener('click', async function() {{
-                if (typeof window.ethereum !== 'undefined') {{
-                    try {{
-                        const accounts = await window.ethereum.request({{ method: 'eth_requestAccounts' }});
-                        const address = accounts[0];
-                        this.textContent = address.substring(0, 6) + '...' + address.substring(address.length - 4);
-                        this.disabled = true;
-                        alert('Wallet connected: ' + address);
-                    }} catch (error) {{
-                        alert('Wallet connection failed: ' + error.message);
-                    }}
-                }} else {{
-                    alert('Please install MetaMask or use Coinbase Wallet!');
+            // Web3Modal Wallet Connect (supports MetaMask, Coinbase Wallet, Trust, Phantom, Rainbow, etc.)
+            const connectButton = document.getElementById('connectButton');
+            let web3Modal;
+            
+            async function initWeb3Modal() {{
+                web3Modal = new Web3Modal.default({{
+                    cacheProvider: true,
+                    providerOptions: {{}},
+                    theme: "dark"
+                }});
+            }}
+            
+            connectButton.addEventListener('click', async function() {{
+                if (!web3Modal) await initWeb3Modal();
+                try {{
+                    const provider = await web3Modal.connect();
+                    const ethersProvider = new ethers.providers.Web3Provider(provider);
+                    const signer = ethersProvider.getSigner();
+                    const address = await signer.getAddress();
+                    connectButton.textContent = address.substring(0, 6) + '...' + address.substring(address.length - 4);
+                    connectButton.disabled = true;
+                    alert('Wallet connected: ' + address);
+                }} catch (err) {{
+                    console.error(err);
+                    alert('Connection failed');
                 }}
             }});
             
