@@ -75,6 +75,47 @@ def api_data():
     crypto_data, last_update = fetch_crypto_data()
     return jsonify({"data": crypto_data, "last_update": last_update})
 
+@app.route('/api/coin/<id>')
+def coin_detail(id):
+    url = f"https://api.coingecko.com/api/v3/coins/{id}"
+    params = {
+        "localization": "false",
+        "tickers": "false",
+        "market_data": "true",
+        "community_data": "false",
+        "developer_data": "false",
+        "sparkline": "false"
+    }
+    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
+
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=15)
+        response.raise_for_status()
+        data = response.json()
+        return jsonify(data)
+    except Exception as e:
+        print(f"Error fetching coin detail: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/coin_chart/<id>')
+def coin_chart(id):
+    url = f"https://api.coingecko.com/api/v3/coins/{id}/market_chart"
+    params = {
+        "vs_currency": "usd",
+        "days": "30",
+        "interval": "daily"
+    }
+    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
+
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=15)
+        response.raise_for_status()
+        data = response.json()
+        return jsonify(data)
+    except Exception as e:
+        print(f"Error fetching coin chart: {e}")
+        return jsonify({"error": str(e)}), 500
+
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -83,7 +124,9 @@ HTML_TEMPLATE = '''
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeScout Pro — Top 100 Cryptocurrencies</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- For sparklines -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- For sparklines and detail chart -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- For modal -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -107,10 +150,10 @@ HTML_TEMPLATE = '''
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-8">
-                    <div class="flex items-center space-x-4">
+                    <a href="/" class="flex items-center space-x-4">
                         <img src="https://i.ibb.co/tPJ79Fnf/image.png" alt="Logo" class="h-10 w-10 rounded-lg">
                         <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-500">TradeScout Pro</h1>
-                    </div>
+                    </a>
                     <div class="hidden md:flex items-center space-x-8">
                         <a href="#" class="font-medium hover:text-blue-600 dark:hover:text-blue-400">Markets</a>
                         <a href="#" class="font-medium hover:text-blue-600 dark:hover:text-blue-400">Watchlist</a>
@@ -151,7 +194,7 @@ HTML_TEMPLATE = '''
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-gray-200 dark:divide-gray-800">
                         {% for coin in crypto_data %}
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" style="cursor: pointer;" onclick="showCoinDetail('{{ coin.id }}', '{{ coin.name }}', '{{ coin.symbol }}')">
                             <td class="py-4 px-6 text-center text-gray-500 dark:text-gray-400">{{ coin.rank }}</td>
                             <td class="py-4 px-6">
                                 <div class="flex items-center space-x-3">
@@ -162,7 +205,7 @@ HTML_TEMPLATE = '''
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6 text-right font-medium">${{ format_number(coin.price) }}</td>
+                            <td class="py-4 px-6 text-right font-medium">${{ '%.2f' % coin.price if coin.price else '0.00' }}</td>
                             <td class="py-4 px-6 text-right {% if coin.change_1h > 0 %}text-green-500{% elif coin.change_1h < 0 %}text-red-500{% endif %}">
                                 {% if coin.change_1h > 0 %}+{% endif %}{{ coin.change_1h }}%
                             </td>
@@ -185,6 +228,22 @@ HTML_TEMPLATE = '''
             </div>
         </div>
     </main>
+
+    <!-- Coin Detail Modal -->
+    <div class="modal fade" id="coinModal" tabindex="-1" aria-labelledby="coinModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="coinModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="coinDetailContent"></div>
+                    <canvas id="coinChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="text-center py-8 text-gray-500 dark:text-gray-500 text-sm">
         Powered by CoinGecko API • TradeScout Pro © 2026
@@ -268,6 +327,8 @@ HTML_TEMPLATE = '''
 
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors';
+                    row.style.cursor = 'pointer';
+                    row.onclick = () => showCoinDetail(coin.id, coin.name, coin.symbol);
                     row.innerHTML = `
                         <td class="py-4 px-6 text-center text-gray-500 dark:text-gray-400">${coin.rank}</td>
                         <td class="py-4 px-6">
@@ -292,7 +353,7 @@ HTML_TEMPLATE = '''
                     `;
                     tbody.appendChild(row);
                 });
-                renderSparklines();  # Re-render sparklines after update
+                renderSparklines();  // Re-render sparklines after update
             } catch (e) {
                 console.error('Refresh failed:', e);
             }
@@ -312,6 +373,47 @@ HTML_TEMPLATE = '''
         }
 
         setInterval(refreshData, 60000);
+
+        // Show coin detail modal
+        let detailChart;
+        async function showCoinDetail(id, name, symbol) {
+            const modal = new bootstrap.Modal(document.getElementById('coinModal'));
+            document.getElementById('coinModalLabel').textContent = `${name} (${symbol})`;
+
+            const contentDiv = document.getElementById('coinDetailContent');
+            contentDiv.innerHTML = 'Loading...';
+
+            try {
+                const detailRes = await fetch(`/api/coin/${id}`);
+                const detail = await detailRes.json();
+
+                const chartRes = await fetch(`/api/coin_chart/${id}`);
+                const chartData = await chartRes.json();
+
+                contentDiv.innerHTML = `
+                    <p><strong>Price:</strong> $${detail.market_data.current_price.usd.toLocaleString()}</p>
+                    <p><strong>Market Cap:</strong> $${detail.market_data.market_cap.usd.toLocaleString()}</p>
+                    <p><strong>24h Volume:</strong> $${detail.market_data.total_volume.usd.toLocaleString()}</p>
+                    <p><strong>24h Change:</strong> ${detail.market_data.price_change_percentage_24h.toFixed(2)}%</p>
+                    <p><strong>All Time High:</strong> $${detail.market_data.ath.usd.toLocaleString()} (${detail.market_data.ath_date.usd.split('T')[0]})</p>
+                    <p><strong>Description:</strong> ${detail.description.en.substring(0, 300)}...</p>
+                `;
+
+                // Render chart
+                const labels = chartData.prices.map(p => new Date(p[0]).toLocaleDateString());
+                const prices = chartData.prices.map(p => p[1]);
+                if (detailChart) detailChart.destroy();
+                detailChart = new Chart(document.getElementById('coinChart'), {
+                    type: 'line',
+                    data: { labels: labels, datasets: [{ label: 'Price (USD)', data: prices, borderColor: '#1976d2', tension: 0.3 }] },
+                    options: { responsive: true, scales: { x: { ticks: { maxTicksLimit: 10 } } }, plugins: { legend: { display: false } } }
+                });
+
+                modal.show();
+            } catch (e) {
+                contentDiv.innerHTML = 'Error loading detail: ' + e;
+            }
+        }
     </script>
 </body>
 </html>
