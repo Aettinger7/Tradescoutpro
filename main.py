@@ -7,8 +7,10 @@ app = Flask(__name__)
 CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"
 
 def get_global_metrics():
+    url = "https://api.coingecko.com/api/v3/global"
+    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
     try:
-        res = requests.get("https://api.coingecko.com/api/v3/global", timeout=15)
+        res = requests.get(url, headers=headers, timeout=15)
         res.raise_for_status()
         data = res.json()['data']
         total_cap = data['total_market_cap']['usd']
@@ -59,8 +61,7 @@ def fetch_crypto_data():
                 "sparkline_prices": coin.get("sparkline_in_7d", {}).get("price", []),
             })
         return formatted
-    except Exception as e:
-        print(e)
+    except:
         return []
 
 @app.route('/')
@@ -72,23 +73,11 @@ def main():
     title = "Top 100 Cryptocurrencies" if request.path == '/' else "Trending Coins"
     return render_template_string(HTML_TEMPLATE, data=data, last_update=last_update, metrics=metrics, title=title)
 
-@app.route('/api/coin_ohlc/<id>')
-def coin_ohlc(id):
-    url = f"https://api.coingecko.com/api/v3/coins/{id}/ohlc"
-    params = {"vs_currency": "usd", "days": "30"}
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
-    try:
-        response = requests.get(url, params=params, headers=headers, timeout=15)
-        response.raise_for_status()
-        return jsonify(response.json())
-    except:
-        return jsonify([])
-
 application = app
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,15 +87,15 @@ HTML_TEMPLATE = """
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; }
         .header { background: #0066ff; }
-        .card { background: #111; }
-        .text-green { color: #00ff99; }
-        .text-red { color: #ff4444; }
+        .card { background: #111; border-radius: 1rem; padding: 1.5rem; text-align: center; }
         .hover-row:hover { background: #222; }
         .sparkline { height: 60px; width: 140px; }
+        .text-green { color: #00ff99; }
+        .text-red { color: #ff4444; }
     </style>
 </head>
 <body>
-    <header class="header text-white py-6 px-8 flex justify-between items-center sticky top-0">
+    <header class="header text-white py-6 px-8 flex justify-between items-center">
         <a href="/" class="text-4xl font-bold flex items-center gap-4">
             <img src="https://i.ibb.co/sJjcKmPs/ttn41attn41attn4.png" alt="Logo" class="w-12 h-12">
             TradeScout Pro
@@ -114,34 +103,33 @@ HTML_TEMPLATE = """
         <div class="flex items-center gap-8">
             <a href="/" class="hover:underline">Top 100</a>
             <a href="/trending" class="hover:underline">Trending</a>
-            <input type="text" id="searchInput" class="px-6 py-3 rounded-full bg-black/50 text-white" placeholder="Search crypto...">
-            <button id="themeToggle">🌙</button>
+            <input type="text" class="px-6 py-3 rounded-full bg-black/50 text-white" placeholder="Search...">
         </div>
     </header>
 
     <div class="container mx-auto px-6 py-8">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div class="card rounded-xl p-6 text-center">
+            <div class="card">
                 <p class="text-gray-400">Total Market Cap</p>
                 <p class="text-3xl font-bold">${{ "{:,.0f}".format(metrics.total_market_cap / 1e12) }}T</p>
             </div>
-            <div class="card rounded-xl p-6 text-center">
+            <div class="card">
                 <p class="text-gray-400">Fear & Greed</p>
                 <p class="text-4xl font-bold">{{ metrics.fear_greed }}</p>
                 <p class="text-gray-400">Neutral</p>
             </div>
-            <div class="card rounded-xl p-6 text-center">
+            <div class="card">
                 <p class="text-gray-400">Altcoin Season</p>
                 <p class="text-3xl font-bold">{{ metrics.alt_season }}/100</p>
                 <p class="text-gray-400">Bitcoin Season</p>
             </div>
-            <div class="card rounded-xl p-6 text-center">
+            <div class="card">
                 <p class="text-gray-400">BTC Dominance</p>
                 <p class="text-3xl font-bold">{{ metrics.btc_dominance }}%</p>
             </div>
         </div>
 
-        <div class="overflow-x-auto rounded-2xl bg-gray-900/50">
+        <div class="overflow-x-auto bg-gray-900/50 rounded-2xl">
             <table class="w-full">
                 <thead class="bg-gray-800 text-gray-300 text-sm uppercase">
                     <tr>
@@ -156,9 +144,9 @@ HTML_TEMPLATE = """
                         <th class="px-6 py-4 text-center">Last 7 Days</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
+                <tbody>
                     {% for coin in data %}
-                    <tr class="hover-row cursor-pointer" onclick="openModal('{{ coin.id }}')">
+                    <tr class="hover-row">
                         <td class="px-6 py-4 text-gray-400">{{ coin.rank }}</td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-4">
@@ -169,13 +157,39 @@ HTML_TEMPLATE = """
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-right font-bold">${{ "{:,.2f}".format(coin.price) }}</td>
-                        <td class="px-6 py-4 text-right">{{ '%+.' ~ '2f'|format(coin.change_1h) }}%</td>
-                        <td class="px-6 py-4 text-right">{{ '%+.' ~ '2f'|format(coin.change_24h) }}%</td>
-                        <td class="px-6 py-4 text-right">{{ '%+.' ~ '2f'|format(coin.change_7d) }}%</td>
+                        <td class="px-6 py-4 text-right font-bold">${{ coin.price | float | format('%.2f') if coin.price else '0' }}</td>
+                        <td class="px-6 py-4 text-right">
+                            {% if coin.change_1h > 0 %}
+                            <span class="text-green">+{{ coin.change_1h }}%</span>
+                            {% elif coin.change_1h < 0 %}
+                            <span class="text-red">{{ coin.change_1h }}%</span>
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            {% if coin.change_24h > 0 %}
+                            <span class="text-green">+{{ coin.change_24h }}%</span>
+                            {% elif coin.change_24h < 0 %}
+                            <span class="text-red">{{ coin.change_24h }}%</span>
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            {% if coin.change_7d > 0 %}
+                            <span class="text-green">+{{ coin.change_7d }}%</span>
+                            {% elif coin.change_7d < 0 %}
+                            <span class="text-red">{{ coin.change_7d }}%</span>
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
                         <td class="px-6 py-4 text-right text-gray-400">${{ "{:,.0f}".format(coin.market_cap) }}</td>
                         <td class="px-6 py-4 text-right text-gray-400">${{ "{:,.0f}".format(coin.volume_24h) }}</td>
-                        <td class="px-6 py-4 text-center"><canvas class="sparkline" data-prices='{{ coin.sparkline_prices|tojson }}'></canvas></td>
+                        <td class="px-6 py-4 text-center">
+                            <canvas class="sparkline" data-prices="{{ coin.sparkline_prices | tojson }}"></canvas>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -183,32 +197,7 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <div class="fixed inset-0 hidden flex items-center justify-center bg-black/80 z-50" id="modal">
-        <div class="bg-gray-900 rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <button class="text-4xl float-right" onclick="document.getElementById('modal').classList.add('hidden')">&times;</button>
-            <h2 class="text-3xl font-bold mb-4">30 Day Candlestick Chart</h2>
-            <canvas id="detailChart"></canvas>
-        </div>
-    </div>
-
     <script>
-        let detailChart = null;
-
-        function openModal(id) {
-            document.getElementById('modal').classList.remove('hidden');
-            fetch(`/api/coin_ohlc/${id}`)
-                .then(res => res.json())
-                .then(raw => {
-                    const candles = raw.map(d => ({ x: d[0], o: d[1], h: d[2], l: d[3], c: d[4] }));
-                    if (detailChart) detailChart.destroy();
-                    detailChart = new Chart(document.getElementById('detailChart'), {
-                        type: 'candlestick',
-                        data: { datasets: [{ data: candles }] },
-                        options: { responsive: true }
-                    });
-                });
-        }
-
         document.querySelectorAll('.sparkline').forEach(canvas => {
             const prices = JSON.parse(canvas.dataset.prices || '[]');
             if (prices.length < 2) return;
