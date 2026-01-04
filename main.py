@@ -1,101 +1,168 @@
 from flask import Flask, render_template_string, jsonify, request
 import requests
 import datetime
+import json
 
 app = Flask(__name__)
 
-CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"
+CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"  # Your Pro key
 
-def get_global_metrics():
-    url = "https://api.coingecko.com/api/v3/global"
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
+def fetch_crypto_data():
+    url = "https://api.coingecko.com/api/v3/coins/markets"
+    params = {
+        'vs_currency': 'usd',
+        'order': 'market_cap_desc',
+        'per_page': 100,
+        'page': 1,
+        'sparkline': True,
+        'price_change_percentage': '24h,7d'
+    }
     try:
-        res = requests.get(url, headers=headers, timeout=15)
-        res.raise_for_status()
-        data = res.json()['data']
-        total_cap = data['total_market_cap']['usd']
-        btc_dom = round(data['market_cap_percentage']['btc'], 1)
-        return {
-            "total_market_cap": total_cap,
-            "btc_dominance": btc_dom,
-            "fear_greed": 40,
-            "alt_season": 24,
-        }
-    except Exception as e:
-        print(f"Metrics error: {e}")
-        return {
-            "total_market_cap": 3120000000000,
-            "btc_dominance": 58.4,
-            "fear_greed": 40,
-            "alt_season": 24,
-        }
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except:
+        return []
 
-# fetch_crypto_data and fetch_trending_data same as last fixed version
+def fetch_trending_top_25():
+    try:
+        response = requests.get(COINGECKO_TRENDING, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        trending_coins = data.get('coins', [])[:25]
+        ids = [coin['item']['id'] for coin in trending_coins]
+        if not ids:
+            return []
+        
+        params = {
+            'vs_currency': 'usd',
+            'ids': ','.join(ids),
+            'order': 'market_cap_desc',
+            'per_page': 50,
+            'page': 1,
+            'sparkline': True,
+            'price_change_percentage': '24h,7d'
+        }
+        response = requests.get(COINGECKO_MARKETS, params=params, timeout=10)
+        response.raise_for_status()
+        full_data = response.json()
+        
+        order_map = {coin['id']: idx for idx, coin in enumerate(full_data)}
+        full_data.sort(key=lambda x: order_map.get(x['id'], 999))
+        return full_data[:25]
+    except:
+        return []
+
+def get_coin_detail(coin_id):
+    url = COINGECKO_COIN_DETAIL.format(id=coin_id)
+    params = {'localization': False, 'tickers': False, 'market_data': True,
+              'community_data': False, 'developer_data': False, 'sparkline': False}
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except:
+        return {}
+
+def get_chart_data(coin_id):
+    url = COINGECKO_CHART.format(id=coin_id)
+    params = {'vs_currency': 'usd', 'days': 30, 'interval': 'daily'}
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        return response.json()['prices']
+    except:
+        return []
 
 @app.route('/')
 def index():
-    metrics = get_global_metrics()
-    crypto_data, last_update = fetch_crypto_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=crypto_data, last_update=last_update, metrics=metrics, page="top")
+    return render_template_string(HTML_TEMPLATE)
 
 @app.route('/trending')
 def trending():
-    metrics = get_global_metrics()
-    trending_data, last_update = fetch_trending_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data, last_update=last_update, metrics=metrics, page="trending")
+    return render_template_string(HTML_TEMPLATE)
 
-# All other routes same
+@app.route('/api/top100')
+def api_top100():
+    data = fetch_crypto_data()
+    return jsonify({'data': data, 'timestamp': datetime.datetime.utcnow().timestamp()})
 
-application = app
+@app.route('/api/trending')
+def api_trending():
+    data = fetch_trending_top_25()
+    return jsonify({'data': data, 'timestamp': datetime.datetime.utcnow().timestamp()})
+
+@app.route('/api/coin/<coin_id>')
+def api_coin(coin_id):
+    detail = get_coin_detail(coin_id)
+    chart = get_chart_data(coin_id)
+    return jsonify({'detail': detail, 'chart': chart})
 
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-    <!-- Same head -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="https://www.tradescoutpro.com/favicon.ico">
 </head>
-<body class="min-h-screen">
-    <!-- Nav same -->
-
-    <!-- Metrics Boxes (CMC style) -->
-    <div class="container mx-auto px-6 py-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <div class="bg-gray-800 rounded-xl p-6 shadow-lg text-center">
-                <p class="text-gray-400 text-sm mb-2">Total Market Cap</p>
-                <p class="text-3xl font-bold">${{ "{:,.0f}".format(metrics.total_market_cap / 1e12) }}T</p>
-                <p class="text-green text-sm mt-2">+1.27%</p>
-            </div>
-            <div class="bg-gray-800 rounded-xl p-6 shadow-lg text-center">
-                <p class="text-gray-400 text-sm mb-2">Fear & Greed Index</p>
-                <p class="text-4xl font-bold">{{ metrics.fear_greed }}</p>
-                <p class="text-gray-400 text-sm">Neutral</p>
-            </div>
-            <div class="bg-gray-800 rounded-xl p-6 shadow-lg text-center">
-                <p class="text-gray-400 text-sm mb-2">Altcoin Season Index</p>
-                <p class="text-3xl font-bold">{{ metrics.alt_season }}/100</p>
-                <p class="text-gray-400 text-sm">Bitcoin Season</p>
-            </div>
-            <div class="bg-gray-800 rounded-xl p-6 shadow-lg text-center">
-                <p class="text-gray-400 text-sm mb-2">BTC Dominance</p>
-                <p class="text-3xl font-bold">{{ "%.1f" % metrics.btc_dominance }}%</p>
-            </div>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="/" class="logo">TradeScout Pro</a>
+            <nav>
+                <a href="/" class="{% if request.path == '/' %}active{% endif %}">Top 100</a>
+                <a href="/trending" class="{% if request.path == '/trending' %}active{% endif %}">Trending</a>
+                <button id="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
+            </nav>
         </div>
-    </div>
+    </header>
 
-    <!-- Table full width -->
-    <div class="container mx-auto px-6 pb-10">
-        <div class="overflow-x-auto rounded-2xl shadow-2xl bg-gray-900/50">
-            <table class="w-full text-left">
-                <!-- same table -->
+    <main class="container">
+        <h1>{{ title }}</h1>
+        
+        <div class="controls">
+            <input type="text" id="search" placeholder="Search coin..." aria-label="Search">
+            <div id="last-update">Loading...</div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="coins-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Coin</th>
+                        <th>Price</th>
+                        <th>24h %</th>
+                        <th>7d %</th>
+                        <th>Market Cap</th>
+                        <th>Volume(24h)</th>
+                        <th>Last 7d</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
             </table>
         </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
     </div>
 
-    <!-- Modal and script same -->
-
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        const API_ENDPOINT = '{% block api_endpoint %}/api/top100{% endblock %}';
+        const PAGE_TITLE = '{% block page_title %}Top 100{% endblock %}';
+    </script>
 </body>
 </html>
 '''
-
-if __name__ == '__main__':
-    app.run(debug=True)
+</parameter>
+</xai:function_call>
