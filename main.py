@@ -88,10 +88,9 @@ def index():
         <meta http-equiv="refresh" content="60">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-        <script src="https://unpkg.com/ethers@5.7/dist/ethers.umd.min.js"></script>
         <style>
-            body {{ font-family: 'Inter', sans-serif; background: #000000; min-height: 100vh; margin: 0; overflow-x: hidden; }}
-            .light-mode {{ background: #f1f5f9 !important; }}
+            body {{ font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; background: linear-gradient(to right, #000000, #0052FF); min-height: 100vh; }}
+            .light-mode {{ background: linear-gradient(to right, #f1f5f9, #e0e7ff) !important; }}
             .light-mode .bg-gray-900\\/90 {{ background: rgba(241,245,249,0.9) !important; }}
             .light-mode .text-white {{ color: #000000 !important; }}
             .light-mode .text-gray-400 {{ color: #64748b !important; }}
@@ -106,13 +105,13 @@ def index():
                         TradeScout Pro
                     </h1>
                 </div>
-                <div class="flex items-center space-x-4 w-full md:w-auto">
+                <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full md:w-auto">
                     <input type="text" id="searchInput" placeholder="Search cryptos..." 
                            class="px-5 py-3 rounded-full bg-gray-900/70 border border-gray-800 focus:border-[#0052FF] focus:outline-none text-white w-full">
                     <button id="themeToggle" class="p-2 rounded-full bg-gray-900 hover:bg-gray-800 transition text-xl">
                         🌙
                     </button>
-                    <button id="connectWallet" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg">
+                    <button id="connectWalletBtn" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg">
                         Connect Wallet
                     </button>
                 </div>
@@ -161,6 +160,7 @@ def index():
         </div>
         
         <script>
+            // Search
             document.getElementById('searchInput').addEventListener('input', function(e) {{
                 const term = e.target.value.toLowerCase();
                 document.querySelectorAll('.crypto-card').forEach(card => {{
@@ -169,11 +169,30 @@ def index():
                 }});
             }});
             
+            // Theme Toggle
             document.getElementById('themeToggle').addEventListener('click', function() {{
                 document.body.classList.toggle('light-mode');
                 this.innerHTML = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
             }});
             
+            // Wallet Connect (MetaMask or Coinbase Wallet on Base)
+            document.getElementById('connectWalletBtn').addEventListener('click', async function() {{
+                if (typeof window.ethereum !== 'undefined') {{
+                    try {{
+                        const accounts = await window.ethereum.request({{ method: 'eth_requestAccounts' }});
+                        const address = accounts[0];
+                        this.textContent = address.substring(0, 6) + '...' + address.substring(address.length - 4);
+                        this.disabled = true;
+                        alert('Wallet connected: ' + address);
+                    }} catch (error) {{
+                        alert('Wallet connection failed: ' + error.message);
+                    }}
+                }} else {{
+                    alert('Please install MetaMask or use Coinbase Wallet!');
+                }}
+            }});
+            
+            // Modal
             function openModal(id, name, price, change, sign, mcap, logo, volume, high24h, low24h, ath, supply) {{
                 document.getElementById('modalName').textContent = name;
                 document.getElementById('modalPrice').textContent = new Intl.NumberFormat('en-US', {{style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 8}}).format(price);
