@@ -1,89 +1,3 @@
-from flask import Flask, render_template_string, jsonify
-import requests
-import datetime
-
-app = Flask(__name__)
-
-CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"  # Your Pro key
-
-def fetch_crypto_data():
-    url = "https://api.coingecko.com/api/v3/coins/markets"
-    params = {
-        "vs_currency": "usd",
-        "order": "market_cap_desc",
-        "per_page": 100,
-        "page": 1,
-        "price_change_percentage": "1h,24h,7d",
-        "sparkline": True,
-    }
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
-
-    try:
-        response = requests.get(url, params=params, headers=headers, timeout=15)
-        response.raise_for_status()
-        data = response.json()
-
-        formatted_data = []
-        for rank, coin in enumerate(data, 1):
-            sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
-            formatted_data.append({
-                "rank": rank,
-                "id": coin["id"],
-                "name": coin["name"],
-                "symbol": coin["symbol"].upper(),
-                "logo": coin["image"],
-                "price": coin["current_price"] or 0,
-                "change_1h": round(coin.get("price_change_percentage_1h_in_currency") or 0, 2),
-                "change_24h": round(coin.get("price_change_percentage_24h_in_currency") or 0, 2),
-                "change_7d": round(coin.get("price_change_percentage_7d_in_currency") or 0, 2),
-                "market_cap": coin["market_cap"] or 0,
-                "volume_24h": coin["total_volume"] or 0,
-                "sparkline_prices": sparkline_prices,
-            })
-
-        last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-        return formatted_data, last_update
-
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return [], "Error"
-
-def fetch_trending_data():
-    return fetch_crypto_data()  # Placeholder
-
-@app.route('/')
-def index():
-    crypto_data, last_update = fetch_crypto_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=crypto_data, last_update=last_update, title="Top 100 Cryptocurrencies", is_trending=False)
-
-@app.route('/trending')
-def trending():
-    trending_data, last_update = fetch_trending_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data, last_update=last_update, title="Top 25 Trending Coins", is_trending=True)
-
-@app.route('/api/data')
-def api_data():
-    crypto_data, last_update = fetch_crypto_data()
-    return jsonify({"data": crypto_data, "last_update": last_update})
-
-@app.route('/api/trending')
-def api_trending():
-    trending_data, last_update = fetch_trending_data()
-    return jsonify({"data": trending_data, "last_update": last_update})
-
-@app.route('/api/coin_ohlc/<id>')
-def coin_ohlc(id):
-    url = f"https://api.coingecko.com/api/v3/coins/{id}/ohlc"
-    params = {"vs_currency": "usd", "days": "30"}
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
-    try:
-        response = requests.get(url, params=params, headers=headers, timeout=15)
-        response.raise_for_status()
-        # Data is list of [time, open, high, low, close]
-        return jsonify(response.json())
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -179,7 +93,7 @@ HTML_TEMPLATE = '''
 
         async function loadCoins() {
             try {
-                const endpoint = {{ "/api/trending" if is_trending else "/api/data" }};
+                const endpoint = "{{ '/api/trending' if is_trending else '/api/data' }}";
                 const res = await fetch(endpoint);
                 if (!res.ok) throw new Error("Network error");
                 const json = await res.json();
@@ -207,7 +121,6 @@ HTML_TEMPLATE = '''
                     tbody.appendChild(row);
                 });
 
-                // Render 7-day line sparklines (kept simple & lightweight)
                 document.querySelectorAll('.sparkline').forEach(canvas => {
                     let prices = [];
                     try { prices = JSON.parse(canvas.dataset.prices); } catch(e) {}
@@ -223,7 +136,7 @@ HTML_TEMPLATE = '''
                 document.getElementById('lastUpdate').textContent = json.last_update || new Date().toUTCString();
             } catch (err) {
                 console.error(err);
-                document.querySelector('#tableBody').innerHTML = '<tr><td colspan="9" class="text-center text-danger">Failed to load data</td></tr>';
+                document.querySelector('#tableBody').innerHTML = '<tr><td colspan="9" class="text-center text-danger">Failed to load data — check console (F12)</td></tr>';
             }
         }
 
@@ -233,7 +146,6 @@ HTML_TEMPLATE = '''
                 const res = await fetch(`/api/coin_ohlc/${id}`);
                 const rawData = await res.json();
 
-                // Convert CoinGecko OHLC to financial plugin format: {x: timestamp, o: open, h: high, l: low, c: close}
                 const candleData = rawData.map(d => ({
                     x: d[0],
                     o: d[1],
@@ -285,6 +197,3 @@ HTML_TEMPLATE = '''
 </body>
 </html>
 '''
-
-if __name__ == '__main__':
-    app.run(debug=True)
