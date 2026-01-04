@@ -111,10 +111,10 @@ def index():
                     <button id="themeToggle" class="p-2 rounded-full bg-gray-900 hover:bg-gray-800 transition text-xl">
                         🌙
                     </button>
-                    <a href="https://x.com/yourusername" target="_blank" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg text-center">
+                    <a href="https://x.com/tradescoutpro" target="_blank" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg text-center">
                         Follow on X
                     </a>
-                    <a href="https://toshimart.com" target="_blank" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg text-center">
+                    <a href="https://toshimart.xyz" target="_blank" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg text-center">
                         ToshiMart Website
                     </a>
                 </div>
