@@ -88,9 +88,10 @@ def index():
         <meta http-equiv="refresh" content="60">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-        <!-- Web3Modal + ethers.js CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/@web3modal/ethers@4.1.1/dist/web3modal.min.js"></script>
-        <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+        <!-- Simple Wallet Connect (supports MetaMask, Coinbase Wallet, Trust, Phantom, etc.) -->
+        <script src="https://unpkg.com/@web3-onboard/core@2/dist/index.js"></script>
+        <script src="https://unpkg.com/@web3-onboard/injected-wallets@2/dist/index.js"></script>
+        <script src="https://unpkg.com/@web3-onboard/walletconnect@2/dist/index.js"></script>
         <style>
             body {{ font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; background: linear-gradient(to right, #000000, #0052FF); min-height: 100vh; }}
             .light-mode {{ background: linear-gradient(to right, #f1f5f9, #e0e7ff) !important; }}
@@ -178,31 +179,43 @@ def index():
                 this.innerHTML = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
             }});
             
-            // Web3Modal Wallet Connect (multiple wallets)
+            // Wallet Connect with multiple options
+            const injected = injectedWallets();
+            const walletConnect = walletConnect();
+            const onboard = Onboard({
+                wallets: [injected, walletConnect],
+                chains: [
+                    {
+                        id: '0x1',
+                        token: 'ETH',
+                        label: 'Ethereum Mainnet',
+                        rpcUrl: 'https://eth.llamarpc.com'
+                    },
+                    {
+                        id: '0x2105',
+                        token: 'ETH',
+                        label: 'Base',
+                        rpcUrl: 'https://mainnet.base.org'
+                    }
+                ],
+                appMetadata: {
+                    name: "TradeScout Pro",
+                    icon: "https://i.ibb.co/tPJ79Fnf/image.png",
+                    description: "Live Crypto Prices Dashboard"
+                }
+            });
+            
             const connectButton = document.getElementById('connectButton');
-            let modal;
-            
-            async function initModal() {{
-                modal = new Web3Modal({{
-                    cacheProvider: true,
-                    projectId: "YOUR_PROJECT_ID_IF_NEEDED", // Optional for WalletConnect v2 (free at cloud.walletconnect.com)
-                    themeMode: "dark"
-                }});
-            }}
-            
             connectButton.addEventListener('click', async () => {{
-                if (!modal) await initModal();
                 try {{
-                    const provider = await modal.connect();
-                    const ethersProvider = new ethers.providers.Web3Provider(provider);
-                    const signer = ethersProvider.getSigner();
-                    const address = await signer.getAddress();
-                    connectButton.textContent = address.substring(0, 6) + '...' + address.substring(address.length - 4);
-                    connectButton.disabled = true;
-                    alert('Connected: ' + address);
+                    const wallets = await onboard.connectWallet();
+                    if (wallets.length > 0) {{
+                        const address = wallets[0].accounts[0].address;
+                        connectButton.textContent = address.substring(0, 6) + '...' + address.substring(address.length - 4);
+                        connectButton.disabled = true;
+                    }}
                 }} catch (err) {{
                     console.error(err);
-                    alert('Connection failed');
                 }}
             }});
             
