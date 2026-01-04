@@ -197,3 +197,4 @@ HTML_TEMPLATE = '''
 </body>
 </html>
 '''
+application = app  # Gunicorn sometimes looks for 'application' as fallback
