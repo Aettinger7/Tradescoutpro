@@ -1,6 +1,7 @@
-from flask import Flask, render_template_string, jsonify
+from flask import Flask, render_template_string, jsonify, request
 import requests
 import datetime
+import json  # Ensure safe JSON
 
 app = Flask(__name__)
 
@@ -49,17 +50,68 @@ def fetch_crypto_data():
         return [], "Error"
 
 def fetch_trending_data():
+    try:
+        trending_url = "https://api.coingecko.com/api/v3/search/trending"
+        headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
+        trending_res = requests.get(trending_url, headers=headers, timeout=15)
+        trending_res.raise_for_status()
+        trending_json = trending_res.json()
+        trending_items = trending_json.get('coins', [])[:25]
+        ids = [item['item']['id'] for item in trending_items]
+
+        if ids:
+            markets_url = "https://api.coingecko.com/api/v3/coins/markets"
+            markets_params = {
+                "vs_currency": "usd",
+                "ids": ','.join(ids),
+                "order": "market_cap_desc",
+                "per_page": 50,
+                "page": 1,
+                "sparkline": True,
+                "price_change_percentage": "1h,24h,7d",
+            }
+            markets_res = requests.get(markets_url, params=markets_params, headers=headers, timeout=15)
+            markets_res.raise_for_status()
+            full_data = markets_res.json()
+
+            # Preserve trending order
+            id_to_item = {item['item']['id']: item for item in trending_items}
+            full_data.sort(key=lambda c: list(id_to_item.keys()).index(c['id']))
+            full_data = full_data[:25]
+
+            formatted_data = []
+            for rank, coin in enumerate(full_data, 1):
+                sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
+                formatted_data.append({
+                    "rank": rank,
+                    "id": coin["id"],
+                    "name": coin["name"],
+                    "symbol": coin["symbol"].upper(),
+                    "logo": coin["image"],
+                    "price": coin["current_price"] or 0,
+                    "change_1h": round(coin.get("price_change_percentage_1h_in_currency") or 0, 2),
+                    "change_24h": round(coin.get("price_change_percentage_24h_in_currency") or 0, 2),
+                    "change_7d": round(coin.get("price_change_percentage_7d_in_currency") or 0, 2),
+                    "market_cap": coin["market_cap"] or 0,
+                    "volume_24h": coin["total_volume"] or 0,
+                    "sparkline_prices": sparkline_prices,
+                })
+            last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+            return formatted_data, last_update
+    except Exception as e:
+        print(f"Trending error: {e}")
+
     return fetch_crypto_data()
 
 @app.route('/')
 def index():
     crypto_data, last_update = fetch_crypto_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=crypto_data, last_update=last_update, title="Top 100 Cryptocurrencies", is_trending=False)
+    return render_template_string(HTML_TEMPLATE, crypto_data=crypto_data, last_update=last_update, title="Top 100 Cryptocurrencies", page="top")
 
 @app.route('/trending')
 def trending():
     trending_data, last_update = fetch_trending_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data, last_update=last_update, title="Top 25 Trending Coins", is_trending=True)
+    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data, last_update=last_update, title="Top 25 Trending Coins", page="trending")
 
 @app.route('/api/data')
 def api_data():
@@ -70,6 +122,30 @@ def api_data():
 def api_trending():
     trending_data, last_update = fetch_trending_data()
     return jsonify({"data": trending_data, "last_update": last_update})
+
+@app.route('/api/search')
+def api_search():
+    query = request.args.get('q', '').strip()
+    if not query:
+        return jsonify({"results": []})
+    url = "https://api.coingecko.com/api/v3/search"
+    params = {"query": query}
+    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=15)
+        response.raise_for_status()
+        search_data = response.json().get('coins', [])[:20]
+        results = []
+        for item in search_data:
+            results.append({
+                "id": item['id'],
+                "name": item['name'],
+                "symbol": item['symbol'].upper(),
+                "logo": item.get('large') or item.get('thumb') or '',
+            })
+        return jsonify({"results": results})
+    except Exception as e:
+        return jsonify({"results": [], "error": str(e)})
 
 @app.route('/api/coin_ohlc/<id>')
 def coin_ohlc(id):
@@ -83,11 +159,11 @@ def coin_ohlc(id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-application = app  # For Render/Gunicorn
+application = app
 
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,62 +174,81 @@ HTML_TEMPLATE = '''
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #000; color: #fff; font-family: 'Inter', system-ui, sans-serif; }
-        .bg-dark { background-color: #000; }
+        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
+        .logo-font { font-family: 'Orbitron', sans-serif; }
         .text-green { color: #00ff99; }
         .text-red { color: #ff4444; }
         .hover-row:hover { background-color: #111 !important; }
         .sparkline { height: 60px; width: 140px; }
         .navbar-blue { background-color: #0066ff; }
+        .active-link { color: #00ff99; border-bottom: 3px solid #00ff99; padding-bottom: 4px; }
+        [data-theme="light"] { background-color: #f8f9fa; color: #000; }
+        [data-theme="light"] .navbar-blue { background-color: #005edc; }
+        [data-theme="light"] .hover-row:hover { background-color: #e9ecef !important; }
+        [data-theme="light"] .bg-gray-900 { background-color: #fff !important; }
     </style>
 </head>
-<body class="bg-dark min-h-screen">
-    <nav class="navbar-blue text-white py-4 px-6 flex justify-between items-center sticky top-0 z-50 shadow-lg">
-        <a href="/" class="text-2xl font-bold">TradeScout Pro</a>
-        <div class="flex items-center gap-6">
-            <input type="text" id="searchInput" class="px-4 py-2 rounded-lg bg-black/50 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:border-blue-400" placeholder="Search coin...">
-            <button id="themeToggle" class="text-2xl">🌙</button>
+<body class="min-h-screen">
+    <nav class="navbar-blue text-white py-5 px-8 flex justify-between items-center sticky top-0 z-50 shadow-xl">
+        <a href="/" class="text-4xl font-bold logo-font flex items-center gap-3">
+            <img src="https://www.tradescoutpro.com/favicon.ico" alt="Logo" class="w-10 h-10"> TradeScout Pro
+        </a>
+        <div class="flex items-center gap-10 text-lg">
+            <a href="/" class="hover:text-cyan-300 {% if page == 'top' %}active-link{% endif %}">Top 100</a>
+            <a href="/trending" class="hover:text-cyan-300 {% if page == 'trending' %}active-link{% endif %}">Trending</a>
+            <div class="relative">
+                <input type="text" id="searchInput" class="px-6 py-3 rounded-full bg-black/50 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:border-cyan-400 w-96" placeholder="Search any crypto...">
+                <div id="searchDropdown" class="absolute hidden bg-gray-900 border border-gray-700 rounded-lg shadow-xl mt-2 w-full z-50">
+                    <div id="searchResults" class="max-h-96 overflow-y-auto"></div>
+                </div>
+            </div>
+            <button id="themeToggle" class="text-3xl">🌙</button>
         </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <h1 class="text-3xl font-bold text-center mb-8">{{ title }}</h1>
+    <div class="container mx-auto px-6 py-10 max-w-7xl">
+        <h1 class="text-4xl font-bold text-center mb-10 logo-font">{{ title }}</h1>
         
-        <div class="overflow-x-auto rounded-xl shadow-2xl">
+        <div class="overflow-x-auto rounded-2xl shadow-2xl bg-gray-900/50">
             <table class="w-full text-left">
-                <thead class="bg-gray-900 text-gray-400 uppercase text-xs">
+                <thead class="bg-gray-800/80 text-gray-300 uppercase text-sm">
                     <tr>
-                        <th class="px-6 py-4">#</th>
-                        <th class="px-6 py-4">Name</th>
-                        <th class="px-6 py-4 text-right">Price</th>
-                        <th class="px-6 py-4 text-right">1h %</th>
-                        <th class="px-6 py-4 text-right">24h %</th>
-                        <th class="px-6 py-4 text-right">7d %</th>
-                        <th class="px-6 py-4 text-right">24h Volume</th>
-                        <th class="px-6 py-4 text-right">Market Cap</th>
-                        <th class="px-6 py-4 text-center">Last 7 Days</th>
+                        <th class="px-6 py-5">#</th>
+                        <th class="px-6 py-5">Name</th>
+                        <th class="px-6 py-5 text-right">Price</th>
+                        <th class="px-6 py-5 text-right">1h %</th>
+                        <th class="px-6 py-5 text-right">24h %</th>
+                        <th class="px-6 py-5 text-right">7d %</th>
+                        <th class="px-6 py-5 text-right">24h Volume</th>
+                        <th class="px-6 py-5 text-right">Market Cap</th>
+                        <th class="px-6 py-5 text-center">Last 7 Days</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody" class="divide-y divide-gray-800"></tbody>
             </table>
         </div>
         
-        <p class="text-center text-gray-500 mt-6 text-sm">Last update: <span id="lastUpdate">{{ last_update }}</span> • Auto-refreshes every 60s • Powered by CoinGecko</p>
+        <p class="text-center text-gray-500 mt-8 text-sm">Last update: <span id="lastUpdate">{{ last_update }}</span> • Auto-refreshes every 60s • Powered by CoinGecko</p>
     </div>
 
-    <div class="fixed inset-0 hidden items-center justify-center bg-black/80 z-50" id="modal">
-        <div class="bg-gray-900 rounded-2xl p-8 max-w-4xl w-full mx-4 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="modalTitle" class="text-2xl font-bold"></h2>
-                <button onclick="document.getElementById('modal').classList.add('hidden')" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+    <!-- Modal -->
+    <div class="fixed inset-0 hidden items-center justify-center bg-black/90 z-50" id="modal">
+        <div class="bg-gray-900 rounded-3xl p-10 max-w-5xl w-full mx-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-8">
+                <h2 id="modalTitle" class="text-3xl font-bold logo-font"></h2>
+                <button onclick="document.getElementById('modal').classList.add('hidden')" class="text-4xl text-gray-400 hover:text-white">&times;</button>
             </div>
-            <canvas id="detailChart" height="400"></canvas>
+            <canvas id="detailChart" height="450"></canvas>
         </div>
     </div>
 
     <script>
         let detailChart = null;
+        const searchInput = document.getElementById('searchInput');
+        const dropdown = document.getElementById('searchDropdown');
+        const resultsDiv = document.getElementById('searchResults');
 
         function formatNumber(num) {
             if (!num) return '$0';
@@ -170,7 +265,7 @@ HTML_TEMPLATE = '''
 
         async function loadCoins() {
             try {
-                const endpoint = "{{ '/api/trending' if is_trending else '/api/data' }}";
+                const endpoint = "{{ '/api/trending' if page == 'trending' else '/api/data' }}";
                 const res = await fetch(endpoint);
                 if (!res.ok) throw new Error("Failed");
                 const json = await res.json();
@@ -184,37 +279,50 @@ HTML_TEMPLATE = '''
                     tr.className = 'hover-row cursor-pointer';
                     tr.onclick = () => openModal(coin.id, coin.name, coin.symbol);
 
+                    // Safe JSON for data-prices
+                    const pricesJson = JSON.stringify(coin.sparkline_prices || []);
+
                     tr.innerHTML = `
-                        <td class="px-6 py-4 text-gray-400">${coin.rank}</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <img src="${coin.logo}" class="w-8 h-8 rounded-full">
+                        <td class="px-6 py-5 text-gray-400">${coin.rank}</td>
+                        <td class="px-6 py-5">
+                            <div class="flex items-center gap-4">
+                                <img src="${coin.logo}" class="w-10 h-10 rounded-full">
                                 <div>
-                                    <div class="font-semibold">${coin.name}</div>
-                                    <div class="text-gray-500 text-sm">${coin.symbol}</div>
+                                    <div class="font-bold text-lg">${coin.name}</div>
+                                    <div class="text-gray-500">${coin.symbol}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-right font-medium">${formatNumber(coin.price)}</td>
-                        <td class="px-6 py-4 text-right">${formatPercent(coin.change_1h)}</td>
-                        <td class="px-6 py-4 text-right">${formatPercent(coin.change_24h)}</td>
-                        <td class="px-6 py-4 text-right">${formatPercent(coin.change_7d)}</td>
-                        <td class="px-6 py-4 text-right text-gray-400">${formatNumber(coin.volume_24h)}</td>
-                        <td class="px-6 py-4 text-right text-gray-400">${formatNumber(coin.market_cap)}</td>
-                        <td class="px-6 py-4"><canvas class="sparkline" data-prices='${JSON.stringify(coin.sparkline_prices)}'></canvas></td>
+                        <td class="px-6 py-5 text-right font-bold text-xl">${formatNumber(coin.price)}</td>
+                        <td class="px-6 py-5 text-right">${formatPercent(coin.change_1h)}</td>
+                        <td class="px-6 py-5 text-right">${formatPercent(coin.change_24h)}</td>
+                        <td class="px-6 py-5 text-right">${formatPercent(coin.change_7d)}</td>
+                        <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.volume_24h)}</td>
+                        <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.market_cap)}</td>
+                        <td class="px-6 py-5 text-center"><canvas class="sparkline" data-prices="${pricesJson}"></canvas></td>
                     `;
                     tbody.appendChild(tr);
                 });
 
-                // Render sparklines
+                // Render sparklines - now guaranteed valid JSON
                 document.querySelectorAll('.sparkline').forEach(canvas => {
-                    let prices = JSON.parse(canvas.dataset.prices || '[]');
-                    if (prices.length < 2) return;
+                    let prices = [];
+                    try {
+                        prices = JSON.parse(canvas.dataset.prices);
+                    } catch (e) {
+                        console.error("Parse error:", e);
+                        return;
+                    }
+                    if (!Array.isArray(prices) || prices.length < 2) return;
                     const up = prices[prices.length - 1] >= prices[0];
                     new Chart(canvas, {
                         type: 'line',
-                        data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2 }] },
-                        options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+                        data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2.5 }] },
+                        options: { 
+                            scales: { x: { display: false }, y: { display: false } }, 
+                            plugins: { legend: { display: false } },
+                            animation: false  // Faster render
+                        }
                     });
                 });
 
@@ -241,19 +349,58 @@ HTML_TEMPLATE = '''
             } catch (e) { console.error(e); }
         }
 
-        document.getElementById('searchInput').addEventListener('input', e => {
-            const term = e.target.value.toLowerCase();
-            document.querySelectorAll('#tableBody tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
-            });
+        // Search dropdown...
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            const q = searchInput.value.trim();
+            dropdown.classList.add('hidden');
+            if (q.length < 2) return;
+
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+                    const json = await res.json();
+                    const results = json.results || [];
+
+                    resultsDiv.innerHTML = '';
+                    if (results.length === 0) {
+                        resultsDiv.innerHTML = '<div class="p-4 text-gray-500">No results</div>';
+                    } else {
+                        results.forEach(coin => {
+                            const div = document.createElement('div');
+                            div.className = 'p-4 hover:bg-gray-800 cursor-pointer flex items-center gap-4';
+                            div.onclick = () => {
+                                openModal(coin.id, coin.name, coin.symbol);
+                                searchInput.value = '';
+                                dropdown.classList.add('hidden');
+                            };
+                            div.innerHTML = `
+                                <img src="${coin.logo}" class="w-10 h-10 rounded-full">
+                                <div>
+                                    <div class="font-semibold">${coin.name}</div>
+                                    <div class="text-sm text-gray-500">${coin.symbol}</div>
+                                </div>
+                            `;
+                            resultsDiv.appendChild(div);
+                        });
+                    }
+                    dropdown.classList.remove('hidden');
+                } catch (e) { console.error(e); }
+            }, 300);
         });
 
-        // Simple theme toggle (dark/light)
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
         document.getElementById('themeToggle').addEventListener('click', () => {
-            document.body.classList.toggle('bg-dark');
-            const isDark = document.body.classList.contains('bg-dark');
-            document.getElementById('themeToggle').textContent = isDark ? '🌙' : '☀️';
-            // Add light mode classes if needed later
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
         });
 
         loadCoins();
