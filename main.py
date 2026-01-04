@@ -1,7 +1,7 @@
 from flask import Flask, render_template_string, jsonify, request
 import requests
 import datetime
-import json  # Ensure safe JSON
+import json
 
 app = Flask(__name__)
 
@@ -74,9 +74,8 @@ def fetch_trending_data():
             markets_res.raise_for_status()
             full_data = markets_res.json()
 
-            # Preserve trending order
-            id_to_item = {item['item']['id']: item for item in trending_items}
-            full_data.sort(key=lambda c: list(id_to_item.keys()).index(c['id']))
+            id_order = {id: idx for idx, id in enumerate(ids)}
+            full_data.sort(key=lambda c: id_order.get(c['id'], 999))
             full_data = full_data[:25]
 
             formatted_data = []
@@ -147,6 +146,18 @@ def api_search():
     except Exception as e:
         return jsonify({"results": [], "error": str(e)})
 
+@app.route('/api/coin_detail/<id>')
+def coin_detail(id):
+    url = f"https://api.coingecko.com/api/v3/coins/{id}"
+    params = {"localization": False, "tickers": False, "market_data": True, "community_data": False, "developer_data": False, "sparkline": False}
+    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=15)
+        response.raise_for_status()
+        return jsonify(response.json())
+    except:
+        return jsonify({}), 500
+
 @app.route('/api/coin_ohlc/<id>')
 def coin_ohlc(id):
     url = f"https://api.coingecko.com/api/v3/coins/{id}/ohlc"
@@ -187,13 +198,14 @@ HTML_TEMPLATE = '''
         [data-theme="light"] { background-color: #f8f9fa; color: #000; }
         [data-theme="light"] .navbar-blue { background-color: #005edc; }
         [data-theme="light"] .hover-row:hover { background-color: #e9ecef !important; }
-        [data-theme="light"] .bg-gray-900 { background-color: #fff !important; }
+        [data-theme="light"] .text-green { color: #00aa66; }
+        [data-theme="light"] .text-red { color: #cc3333; }
     </style>
 </head>
 <body class="min-h-screen">
     <nav class="navbar-blue text-white py-5 px-8 flex justify-between items-center sticky top-0 z-50 shadow-xl">
-        <a href="/" class="text-4xl font-bold logo-font flex items-center gap-3">
-            <img src="https://www.tradescoutpro.com/favicon.ico" alt="Logo" class="w-10 h-10"> TradeScout Pro
+        <a href="/" class="text-4xl font-bold logo-font flex items-center gap-4">
+            <span class="text-5xl">🚀</span> TradeScout Pro
         </a>
         <div class="flex items-center gap-10 text-lg">
             <a href="/" class="hover:text-cyan-300 {% if page == 'top' %}active-link{% endif %}">Top 100</a>
@@ -233,14 +245,29 @@ HTML_TEMPLATE = '''
         <p class="text-center text-gray-500 mt-8 text-sm">Last update: <span id="lastUpdate">{{ last_update }}</span> • Auto-refreshes every 60s • Powered by CoinGecko</p>
     </div>
 
-    <!-- Modal -->
-    <div class="fixed inset-0 hidden items-center justify-center bg-black/90 z-50" id="modal">
-        <div class="bg-gray-900 rounded-3xl p-10 max-w-5xl w-full mx-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-8">
-                <h2 id="modalTitle" class="text-3xl font-bold logo-font"></h2>
+    <!-- Coin Detail Modal -->
+    <div class="fixed inset-0 hidden flex items-center justify-center bg-black/90 z-50" id="modal">
+        <div class="bg-gray-900 rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl mx-4">
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex items-center gap-4">
+                    <img id="modalLogo" src="" class="w-16 h-16 rounded-full">
+                    <div>
+                        <h2 id="modalName" class="text-3xl font-bold logo-font"></h2>
+                        <p id="modalSymbol" class="text-xl text-gray-400"></p>
+                    </div>
+                </div>
                 <button onclick="document.getElementById('modal').classList.add('hidden')" class="text-4xl text-gray-400 hover:text-white">&times;</button>
             </div>
-            <canvas id="detailChart" height="450"></canvas>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 text-lg">
+                <div><strong>Current Price:</strong> <span id="modalPrice" class="font-bold text-2xl"></span></div>
+                <div><strong>Market Cap:</strong> <span id="modalMarketCap"></span></div>
+                <div><strong>24h Volume:</strong> <span id="modalVolume"></span></div>
+                <div><strong>24h Change:</strong> <span id="modalChange24h"></span></div>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">30 Day Candlestick Chart</h3>
+            <div class="bg-gray-800 rounded-lg p-4">
+                <canvas id="detailChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -277,9 +304,8 @@ HTML_TEMPLATE = '''
                 data.forEach(coin => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover-row cursor-pointer';
-                    tr.onclick = () => openModal(coin.id, coin.name, coin.symbol);
+                    tr.onclick = () => openModal(coin.id, coin.name, coin.symbol, coin.logo);
 
-                    // Safe JSON for data-prices
                     const pricesJson = JSON.stringify(coin.sparkline_prices || []);
 
                     tr.innerHTML = `
@@ -304,25 +330,15 @@ HTML_TEMPLATE = '''
                     tbody.appendChild(tr);
                 });
 
-                // Render sparklines - now guaranteed valid JSON
                 document.querySelectorAll('.sparkline').forEach(canvas => {
                     let prices = [];
-                    try {
-                        prices = JSON.parse(canvas.dataset.prices);
-                    } catch (e) {
-                        console.error("Parse error:", e);
-                        return;
-                    }
-                    if (!Array.isArray(prices) || prices.length < 2) return;
+                    try { prices = JSON.parse(canvas.dataset.prices); } catch(e) {}
+                    if (prices.length < 2) return;
                     const up = prices[prices.length - 1] >= prices[0];
                     new Chart(canvas, {
                         type: 'line',
                         data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2.5 }] },
-                        options: { 
-                            scales: { x: { display: false }, y: { display: false } }, 
-                            plugins: { legend: { display: false } },
-                            animation: false  // Faster render
-                        }
+                        options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
                     });
                 });
 
@@ -332,24 +348,39 @@ HTML_TEMPLATE = '''
             }
         }
 
-        async function openModal(id, name, symbol) {
-            document.getElementById('modalTitle').textContent = `${name} (${symbol}) — 30 Day Candlesticks`;
-            document.getElementById('modal').classList.remove('hidden');
+        async function openModal(id, name, symbol, logo) {
+            document.getElementById('modalName').textContent = name;
+            document.getElementById('modalSymbol').textContent = symbol;
+            document.getElementById('modalLogo').src = logo || '';
+
             try {
-                const res = await fetch(`/api/coin_ohlc/${id}`);
-                const raw = await res.json();
+                const detailRes = await fetch(`/api/coin_detail/${id}`);
+                const detail = await detailRes.json();
+                const md = detail.market_data || {};
+
+                document.getElementById('modalPrice').textContent = formatNumber(md.current_price?.usd);
+                document.getElementById('modalMarketCap').textContent = formatNumber(md.market_cap?.usd);
+                document.getElementById('modalVolume').textContent = formatNumber(md.total_volume?.usd);
+                document.getElementById('modalChange24h').innerHTML = formatPercent(md.price_change_percentage_24h);
+            } catch(e) {}
+
+            try {
+                const ohlcRes = await fetch(`/api/coin_ohlc/${id}`);
+                const raw = await ohlcRes.json();
                 const candles = raw.map(d => ({ x: d[0], o: d[1], h: d[2], l: d[3], c: d[4] }));
 
                 if (detailChart) detailChart.destroy();
                 detailChart = new Chart(document.getElementById('detailChart'), {
                     type: 'candlestick',
                     data: { datasets: [{ label: `${symbol}/USD`, data: candles }] },
-                    options: { responsive: true }
+                    options: { responsive: true, maintainAspectRatio: false }
                 });
             } catch (e) { console.error(e); }
+
+            document.getElementById('modal').classList.remove('hidden');
         }
 
-        // Search dropdown...
+        // Search and other scripts remain the same...
         let searchTimeout;
         searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
@@ -371,7 +402,7 @@ HTML_TEMPLATE = '''
                             const div = document.createElement('div');
                             div.className = 'p-4 hover:bg-gray-800 cursor-pointer flex items-center gap-4';
                             div.onclick = () => {
-                                openModal(coin.id, coin.name, coin.symbol);
+                                openModal(coin.id, coin.name, coin.symbol, coin.logo);
                                 searchInput.value = '';
                                 dropdown.classList.add('hidden');
                             };
@@ -398,9 +429,10 @@ HTML_TEMPLATE = '''
 
         document.getElementById('themeToggle').addEventListener('click', () => {
             const html = document.documentElement;
-            const isDark = html.getAttribute('data-theme') === 'dark';
-            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
+            const current = html.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '🌙' : '☀️';
         });
 
         loadCoins();
