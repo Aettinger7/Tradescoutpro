@@ -56,8 +56,24 @@ def fetch_trending_data():
         trending_res = requests.get(trending_url, headers=headers, timeout=15)
         trending_res.raise_for_status()
         trending_json = trending_res.json()
-        trending_items = trending_json.get('coins', [])  # Usually 7-15, but we fetch full data for all
+        trending_items = trending_json.get('coins', [])
         ids = [item['item']['id'] for item in trending_items]
+
+        # To make 25, fetch top 25 by 24h change if trending <25
+        if len(ids) < 25:
+            top_url = "https://api.coingecko.com/api/v3/coins/markets"
+            top_params = {
+                "vs_currency": "usd",
+                "order": "percent_change_24h_desc",
+                "per_page": 25 - len(ids),
+                "page": 1,
+                "sparkline": True,
+                "price_change_percentage": "1h,24h,7d",
+            }
+            top_res = requests.get(top_url, params=top_params, headers=headers, timeout=15)
+            top_res.raise_for_status()
+            top_data = top_res.json()
+            ids.extend([coin['id'] for coin in top_data if coin['id'] not in ids])
 
         if ids:
             markets_url = "https://api.coingecko.com/api/v3/coins/markets"
@@ -74,12 +90,12 @@ def fetch_trending_data():
             markets_res.raise_for_status()
             full_data = markets_res.json()
 
-            # Preserve exact trending order
+            # Preserve original trending order + append extras
             order_map = {item['item']['id']: idx for idx, item in enumerate(trending_items)}
             full_data.sort(key=lambda c: order_map.get(c['id'], 999))
 
             formatted_data = []
-            for rank, coin in enumerate(full_data, 1):
+            for rank, coin in enumerate(full_data[:25], 1):
                 sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
                 formatted_data.append({
                     "rank": rank,
@@ -100,7 +116,7 @@ def fetch_trending_data():
     except Exception as e:
         print(f"Trending error: {e}")
 
-    return fetch_crypto_data()  # Fallback
+    return fetch_crypto_data()
 
 @app.route('/')
 def index():
@@ -110,7 +126,7 @@ def index():
 @app.route('/trending')
 def trending():
     trending_data, last_update = fetch_trending_data()
-    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data[:25], last_update=last_update, title="Top Trending Coins", page="trending")
+    return render_template_string(HTML_TEMPLATE, crypto_data=trending_data, last_update=last_update, title="Top 25 Trending Coins", page="trending")
 
 @app.route('/api/data')
 def api_data():
@@ -120,7 +136,7 @@ def api_data():
 @app.route('/api/trending')
 def api_trending():
     trending_data, last_update = fetch_trending_data()
-    return jsonify({"data": trending_data[:25], "last_update": last_update})
+    return jsonify({"data": trending_data, "last_update": last_update})
 
 @app.route('/api/search')
 def api_search():
@@ -201,12 +217,17 @@ HTML_TEMPLATE = '''
         [data-theme="light"] .text-green { color: #00aa66; }
         [data-theme="light"] .text-red { color: #cc3333; }
         [data-theme="light"] .bg-gray-900 { background-color: #fff; }
+        [data-theme="light"] .bg-gray-800 { background-color: #e5e7eb; }
+        [data-theme="light"] .divide-gray-800 { divide-color: #d1d5db; }
+        [data-theme="light"] .text-gray-400 { color: #6b7280; }
+        [data-theme="light"] .text-gray-300 { color: #9ca3af; }
+        [data-theme="light"] .text-gray-500 { color: #6b7280; }
     </style>
 </head>
 <body class="min-h-screen">
     <nav class="navbar-blue text-white py-5 px-8 flex justify-between items-center sticky top-0 z-50 shadow-xl">
         <a href="/" class="text-4xl font-bold logo-font flex items-center gap-4">
-            <img src="https://i.ibb.co/sJjcKmPs/your-logo.png" alt="TradeScout Pro Logo" class="w-12 h-12 rounded-lg">
+            <img src="https://i.ibb.co/sJjcKmPs/ttn41attn41attn4.png" alt="TradeScout Pro Logo" class="w-12 h-12 rounded-lg">
             TradeScout Pro
         </a>
         <div class="flex items-center gap-10 text-lg">
@@ -268,7 +289,7 @@ HTML_TEMPLATE = '''
             </div>
             <h3 class="text-2xl font-bold mb-4">30 Day Candlestick Chart</h3>
             <div class="bg-gray-800 rounded-lg p-4">
-                <canvas id="detailChart"></canvas>
+                <canvas id="detailChart" height="300"></canvas>
             </div>
         </div>
     </div>
@@ -303,7 +324,7 @@ HTML_TEMPLATE = '''
                 data.forEach(coin => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover-row cursor-pointer';
-                    tr.onclick = () => openModal(coin.id, coin.name, coin.symbol, coin.logo);
+                    tr.onclick = () => openModal(coin.id);
 
                     const pricesJson = JSON.stringify(coin.sparkline_prices || []);
 
@@ -324,31 +345,27 @@ HTML_TEMPLATE = '''
                         <td class="px-6 py-5 text-right">${formatPercent(coin.change_7d)}</td>
                         <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.volume_24h)}</td>
                         <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.market_cap)}</td>
-                        <td class="px-6 py-5 text-center"><canvas class="sparkline inline-block" data-prices="${pricesJson}"></canvas></td>
+                        <td class="px-6 py-5 text-center"><canvas class="sparkline" width="140" height="60" data-prices="${pricesJson}"></canvas></td>
                     `;
                     tbody.appendChild(tr);
                 });
 
-                // Force sparklines to render
-                setTimeout(() => {
-                    document.querySelectorAll('.sparkline').forEach(canvas => {
-                        let prices = [];
-                        try { prices = JSON.parse(canvas.dataset.prices || '[]'); } catch(e) { console.error(e); }
-                        if (prices.length < 2) return;
-                        const up = prices[prices.length - 1] >= prices[0];
-                        new Chart(canvas, {
-                            type: 'line',
-                            data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2.5 }] },
-                            options: { 
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: { x: { display: false }, y: { display: false } }, 
-                                plugins: { legend: { display: false } },
-                                animation: false
-                            }
-                        });
+                document.querySelectorAll('.sparkline').forEach(canvas => {
+                    let prices = [];
+                    try { prices = JSON.parse(canvas.dataset.prices); } catch(e) { console.error(e); }
+                    if (prices.length < 2) return;
+                    const up = prices[prices.length - 1] >= prices[0];
+                    new Chart(canvas, {
+                        type: 'line',
+                        data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2.5 }] },
+                        options: { 
+                            responsive: false,  // Fixed size for consistency
+                            scales: { x: { display: false }, y: { display: false } }, 
+                            plugins: { legend: { display: false } },
+                            animation: false
+                        }
                     });
-                }, 100);
+                });
 
                 document.getElementById('lastUpdate').textContent = json.last_update;
             } catch (e) {
@@ -356,12 +373,83 @@ HTML_TEMPLATE = '''
             }
         }
 
-        // Rest of script same as before...
-        async function openModal(id, name, symbol, logo) {
-            // ... (same as previous)
+        async function openModal(id) {
+            try {
+                const detailRes = await fetch(`/api/coin_detail/${id}`);
+                const detail = await detailRes.json();
+                const md = detail.market_data || {};
+
+                document.getElementById('modalLogo').src = detail.image?.large || '';
+                document.getElementById('modalName').textContent = detail.name || '';
+                document.getElementById('modalSymbol').textContent = detail.symbol?.toUpperCase() || '';
+                document.getElementById('modalPrice').textContent = formatNumber(md.current_price?.usd);
+                document.getElementById('modalMarketCap').textContent = formatNumber(md.market_cap?.usd);
+                document.getElementById('modalVolume').textContent = formatNumber(md.total_volume?.usd);
+                document.getElementById('modalChange24h').innerHTML = formatPercent(md.price_change_percentage_24h);
+            } catch(e) {}
+
+            try {
+                const ohlcRes = await fetch(`/api/coin_ohlc/${id}`);
+                const raw = await ohlcRes.json();
+                const candles = raw.map(d => ({ x: d[0], o: d[1], h: d[2], l: d[3], c: d[4] }));
+
+                if (detailChart) detailChart.destroy();
+                detailChart = new Chart(document.getElementById('detailChart'), {
+                    type: 'candlestick',
+                    data: { datasets: [{ label: detail.symbol?.toUpperCase() + '/USD', data: candles }] },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            } catch (e) { console.error(e); }
+
+            document.getElementById('modal').classList.remove('hidden');
         }
 
-        // Search, theme toggle, etc. same
+        // Search...
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            const q = searchInput.value.trim();
+            dropdown.classList.add('hidden');
+            if (q.length < 2) return;
+
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+                    const json = await res.json();
+                    const results = json.results || [];
+
+                    resultsDiv.innerHTML = '';
+                    if (results.length === 0) {
+                        resultsDiv.innerHTML = '<div class="p-4 text-gray-500">No results</div>';
+                    } else {
+                        results.forEach(coin => {
+                            const div = document.createElement('div');
+                            div.className = 'p-4 hover:bg-gray-800 cursor-pointer flex items-center gap-4';
+                            div.onclick = () => {
+                                openModal(coin.id);
+                                searchInput.value = '';
+                                dropdown.classList.add('hidden');
+                            };
+                            div.innerHTML = `
+                                <img src="${coin.logo}" class="w-10 h-10 rounded-full">
+                                <div>
+                                    <div class="font-semibold">${coin.name}</div>
+                                    <div class="text-sm text-gray-500">${coin.symbol}</div>
+                                </div>
+                            `;
+                            resultsDiv.appendChild(div);
+                        });
+                    }
+                    dropdown.classList.remove('hidden');
+                } catch (e) { console.error(e); }
+            }, 300);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
 
         document.getElementById('themeToggle').addEventListener('click', () => {
             const html = document.documentElement;
@@ -377,3 +465,6 @@ HTML_TEMPLATE = '''
 </body>
 </html>
 '''
+
+if __name__ == '__main__':
+    app.run(debug=True)
