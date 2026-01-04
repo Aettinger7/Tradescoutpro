@@ -1,11 +1,10 @@
 from flask import Flask, render_template_string, jsonify
 import requests
 import datetime
-import os
 
 app = Flask(__name__)
 
-CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"  # Your key
+CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"  # Your Pro key for higher limits
 
 def format_number(num):
     if not num or num == 0:
@@ -31,6 +30,7 @@ def fetch_crypto_data():
         "per_page": 100,
         "page": 1,
         "price_change_percentage": "1h,24h,7d",
+        "sparkline": True,  # This gets the 7-day price array
     }
     headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
 
@@ -41,6 +41,7 @@ def fetch_crypto_data():
 
         formatted_data = []
         for rank, coin in enumerate(data, 1):
+            sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
             formatted_data.append({
                 "rank": rank,
                 "id": coin["id"],
@@ -54,6 +55,7 @@ def fetch_crypto_data():
                 "market_cap": coin["market_cap"] or 0,
                 "volume_24h": coin["total_volume"] or 0,
                 "circulating_supply": coin.get("circulating_supply") or 0,
+                "sparkline_prices": sparkline_prices,  # List of ~168 prices
             })
 
         last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -81,6 +83,7 @@ HTML_TEMPLATE = '''
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeScout Pro — Top 100 Cryptocurrencies</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- For sparklines -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -91,7 +94,7 @@ HTML_TEMPLATE = '''
     <style>
         body { font-family: 'Inter', sans-serif; }
         .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .sparkline-img { height: 48px; width: 160px; }
+        .sparkline-canvas { height: 48px; width: 160px; }
         ::-webkit-scrollbar { height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #c0c0c0; border-radius: 4px; }
@@ -173,7 +176,7 @@ HTML_TEMPLATE = '''
                             <td class="py-4 px-6 text-right">{{ format_number(coin.volume_24h) }}</td>
                             <td class="py-4 px-6 text-right text-sm">{{ format_supply(coin.circulating_supply, coin.symbol) }}</td>
                             <td class="py-4 px-6 text-center">
-                                <img src="https://www.coingecko.com/coins/{{ coin.id }}/sparkline" alt="{{ coin.name }} sparkline" class="sparkline-img mx-auto" loading="lazy">
+                                <canvas class="sparkline-canvas mx-auto" data-prices='{{ coin.sparkline_prices | tojson }}'></canvas>
                             </td>
                         </tr>
                         {% endfor %}
@@ -188,6 +191,7 @@ HTML_TEMPLATE = '''
     </footer>
 
     <script>
+        // Theme toggle with persistence
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -208,6 +212,7 @@ HTML_TEMPLATE = '''
             }
         });
 
+        // Search filter
         const searchInput = document.getElementById('searchInput');
         const rows = document.querySelectorAll('#tableBody tr');
         searchInput.addEventListener('input', () => {
@@ -217,40 +222,99 @@ HTML_TEMPLATE = '''
             });
         });
 
+        // Render initial sparklines
+        function renderSparklines() {
+            document.querySelectorAll('.sparkline-canvas').forEach(canvas => {
+                const prices = JSON.parse(canvas.dataset.prices || '[]');
+                if (prices.length === 0) return;
+                const isUp = prices[prices.length - 1] >= prices[0];
+                new Chart(canvas, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            data: prices,
+                            borderColor: isUp ? '#00c853' : '#ff1744',
+                            backgroundColor: 'transparent',
+                            tension: 0.4,
+                            pointRadius: 0,
+                            borderWidth: 2,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        scales: { x: { display: false }, y: { display: false } },
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        animation: { duration: 0 },
+                        maintainAspectRatio: false
+                    }
+                });
+            });
+        }
+        renderSparklines();
+
+        // Auto-refresh data every 60s
         async function refreshData() {
             try {
                 const res = await fetch('/api/data');
                 const { data, last_update } = await res.json();
                 document.getElementById('lastUpdate').textContent = last_update;
+
                 const tbody = document.getElementById('tableBody');
                 tbody.innerHTML = '';
                 data.forEach(coin => {
+                    const change1hClass = coin.change_1h > 0 ? 'text-green-500' : coin.change_1h < 0 ? 'text-red-500' : '';
+                    const change24hClass = coin.change_24h > 0 ? 'text-green-500' : coin.change_24h < 0 ? 'text-red-500' : '';
+                    const change7dClass = coin.change_7d > 0 ? 'text-green-500' : coin.change_7d < 0 ? 'text-red-500' : '';
+
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors';
                     row.innerHTML = `
                         <td class="py-4 px-6 text-center text-gray-500 dark:text-gray-400">${coin.rank}</td>
-                        <td class="py-4 px-6"><div class="flex items-center space-x-3"><img src="${coin.logo}" class="w-8 h-8 rounded-full"><div><div class="font-medium">${coin.name}</div><div class="text-sm text-gray-500 dark:text-gray-400 uppercase">${coin.symbol}</div></div></div></td>
+                        <td class="py-4 px-6">
+                            <div class="flex items-center space-x-3">
+                                <img src="${coin.logo}" class="w-8 h-8 rounded-full">
+                                <div>
+                                    <div class="font-medium">${coin.name}</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 uppercase">${coin.symbol}</div>
+                                </div>
+                            </div>
+                        </td>
                         <td class="py-4 px-6 text-right font-medium">$${parseFloat(coin.price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 8})}</td>
-                        <td class="py-4 px-6 text-right ${coin.change_1h > 0 ? 'text-green-500' : coin.change_1h < 0 ? 'text-red-500' : ''}">${coin.change_1h > 0 ? '+' : ''}${coin.change_1h}%</td>
-                        <td class="py-4 px-6 text-right ${coin.change_24h > 0 ? 'text-green-500' : coin.change_24h < 0 ? 'text-red-500' : ''}">${coin.change_24h > 0 ? '+' : ''}${coin.change_24h}%</td>
-                        <td class="py-4 px-6 text-right ${coin.change_7d > 0 ? 'text-green-500' : coin.change_7d < 0 ? 'text-red-500' : ''}">${coin.change_7d > 0 ? '+' : ''}${coin.change_7d}%</td>
+                        <td class="py-4 px-6 text-right ${change1hClass}">${coin.change_1h > 0 ? '+' : ''}${coin.change_1h}%</td>
+                        <td class="py-4 px-6 text-right ${change24hClass}">${coin.change_24h > 0 ? '+' : ''}${coin.change_24h}%</td>
+                        <td class="py-4 px-6 text-right ${change7dClass}">${coin.change_7d > 0 ? '+' : ''}${coin.change_7d}%</td>
                         <td class="py-4 px-6 text-right">${formatNumber(coin.market_cap)}</td>
                         <td class="py-4 px-6 text-right">${formatNumber(coin.volume_24h)}</td>
                         <td class="py-4 px-6 text-right text-sm">${formatSupply(coin.circulating_supply, coin.symbol)}</td>
-                        <td class="py-4 px-6 text-center"><img src="https://www.coingecko.com/coins/${coin.id}/sparkline" class="sparkline-img mx-auto" loading="lazy"></td>
+                        <td class="py-4 px-6 text-center">
+                            <canvas class="sparkline-canvas mx-auto" data-prices='${JSON.stringify(coin.sparkline_prices)}'></canvas>
+                        </td>
                     `;
                     tbody.appendChild(row);
                 });
-            } catch (e) { console.error(e); }
+                renderSparklines();  // Re-render sparklines after update
+            } catch (e) {
+                console.error('Refresh failed:', e);
+            }
         }
-        function formatNumber(num) { if (!num) return "N/A"; if (num >= 1e12) return `$${(num/1e12).toFixed(2)}T`; if (num >= 1e9) return `$${(num/1e9).toFixed(2)}B`; if (num >= 1e6) return `$${(num/1e6).toFixed(2)}M`; return `$${(num).toFixed(2)}`; }
-        function formatSupply(num, symbol) { if (!num) return "N/A"; return `${num.toLocaleString()} ${symbol}`; }
+
+        function formatNumber(num) {
+            if (!num) return "N/A";
+            if (num >= 1e12) return `$${(num/1e12).toFixed(2)}T`;
+            if (num >= 1e9) return `$${(num/1e9).toFixed(2)}B`;
+            if (num >= 1e6) return `$${(num/1e6).toFixed(2)}M`;
+            return `$${(num).toFixed(2)}`;
+        }
+
+        function formatSupply(num, symbol) {
+            if (!num) return "N/A";
+            return `${num.toLocaleString()} ${symbol}`;
+        }
+
         setInterval(refreshData, 60000);
     </script>
 </body>
 </html>
 '''
-
-# NO if __name__ == '__main__' block here — Gunicorn handles it
 
 
