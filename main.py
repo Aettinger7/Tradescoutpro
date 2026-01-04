@@ -88,9 +88,10 @@ def index():
         <meta http-equiv="refresh" content="60">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/ethers@5.7/dist/ethers.umd.min.js"></script>
         <style>
-            body {{ font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; background: linear-gradient(to right, #000000, #0052FF); min-height: 100vh; }}
-            .light-mode {{ background: linear-gradient(to right, #f1f5f9, #e0e7ff) !important; }}
+            body {{ font-family: 'Inter', sans-serif; background: #000000; min-height: 100vh; margin: 0; overflow-x: hidden; }}
+            .light-mode {{ background: #f1f5f9 !important; }}
             .light-mode .bg-gray-900\\/90 {{ background: rgba(241,245,249,0.9) !important; }}
             .light-mode .text-white {{ color: #000000 !important; }}
             .light-mode .text-gray-400 {{ color: #64748b !important; }}
@@ -105,18 +106,15 @@ def index():
                         TradeScout Pro
                     </h1>
                 </div>
-                <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full md:w-auto">
+                <div class="flex items-center space-x-4 w-full md:w-auto">
                     <input type="text" id="searchInput" placeholder="Search cryptos..." 
                            class="px-5 py-3 rounded-full bg-gray-900/70 border border-gray-800 focus:border-[#0052FF] focus:outline-none text-white w-full">
                     <button id="themeToggle" class="p-2 rounded-full bg-gray-900 hover:bg-gray-800 transition text-xl">
                         🌙
                     </button>
-                    <a href="https://x.com/tradescoutpro" target="_blank" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg text-center">
-                        Follow on X
-                    </a>
-                    <a href="https://toshimart.xyz" target="_blank" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg text-center">
-                        ToshiMart Website
-                    </a>
+                    <button id="connectWallet" class="px-6 py-3 bg-[#0052FF] hover:bg-[#0066FF] rounded-full text-white font-bold transition shadow-lg">
+                        Connect Wallet
+                    </button>
                 </div>
             </header>
             
@@ -134,6 +132,7 @@ def index():
             </footer>
         </div>
         
+        <!-- Modal -->
         <div id="detailModal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50" onclick="closeModal()">
             <div class="bg-gray-900/95 backdrop-blur-xl rounded-3xl p-10 max-w-lg w-full mx-4 shadow-2xl border border-[#0052FF]/50" onclick="event.stopPropagation()">
                 <div class="flex items-center space-x-6 mb-6">
