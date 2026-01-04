@@ -4,49 +4,42 @@ import datetime
 
 app = Flask(__name__)
 
-CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu" # Keep your Pro key
+CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu" # Your Pro key
 
 def fetch_crypto_data():
-    url = "https://api.coingecko.com/api/v3/coins/markets"
-    params = {
-        "vs_currency": "usd",
-        "order": "market_cap_desc",
-        "per_page": 100,
-        "page": 1,
-        "price_change_percentage": "1h,24h,7d",
-        "sparkline": True,
-    }
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
+ url = "https://api.coingecko.com/api/v3/coins/markets"
+ params = {
+ "vs_currency": "usd",
+ "order": "market_cap_desc",
+ "per_page": 100,
+ "page": 1,
+ "price_change_percentage": "1h,24h,7d",
+ "sparkline": True,
+ }
+ headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
 
-    try:
-        response = requests.get(url, params=params, headers=headers, timeout=15)
-        response.raise_for_status()
-        data = response.json()
+ try:
+ response = requests.get(url, params=params, headers=headers, timeout=15)
+ response.raise_for_status()
+ data = response.json()
 
-        formatted_data = []
-        for rank, coin in enumerate(data, 1):
-            sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
-            formatted_data.append({
-                "rank": rank,
-                "id": coin["id"],
-                "name": coin["name"],
-                "symbol": coin["symbol"].upper(),
-                "logo": coin["image"],
-                "price": coin["current_price"] or 0,
-                "change_1h": round(coin.get("price_change_percentage_1h_in_currency") or 0, 2),
-                "change_24h": round(coin.get("price_change_percentage_24h_in_currency") or 0, 2),
-                "change_7d": round(coin.get("price_change_percentage_7d_in_currency") or 0, 2),
-                "market_cap": coin["market_cap"] or 0,
-                "volume_24h": coin["total_volume"] or 0,
-                "sparkline_prices": sparkline_prices,
-            })
-
-        last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-        return formatted_data, last_update
-
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return [], "Error"
+ formatted_data = []
+ for rank, coin in enumerate(data, 1):
+ sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
+ formatted_data.append({
+ "rank": rank,
+ "id": coin["id"],
+ "name": coin["name"],
+ "symbol": coin["symbol"].upper(),
+ "logo": coin["image"],
+ "price": coin["current_price"] or 0,
+ "change_1h": round(coin.get("price_change_percentage_1h_in_currency") or 0, 2),
+ "change_24h": round(coin.get("price_change_percentage_24h_in_currency") or 0, 2),
+ "change_7d": round(coin.get("price_change_percentage_7d_in_currency") or 0, 2),
+ "market_cap": coin["market_cap"] or 0,
+ "volume_24h": coin["total_volume"] or 0,
+ "sparkline_prices": sparkline_prices,
+ })
 
  last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
  return formatted_data, last_update
@@ -55,9 +48,9 @@ def fetch_crypto_data():
  print(f"Error fetching data: {e}")
  return [], "Error"
 
+# Temporary: use top 100 for trending too (we'll upgrade later)
 def fetch_trending_data():
- # We'll keep it simple and reuse top 100 for trending until we improve it
- return fetch_crypto_data() # Temporary - replace later if needed
+ return fetch_crypto_data()
 
 @app.route('/')
 def index():
@@ -107,7 +100,7 @@ HTML_TEMPLATE = '''
  <script>
  tailwind.config = {
  darkMode: 'class',
- theme: { extend: { fontFamily : { sans: ['Inter', 'sans-serif'] } }}
+ theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } }}
  }
  </script>
  <style>
@@ -121,8 +114,6 @@ HTML_TEMPLATE = '''
  .change-negative { color: #ff1744; }
  .navbar { background-color: #1976d2; }
  .search-input { max-width: 300px; }
- .table-hover tbody tr:hover { background-color: #f3f4f6; }
- .theme-dark .table-hover tbody tr:hover { background-color: #2d2d2d; }
  </style>
 </head>
 <body class="theme-dark">
@@ -153,13 +144,12 @@ HTML_TEMPLATE = '''
  <th>Last 7 Days</th>
  </tr>
  </thead>
- <tbody id="tableBody"></tbody> <!-- Added ID here -->
+ <tbody id="tableBody"></tbody>
  </table>
  </div>
- <p class="text-center text-muted mt-3">Last update: <span id="lastUpdate">{{ last_update }}</span> • Data refreshes every 60 seconds • Powered by CoinGecko API</p>
+ <p class="text-center text-muted mt-3">Last update: <span id="lastUpdate">{{ last_update }}</span> • Refreshes every 60s • Powered by CoinGecko</p>
  </div>
 
- <!-- Modal -->
  <div class="modal fade" id="chartModal" tabindex="-1">
  <div class="modal-dialog modal-lg">
  <div class="modal-content theme-dark">
@@ -192,9 +182,9 @@ HTML_TEMPLATE = '''
 
  async function loadCoins() {
  try {
- const endpoint = {{ '"/api/trending"' if is_trending else '"/api/data"' }};
+ const endpoint = {{ "/api/trending" if is_trending else "/api/data" }};
  const res = await fetch(endpoint);
- if (!res.ok) throw new Error('Fetch failed');
+ if (!res.ok) throw new Error("Network error");
  const json = await res.json();
  const data = json.data || [];
 
@@ -208,7 +198,7 @@ HTML_TEMPLATE = '''
 
  row.innerHTML = `
  <td>${coin.rank}</td>
- <td><img src="${coin.logo}" class="coin-logo rounded-circle" alt="${coin.name}"> ${coin.name} <small class="text-muted">${coin.symbol}</small></td>
+ <td><img src="${coin.logo}" class="coin-logo rounded-circle" alt=""> ${coin.name} <small class="text-muted">${coin.symbol}</small></td>
  <td>${formatNumber(coin.price)}</td>
  <td>${formatPercent(coin.change_1h)}</td>
  <td>${formatPercent(coin.change_24h)}</td>
@@ -220,14 +210,10 @@ HTML_TEMPLATE = '''
  tbody.appendChild(row);
  });
 
- // Render sparklines
  document.querySelectorAll('.sparkline').forEach(canvas => {
  let prices = [];
  try { prices = JSON.parse(canvas.dataset.prices); } catch(e) {}
- if (prices.length < 2) {
- canvas.parentElement.innerHTML = '<small>No data</small>';
- return;
- }
+ if (prices.length < 2) return;
  const isUp = prices[prices.length - 1] >= prices[0];
  new Chart(canvas, {
  type: 'line',
@@ -239,12 +225,12 @@ HTML_TEMPLATE = '''
  document.getElementById('lastUpdate').textContent = json.last_update || new Date().toUTCString();
  } catch (err) {
  console.error(err);
- document.querySelector('#tableBody').innerHTML = '<tr><td colspan="9" class="text-center text-danger">Error loading data. Check console.</td></tr>';
+ document.querySelector('#tableBody').innerHTML = '<tr><td colspan="9" class="text-center text-danger">Failed to load data</td></tr>';
  }
  }
 
  async function openModal(id, name, symbol) {
- document.getElementById('modalTitle').textContent = `${name} (${symbol}) Price Chart (30d)`;
+ document.getElementById('modalTitle').textContent = `${name} (${symbol}) — 30 Day Chart`;
  try {
  const res = await fetch(`/api/coin_chart/${id}`);
  const hist = await res.json();
@@ -254,40 +240,36 @@ HTML_TEMPLATE = '''
  if (detailChart) detailChart.destroy();
  detailChart = new Chart(document.getElementById('detailChart'), {
  type: 'line',
- data: { labels, datasets: [{ label: 'Price (USD)', data: prices, borderColor: '#1976d2', backgroundColor: 'rgba(25,118,210,0.1)', tension: 0.3, fill: true }] },
- options: { responsive: true, scales: { x: { ticks: { maxTicksLimit: 8 } } } }
+ data: { labels, datasets: [{ label: 'Price (USD)', data: prices, borderColor: '#1976d2', backgroundColor: 'rgba(25,118,210,0.1)', fill: true, tension: 0.3 }] },
+ options: { responsive: true }
  });
 
  new bootstrap.Modal(document.getElementById('chartModal')).show();
  } catch (err) {
- alert('Error loading chart');
+ alert('Could not load chart');
  }
  }
 
- // Search
- const searchInput = document.getElementById('searchInput');
- const tableRows = document.querySelectorAll('#coinsTable tbody tr');
- searchInput.addEventListener('input', () => {
- const term = searchInput.value .toLowerCase();
+ document.getElementById('searchInput').addEventListener('input', (e) => {
+ const term = e.target.value.toLowerCase();
  document.querySelectorAll('#coinsTable tbody tr').forEach(row => {
- const text = row.textContent.toLowerCase();
- row.style.display = text.includes(term) ? '' : 'none';
+ row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
  });
  });
 
- // Theme toggle
  document.getElementById('themeToggle').addEventListener('click', () => {
  document.body.classList.toggle('theme-dark');
- const icon = document.body.classList.contains('theme-dark') ? 'fa-moon' : 'fa-sun';
- document.querySelector('#themeToggle i').classList.replace('fa-moon', 'fa-sun');
- document.querySelector('#themeToggle i').classList.replace('fa-sun', 'fa-moon');
- document.querySelector('#themeToggle i').classList.toggle(icon);
+ const isDark = document.body.classList.contains('theme-dark');
+ document.querySelector('#themeToggle i').classList.toggle('fa-moon', isDark);
+ document.querySelector('#themeToggle i').classList.toggle('fa-sun', !isDark);
  });
 
- // Load on start + refresh
  loadCoins();
  setInterval(loadCoins, 60000);
  </script>
 </body>
 </html>
 '''
+
+if __name__ == '__main__':
+ app.run(debug=True)
