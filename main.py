@@ -1,10 +1,11 @@
 from flask import Flask, render_template_string, jsonify
 import requests
 import datetime
+import os
 
 app = Flask(__name__)
 
-CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"  # Your Pro key
+CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"  # Your key
 
 def format_number(num):
     if not num or num == 0:
@@ -59,7 +60,7 @@ def fetch_crypto_data():
         return formatted_data, last_update
 
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error fetching data: {e}")
         return [], datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
 
 @app.route('/')
@@ -99,7 +100,6 @@ HTML_TEMPLATE = '''
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-    <!-- Navigation -->
     <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
@@ -159,7 +159,7 @@ HTML_TEMPLATE = '''
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-6 text-right font-medium">${{ coin.price|float|format("%.2f") if coin.price else "0.00" }}</td>
+                            <td class="py-4 px-6 text-right font-medium">${{ '%.2f' % coin.price if coin.price else '0.00' }}</td>
                             <td class="py-4 px-6 text-right {% if coin.change_1h > 0 %}text-green-500{% elif coin.change_1h < 0 %}text-red-500{% endif %}">
                                 {% if coin.change_1h > 0 %}+{% endif %}{{ coin.change_1h }}%
                             </td>
@@ -173,7 +173,7 @@ HTML_TEMPLATE = '''
                             <td class="py-4 px-6 text-right">{{ format_number(coin.volume_24h) }}</td>
                             <td class="py-4 px-6 text-right text-sm">{{ format_supply(coin.circulating_supply, coin.symbol) }}</td>
                             <td class="py-4 px-6 text-center">
-                                <img src="https://www.coingecko.com/coins/{{ coin.id }}/sparkline" alt="{{ coin.name }} sparkline" class="sparkline-img mx-auto">
+                                <img src="https://www.coingecko.com/coins/{{ coin.id }}/sparkline" alt="{{ coin.name }} sparkline" class="sparkline-img mx-auto" loading="lazy">
                             </td>
                         </tr>
                         {% endfor %}
@@ -188,19 +188,14 @@ HTML_TEMPLATE = '''
     </footer>
 
     <script>
-        // Dark mode toggle
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
-        
-        // Load saved theme
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             html.classList.add('dark');
             themeToggle.innerHTML = '☀️';
         } else {
-            html.classList.remove('dark');
             themeToggle.innerHTML = '🌙';
         }
-
         themeToggle.addEventListener('click', () => {
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
@@ -213,81 +208,49 @@ HTML_TEMPLATE = '''
             }
         });
 
-        // Search
         const searchInput = document.getElementById('searchInput');
         const rows = document.querySelectorAll('#tableBody tr');
-
         searchInput.addEventListener('input', () => {
             const term = searchInput.value.toLowerCase();
             rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(term) ? '' : 'none';
+                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
             });
         });
 
-        // Auto-refresh data
         async function refreshData() {
             try {
                 const res = await fetch('/api/data');
                 const { data, last_update } = await res.json();
                 document.getElementById('lastUpdate').textContent = last_update;
-
                 const tbody = document.getElementById('tableBody');
                 tbody.innerHTML = '';
-
                 data.forEach(coin => {
-                    const change1hClass = coin.change_1h > 0 ? 'text-green-500' : coin.change_1h < 0 ? 'text-red-500' : '';
-                    const change24hClass = coin.change_24h > 0 ? 'text-green-500' : coin.change_24h < 0 ? 'text-red-500' : '';
-                    const change7dClass = coin.change_7d > 0 ? 'text-green-500' : coin.change_7d < 0 ? 'text-red-500' : '';
-
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors';
                     row.innerHTML = `
                         <td class="py-4 px-6 text-center text-gray-500 dark:text-gray-400">${coin.rank}</td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center space-x-3">
-                                <img src="${coin.logo}" class="w-8 h-8 rounded-full">
-                                <div>
-                                    <div class="font-medium">${coin.name}</div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400 uppercase">${coin.symbol}</div>
-                                </div>
-                            </div>
-                        </td>
+                        <td class="py-4 px-6"><div class="flex items-center space-x-3"><img src="${coin.logo}" class="w-8 h-8 rounded-full"><div><div class="font-medium">${coin.name}</div><div class="text-sm text-gray-500 dark:text-gray-400 uppercase">${coin.symbol}</div></div></div></td>
                         <td class="py-4 px-6 text-right font-medium">$${parseFloat(coin.price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 8})}</td>
-                        <td class="py-4 px-6 text-right ${change1hClass}">${coin.change_1h > 0 ? '+' : ''}${coin.change_1h}%</td>
-                        <td class="py-4 px-6 text-right ${change24hClass}">${coin.change_24h > 0 ? '+' : ''}${coin.change_24h}%</td>
-                        <td class="py-4 px-6 text-right ${change7dClass}">${coin.change_7d > 0 ? '+' : ''}${coin.change_7d}%</td>
+                        <td class="py-4 px-6 text-right ${coin.change_1h > 0 ? 'text-green-500' : coin.change_1h < 0 ? 'text-red-500' : ''}">${coin.change_1h > 0 ? '+' : ''}${coin.change_1h}%</td>
+                        <td class="py-4 px-6 text-right ${coin.change_24h > 0 ? 'text-green-500' : coin.change_24h < 0 ? 'text-red-500' : ''}">${coin.change_24h > 0 ? '+' : ''}${coin.change_24h}%</td>
+                        <td class="py-4 px-6 text-right ${coin.change_7d > 0 ? 'text-green-500' : coin.change_7d < 0 ? 'text-red-500' : ''}">${coin.change_7d > 0 ? '+' : ''}${coin.change_7d}%</td>
                         <td class="py-4 px-6 text-right">${formatNumber(coin.market_cap)}</td>
                         <td class="py-4 px-6 text-right">${formatNumber(coin.volume_24h)}</td>
                         <td class="py-4 px-6 text-right text-sm">${formatSupply(coin.circulating_supply, coin.symbol)}</td>
-                        <td class="py-4 px-6 text-center">
-                            <img src="https://www.coingecko.com/coins/${coin.id}/sparkline" class="sparkline-img mx-auto">
-                        </td>
+                        <td class="py-4 px-6 text-center"><img src="https://www.coingecko.com/coins/${coin.id}/sparkline" class="sparkline-img mx-auto" loading="lazy"></td>
                     `;
                     tbody.appendChild(row);
                 });
-            } catch (e) {
-                console.error('Refresh failed:', e);
-            }
+            } catch (e) { console.error(e); }
         }
-
-        function formatNumber(num) {
-            if (!num) return "N/A";
-            if (num >= 1e12) return `$${(num/1e12).toFixed(2)}T`;
-            if (num >= 1e9) return `$${(num/1e9).toFixed(2)}B`;
-            if (num >= 1e6) return `$${(num/1e6).toFixed(2)}M`;
-            return `$${(num).toFixed(2)}`;
-        }
-
-        function formatSupply(num, symbol) {
-            if (!num) return "N/A";
-            return `${num.toLocaleString()} ${symbol}`;
-        }
-
+        function formatNumber(num) { if (!num) return "N/A"; if (num >= 1e12) return `$${(num/1e12).toFixed(2)}T`; if (num >= 1e9) return `$${(num/1e9).toFixed(2)}B`; if (num >= 1e6) return `$${(num/1e6).toFixed(2)}M`; return `$${(num).toFixed(2)}`; }
+        function formatSupply(num, symbol) { if (!num) return "N/A"; return `${num.toLocaleString()} ${symbol}`; }
         setInterval(refreshData, 60000);
     </script>
 </body>
 </html>
 '''
+
+# NO if __name__ == '__main__' block here — Gunicorn handles it
 
 
