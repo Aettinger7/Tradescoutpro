@@ -1,17 +1,11 @@
-from flask import Flask, render_template_string, jsonify
+from flask import Flask, render_template_string
 import requests
-import datetime
 
 app = Flask(__name__)
 
-CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"
-
 def get_global_metrics():
-    url = "https://api.coingecko.com/api/v3/global"
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
     try:
-        res = requests.get(url, headers=headers, timeout=15)
-        res.raise_for_status()
+        res = requests.get("https://api.coingecko.com/api/v3/global")
         data = res.json()['data']
         total_cap = data['total_market_cap']['usd']
         btc_dom = round(data['market_cap_percentage']['btc'], 1)
@@ -36,19 +30,18 @@ def fetch_crypto_data():
         "order": "market_cap_desc",
         "per_page": 100,
         "page": 1,
-        "price_change_percentage": "1h,24h,7d",
         "sparkline": True,
+        "price_change_percentage": "1h,24h,7d",
     }
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=15)
+        response = requests.get(url, params=params, timeout=15)
         response.raise_for_status()
         data = response.json()
         formatted = []
         for rank, coin in enumerate(data, 1):
+            sparkline = coin.get("sparkline_in_7d", {}).get("price", [])
             formatted.append({
                 "rank": rank,
-                "id": coin["id"],
                 "name": coin["name"],
                 "symbol": coin["symbol"].upper(),
                 "logo": coin["image"],
@@ -58,34 +51,31 @@ def fetch_crypto_data():
                 "change_7d": round(coin.get("price_change_percentage_7d_in_currency") or 0, 2),
                 "market_cap": coin["market_cap"] or 0,
                 "volume_24h": coin["total_volume"] or 0,
-                "sparkline_prices": coin.get("sparkline_in_7d", {}).get("price", []),
+                "sparkline_prices": sparkline,
             })
         return formatted
     except:
         return []
 
 @app.route('/')
-@app.route('/trending')
-def main():
+def index():
     metrics = get_global_metrics()
     data = fetch_crypto_data()
-    last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-    title = "Top 100 Cryptocurrencies" if request.path == '/' else "Trending Coins"
-    return render_template_string(HTML_TEMPLATE, data=data, last_update=last_update, metrics=metrics, title=title)
+    return render_template_string(HTML_TEMPLATE, data=data, metrics=metrics)
 
 application = app
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeScout Pro - {{ title }}</title>
+    <title>TradeScout Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; }
+        body { background: #000; color: #fff; }
         .header { background: #0066ff; }
         .card { background: #111; border-radius: 1rem; padding: 1.5rem; text-align: center; }
         .hover-row:hover { background: #222; }
@@ -96,15 +86,11 @@ HTML_TEMPLATE = """
 </head>
 <body>
     <header class="header text-white py-6 px-8 flex justify-between items-center">
-        <a href="/" class="text-4xl font-bold flex items-center gap-4">
+        <div class="text-4xl font-bold flex items-center gap-4">
             <img src="https://i.ibb.co/sJjcKmPs/ttn41attn41attn4.png" alt="Logo" class="w-12 h-12">
             TradeScout Pro
-        </a>
-        <div class="flex items-center gap-8">
-            <a href="/" class="hover:underline">Top 100</a>
-            <a href="/trending" class="hover:underline">Trending</a>
-            <input type="text" class="px-6 py-3 rounded-full bg-black/50 text-white" placeholder="Search...">
         </div>
+        <input type="text" class="px-6 py-3 rounded-full bg-black/50 text-white" placeholder="Search crypto...">
     </header>
 
     <div class="container mx-auto px-6 py-8">
@@ -129,7 +115,7 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <div class="overflow-x-auto bg-gray-900/50 rounded-2xl">
+        <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gray-800 text-gray-300 text-sm uppercase">
                     <tr>
@@ -157,30 +143,30 @@ HTML_TEMPLATE = """
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-right font-bold">${{ coin.price | float | format('%.2f') if coin.price else '0' }}</td>
+                        <td class="px-6 py-4 text-right font-bold">${{ "{:.2f}".format(coin.price) }}</td>
                         <td class="px-6 py-4 text-right">
                             {% if coin.change_1h > 0 %}
-                            <span class="text-green">+{{ coin.change_1h }}%</span>
+                            <span class="text-green">+{{ "{:.2f}".format(coin.change_1h) }}%</span>
                             {% elif coin.change_1h < 0 %}
-                            <span class="text-red">{{ coin.change_1h }}%</span>
+                            <span class="text-red">{{ "{:.2f}".format(coin.change_1h) }}%</span>
                             {% else %}
                             -
                             {% endif %}
                         </td>
                         <td class="px-6 py-4 text-right">
                             {% if coin.change_24h > 0 %}
-                            <span class="text-green">+{{ coin.change_24h }}%</span>
+                            <span class="text-green">+{{ "{:.2f}".format(coin.change_24h) }}%</span>
                             {% elif coin.change_24h < 0 %}
-                            <span class="text-red">{{ coin.change_24h }}%</span>
+                            <span class="text-red">{{ "{:.2f}".format(coin.change_24h) }}%</span>
                             {% else %}
                             -
                             {% endif %}
                         </td>
                         <td class="px-6 py-4 text-right">
                             {% if coin.change_7d > 0 %}
-                            <span class="text-green">+{{ coin.change_7d }}%</span>
+                            <span class="text-green">+{{ "{:.2f}".format(coin.change_7d) }}%</span>
                             {% elif coin.change_7d < 0 %}
-                            <span class="text-red">{{ coin.change_7d }}%</span>
+                            <span class="text-red">{{ "{:.2f}".format(coin.change_7d) }}%</span>
                             {% else %}
                             -
                             {% endif %}
@@ -188,7 +174,7 @@ HTML_TEMPLATE = """
                         <td class="px-6 py-4 text-right text-gray-400">${{ "{:,.0f}".format(coin.market_cap) }}</td>
                         <td class="px-6 py-4 text-right text-gray-400">${{ "{:,.0f}".format(coin.volume_24h) }}</td>
                         <td class="px-6 py-4 text-center">
-                            <canvas class="sparkline" data-prices="{{ coin.sparkline_prices | tojson }}"></canvas>
+                            <canvas class="sparkline" data-prices="{{ coin.sparkline_prices }}"></canvas>
                         </td>
                     </tr>
                     {% endfor %}
@@ -205,7 +191,7 @@ HTML_TEMPLATE = """
             new Chart(canvas, {
                 type: 'line',
                 data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2 }] },
-                options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+                options: { responsive: true, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
             });
         });
     </script>
