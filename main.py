@@ -1,382 +1,580 @@
-from flask import Flask, render_template_string, jsonify, request
+from flask import Flask, render_template_string
 import requests
 import datetime
-import json
+import time
+import json  # for safe JSON in JS
 
 app = Flask(__name__)
 
-CG_API_KEY = "CG-AmnUtrzxMeYvcPeRsWejUaHu"
+HEADERS = {
+    "accept": "application/json",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+}
+
+# Caching globals
+CACHE_SECONDS = 60
+last_fetch_time = 0
+cached_coins = []
+cached_metrics = {}
 
 def get_global_metrics():
-    url = "https://api.coingecko.com/api/v3/global"
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
+    global cached_metrics, last_fetch_time
+    if time.time() - last_fetch_time < CACHE_SECONDS and cached_metrics:
+        return cached_metrics
     try:
-        res = requests.get(url, headers=headers, timeout=15)
+        res = requests.get("https://api.coingecko.com/api/v3/global", headers=HEADERS, timeout=15)
         res.raise_for_status()
         data = res.json()['data']
         total_cap = data['total_market_cap']['usd']
         btc_dom = round(data['market_cap_percentage']['btc'], 1)
-        return {
+
+        # Fear & Greed
+        fg_res = requests.get("https://api.alternative.me/fng/?limit=1", headers=HEADERS, timeout=10)
+        fg_res.raise_for_status()
+        fg_data = fg_res.json()['data'][0]
+        fear_greed = int(fg_data['value'])
+
+        # Altcoin Season Index
+        alt_res = requests.get("https://api.blockchaincenter.net/v1/altcoin-season-index", headers=HEADERS, timeout=10)
+        alt_res.raise_for_status()
+        alt_season = alt_res.json()['index']
+
+        metrics = {
             "total_market_cap": total_cap,
             "btc_dominance": btc_dom,
-            "fear_greed": 26,  # Current from feargreedmeter.com
-            "alt_season": 22,  # Current from CoinNess
+            "fear_greed": fear_greed,
+            "alt_season": alt_season,
         }
+        cached_metrics = metrics
+        last_fetch_time = time.time()
+        return metrics
     except Exception as e:
-        print(f"Metrics error: {e}")
+        print("Global metrics error:", e)
         return {
-            "total_market_cap": 3120000000000,
-            "btc_dominance": 58.4,
+            "total_market_cap": 3270220197008,
+            "btc_dominance": 57.2,
             "fear_greed": 26,
-            "alt_season": 22,
+            "alt_season": 39,
         }
 
 def fetch_crypto_data():
+    global cached_coins, last_fetch_time
+    if time.time() - last_fetch_time < CACHE_SECONDS and cached_coins:
+        return cached_coins
     url = "https://api.coingecko.com/api/v3/coins/markets"
     params = {
         "vs_currency": "usd",
         "order": "market_cap_desc",
-        "per_page": 100,
+        "per_page": 250,  # Load more for search/trending
         "page": 1,
         "price_change_percentage": "1h,24h,7d",
         "sparkline": True,
     }
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
-    try:
-        response = requests.get(url, params=params, headers=headers, timeout=15)
-        response.raise_for_status()
-        data = response.json()
-        formatted_data = []
-        for rank, coin in enumerate(data, 1):
-            sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
-            formatted_data.append({
-                "rank": rank,
-                "id": coin["id"],
-                "name": coin["name"],
-                "symbol": coin["symbol"].upper(),
-                "logo": coin["image"],
-                "price": coin["current_price"] or 0,
-                "change_1h": round(coin.get("price_change_percentage_1h_in_currency") or 0, 2),
-                "change_24h": round(coin.get("price_change_percentage_24h_in_currency") or 0, 2),
-                "change_7d": round(coin.get("price_change_percentage_7d_in_currency") or 0, 2),
-                "market_cap": coin["market_cap"] or 0,
-                "volume_24h": coin["total_volume"] or 0,
-                "sparkline_prices": sparkline_prices,
-            })
-        return formatted_data
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return []
-
-def fetch_trending_data():
-    try:
-        trending_url = "https://api.coingecko.com/api/v3/search/trending"
-        headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
-        trending_res = requests.get(trending_url, headers=headers, timeout=15)
-        trending_res.raise_for_status()
-        trending_json = trending_res.json()
-        trending_items = trending_json.get('coins', [])
-        ids = [item['item']['id'] for item in trending_items]
-
-        if len(ids) < 25:
-            top_gainers_url = "https://api.coingecko.com/api/v3/coins/markets"
-            top_gainers_params = {
-                "vs_currency": "usd",
-                "order": "price_change_percentage_24h_desc",
-                "per_page": 25 - len(ids),
-                "page": 1,
-                "sparkline": True,
-                "price_change_percentage": "1h,24h,7d",
-            }
-            top_gainers_res = requests.get(top_gainers_url, params=top_gainers_params, headers=headers, timeout=15)
-            top_gainers_res.raise_for_status()
-            top_gainers = top_gainers_res.json()
-            ids.extend([coin['id'] for coin in top_gainers if coin['id'] not in ids])
-
-        if ids:
-            markets_url = "https://api.coingecko.com/api/v3/coins/markets"
-            markets_params = {
-                "vs_currency": "usd",
-                "ids": ','.join(ids),
-                "order": "market_cap_desc",
-                "per_page": 50,
-                "page": 1,
-                "sparkline": True,
-                "price_change_percentage": "1h,24h,7d",
-            }
-            markets_res = requests.get(markets_url, params=markets_params, headers=headers, timeout=15)
-            markets_res.raise_for_status()
-            full_data = markets_res.json()
-
-            order_map = {item['item']['id']: idx for idx, item in enumerate(trending_items)}
-            full_data.sort(key=lambda c: order_map.get(c['id'], 999))
-
-            formatted_data = []
-            for rank, coin in enumerate(full_data[:25], 1):
-                sparkline_prices = coin.get("sparkline_in_7d", {}).get("price", [])
-                formatted_data.append({
+    for attempt in range(5):
+        try:
+            response = requests.get(url, params=params, headers=HEADERS, timeout=15)
+            if response.status_code == 429:
+                time.sleep(2 ** attempt + 1)  # Exponential backoff
+                continue
+            response.raise_for_status()
+            data = response.json()
+            formatted = []
+            for rank, coin in enumerate(data, 1):
+                sparkline = coin.get("sparkline_in_7d", {}).get("price", [])
+                if not sparkline: continue  # Skip if no sparkline
+                formatted.append({
                     "rank": rank,
-                    "id": coin["id"],
                     "name": coin["name"],
                     "symbol": coin["symbol"].upper(),
                     "logo": coin["image"],
-                    "price": coin["current_price"] or 0,
-                    "change_1h": round(coin.get("price_change_percentage_1h_in_currency") or 0, 2),
-                    "change_24h": round(coin.get("price_change_percentage_24h_in_currency") or 0, 2),
-                    "change_7d": round(coin.get("price_change_percentage_7d_in_currency") or 0, 2),
-                    "market_cap": coin["market_cap"] or 0,
-                    "volume_24h": coin["total_volume"] or 0,
-                    "sparkline_prices": sparkline_prices,
+                    "price": float(coin["current_price"] or 0),
+                    "change_1h": round(float(coin.get("price_change_percentage_1h_in_currency") or 0), 2),
+                    "change_24h": round(float(coin.get("price_change_percentage_24h_in_currency") or 0), 2),
+                    "change_7d": round(float(coin.get("price_change_percentage_7d_in_currency") or 0), 2),
+                    "market_cap": int(coin["market_cap"] or 0),
+                    "volume_24h": int(coin["total_volume"] or 0),
+                    "sparkline_prices": sparkline,
                 })
-            return formatted_data
-    except Exception as e:
-        print(f"Trending error: {e}")
-        return fetch_crypto_data()
+            cached_coins = formatted
+            last_fetch_time = time.time()
+            return formatted
+        except Exception as e:
+            print("Data fetch error (attempt {}): {}".format(attempt + 1, e))
+            if attempt < 4:
+                time.sleep(5)
+    return []  # Final fallback
 
 @app.route('/')
 def index():
     metrics = get_global_metrics()
-    data = fetch_crypto_data()
+    data = fetch_crypto_data()[:100]  # Top 100 for main
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-    return render_template_string(HTML_TEMPLATE, data=data, last_update=last_update, metrics=metrics, title="Top 100 Cryptocurrencies", page="top")
+    return render_template_string(HTML_TEMPLATE, data=data, last_update=last_update, metrics=metrics)
 
 @app.route('/trending')
 def trending():
     metrics = get_global_metrics()
-    data = fetch_trending_data()
+    all_data = fetch_crypto_data()
+    # Sort by 24h change desc, positive only, top 25
+    trending_data = sorted([coin for coin in all_data if coin['change_24h'] > 0], key=lambda x: x['change_24h'], reverse=True)[:25]
+    # Re-rank them
+    for i, coin in enumerate(trending_data, 1):
+        coin['rank'] = i
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-    return render_template_string(HTML_TEMPLATE, data=data, last_update=last_update, metrics=metrics, title="Top 25 Trending Coins", page="trending")
-
-@app.route('/api/coin_ohlc/<id>')
-def coin_ohlc(id):
-    url = f"https://api.coingecko.com/api/v3/coins/{id}/ohlc"
-    params = {"vs_currency": "usd", "days": "30"}
-    headers = {"x-cg-demo-api-key": CG_API_KEY} if CG_API_KEY else {}
-    try:
-        response = requests.get(url, params=params, headers=headers, timeout=15)
-        response.raise_for_status()
-        return jsonify(response.json())
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return render_template_string(TRENDING_TEMPLATE, data=trending_data, last_update=last_update, metrics=metrics)
 
 application = app
 
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeScout Pro — {{ title }}</title>
+    <title>TradeScout Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
     <style>
-        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s; }
-        .logo-font { font-family: 'Orbitron', sans-serif; }
-        .text-green { color: #00ff99; }
-        .text-red { color: #ff4444; }
-        .hover-row:hover { background-color: #111 !important; }
+        .hover-row:hover { background-color: #333; cursor: pointer; } /* dark */
+        .light .hover-row:hover { background-color: #eee; }
         .sparkline { height: 60px; width: 140px; }
-        .navbar-blue { background-color: #0066ff; transition: background 0.3s; }
-        .active-link { color: #00ff99; border-bottom: 3px solid #00ff99; padding-bottom: 4px; }
-        [data-theme="light"] { background-color: #f8f9fa; color: #000; }
-        [data-theme="light"] .navbar-blue { background-color: #005edc; }
-        [data-theme="light"] .hover-row:hover { background-color: #e9ecef !important; }
-        [data-theme="light"] .text-green { color: #00aa66; }
-        [data-theme="light"] .text-red { color: #cc3333; }
-        [data-theme="light"] .bg-gray-900 { background-color: #fff; }
-        [data-theme="light"] .bg-gray-800 { background-color: #e5e7eb; }
+        .modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
+        .modal-content { background-color: #222; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 1rem; color: #fff; }
+        .light .modal-content { background-color: #fff; color: #000; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close:hover { color: #fff; text-decoration: none; cursor: pointer; }
+        .light .close:hover { color: #000; }
     </style>
 </head>
-<body class="min-h-screen">
-    <nav class="navbar-blue text-white py-5 px-8 flex justify-between items-center sticky top-0 z-50 shadow-xl">
-        <a href="/" class="text-4xl font-bold logo-font flex items-center gap-4">
-            <img src="https://i.ibb.co/sJjcKmPs/ttn41attn41attn4.png" alt="Logo" class="w-12 h-12 rounded-lg">
-            TradeScout Pro
+<body class="bg-black text-white dark:bg-black dark:text-white light:bg-white light:text-black transition-colors duration-300">
+    <header class="bg-blue-600 text-white py-6 px-8 flex justify-between items-center light:bg-blue-500 light:text-black">
+        <a href="/" class="flex items-center gap-4">
+            <img src="https://i.ibb.co/sJjcKmPs/ttn41attn41attn4.png" alt="Logo" class="w-12 h-12">
+            <div class="text-4xl font-bold">TradeScout Pro</div>
         </a>
-        <div class="flex items-center gap-10 text-lg">
-            <a href="/" class="hover:text-cyan-300 {% if page == 'top' %}active-link{% endif %}">Top 100</a>
-            <a href="/trending" class="hover:text-cyan-300 {% if page == 'trending' %}active-link{% endif %}">Trending</a>
-            <div class="relative">
-                <input type="text" id="searchInput" class="px-6 py-3 rounded-full bg-black/50 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:border-cyan-400 w-96" placeholder="Search any crypto...">
-                <div id="searchDropdown" class="absolute hidden bg-gray-900 border border-gray-700 rounded-lg shadow-xl mt-2 w-full z-50">
-                    <div id="searchResults" class="max-h-96 overflow-y-auto"></div>
+        <div class="flex items-center gap-4">
+            <a href="/trending" class="px-4 py-2 rounded hover:bg-blue-700 light:hover:bg-blue-400">Trending</a>
+            <input id="search-input" type="text" class="px-6 py-3 rounded-full bg-gray-800 text-white light:bg-gray-200 light:text-black" placeholder="Search crypto...">
+            <button id="toggle-theme" class="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 light:bg-gray-300 light:hover:bg-gray-200 light:text-black">Toggle Theme</button>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="card bg-gray-900 p-6 rounded-xl light:bg-gray-100">
+                <p class="text-gray-400 light:text-gray-600">Total Market Cap</p>
+                <p class="text-3xl font-bold">${{ "{:,.2f}".format(metrics.total_market_cap / 1e12) }}T</p>
+                <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5 light:bg-gray-300">
+                    <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ (metrics.total_market_cap / 5e12 * 100) | min(100) }}%"></div>
                 </div>
             </div>
-            <button id="themeToggle" class="text-3xl">🌙</button>
-        </div>
-    </nav>
-
-    <div class="container mx-auto px-6 py-10 max-w-7xl">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div class="bg-gray-800 rounded-xl p-6 text-center shadow-lg">
-                <p class="text-gray-400 text-sm mb-2">Total Market Cap</p>
-                <p class="text-3xl font-bold">${{ "{:,.0f}".format(metrics.total_market_cap / 1e12) }}T</p>
-            </div>
-            <div class="bg-gray-800 rounded-xl p-6 text-center shadow-lg">
-                <p class="text-gray-400 text-sm mb-2">Fear & Greed Index</p>
+            <div class="card bg-gray-900 p-6 rounded-xl light:bg-gray-100">
+                <p class="text-gray-400 light:text-gray-600">Fear & Greed</p>
                 <p class="text-4xl font-bold">{{ metrics.fear_greed }}</p>
-                <p class="text-sm text-gray-400">Fear</p>
+                <p class="text-gray-400 light:text-gray-600">Fear</p>
+                {% set fg_color = 'bg-red-500' if metrics.fear_greed < 25 else 'bg-orange-500' if metrics.fear_greed < 50 else 'bg-yellow-500' if metrics.fear_greed < 51 else 'bg-green-500' if metrics.fear_greed < 76 else 'bg-lime-500' %}
+                <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5 light:bg-gray-300">
+                    <div class="{{ fg_color }} h-1.5 rounded-full" style="width: {{ metrics.fear_greed }}%"></div>
+                </div>
             </div>
-            <div class="bg-gray-800 rounded-xl p-6 text-center shadow-lg">
-                <p class="text-gray-400 text-sm mb-2">Altcoin Season Index</p>
+            <div class="card bg-gray-900 p-6 rounded-xl light:bg-gray-100">
+                <p class="text-gray-400 light:text-gray-600">Altcoin Season</p>
                 <p class="text-3xl font-bold">{{ metrics.alt_season }}/100</p>
-                <p class="text-sm text-gray-400">Bitcoin Season</p>
+                <p class="text-gray-400 light:text-gray-600">Bitcoin Season</p>
+                {% set alt_color = 'bg-red-500' if metrics.alt_season < 25 else 'bg-orange-500' if metrics.alt_season < 50 else 'bg-yellow-500' if metrics.alt_season == 50 else 'bg-green-500' if metrics.alt_season < 76 else 'bg-lime-500' %}
+                <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5 light:bg-gray-300">
+                    <div class="{{ alt_color }} h-1.5 rounded-full" style="width: {{ metrics.alt_season }}%"></div>
+                </div>
             </div>
-            <div class="bg-gray-800 rounded-xl p-6 text-center shadow-lg">
-                <p class="text-gray-400 text-sm mb-2">BTC Dominance</p>
+            <div class="card bg-gray-900 p-6 rounded-xl light:bg-gray-100">
+                <p class="text-gray-400 light:text-gray-600">BTC Dominance</p>
                 <p class="text-3xl font-bold">{{ metrics.btc_dominance }}%</p>
+                <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5 light:bg-gray-300">
+                    <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ metrics.btc_dominance }}%"></div>
+                </div>
             </div>
         </div>
 
-        <div class="overflow-x-auto rounded-2xl shadow-2xl bg-gray-900/50">
+        <div class="overflow-x-auto rounded-2xl bg-gray-800 light:bg-gray-200">
             <table class="w-full text-left">
-                <thead class="bg-gray-800/80 text-gray-300 uppercase text-sm">
+                <thead class="bg-gray-700 text-gray-300 text-sm uppercase light:bg-gray-300 light:text-gray-700">
                     <tr>
-                        <th class="px-6 py-5">#</th>
-                        <th class="px-6 py-5">Name</th>
-                        <th class="px-6 py-5 text-right">Price</th>
-                        <th class="px-6 py-5 text-right">1h %</th>
-                        <th class="px-6 py-5 text-right">24h %</th>
-                        <th class="px-6 py-5 text-right">7d %</th>
-                        <th class="px-6 py-5 text-right">24h Volume</th>
-                        <th class="px-6 py-5 text-right">Market Cap</th>
-                        <th class="px-6 py-5 text-center">Last 7 Days</th>
+                        <th class="px-6 py-4">#</th>
+                        <th class="px-6 py-4">Name</th>
+                        <th class="px-6 py-4 text-right">Price</th>
+                        <th class="px-6 py-4 text-right">1h %</th>
+                        <th class="px-6 py-4 text-right">24h %</th>
+                        <th class="px-6 py-4 text-right">7d %</th>
+                        <th class="px-6 py-4 text-right">Market Cap</th>
+                        <th class="px-6 py-4 text-right">Volume(24h)</th>
+                        <th class="px-6 py-4 text-center">Last 7 Days</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody" class="divide-y divide-gray-800"></tbody>
+                <tbody id="crypto-table">
+                    {% if data %}
+                    {% for coin in data %}
+                    <tr class="hover-row border-b border-gray-700 light:border-gray-300" data-coin='{{ coin | tojson }}'>
+                        <td class="px-6 py-4 text-gray-400 light:text-gray-600">{{ coin.rank }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-4">
+                                <img src="{{ coin.logo }}" class="w-10 h-10 rounded-full">
+                                <div>
+                                    <div class="font-bold">{{ coin.name }}</div>
+                                    <div class="text-gray-500 light:text-gray-400">{{ coin.symbol }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-right font-bold">${{ "{:.2f}".format(coin.price) }}</td>
+                        <td class="px-6 py-4 text-right {% if coin.change_1h > 0 %}text-green-500{% elif coin.change_1h < 0 %}text-red-500{% endif %}">
+                            {% if coin.change_1h > 0 %}+{{ coin.change_1h }}%{% elif coin.change_1h < 0 %}{{ coin.change_1h }}%{% else %}-{% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right {% if coin.change_24h > 0 %}text-green-500{% elif coin.change_24h < 0 %}text-red-500{% endif %}">
+                            {% if coin.change_24h > 0 %}+{{ coin.change_24h }}%{% elif coin.change_24h < 0 %}{{ coin.change_24h }}%{% else %}-{% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right {% if coin.change_7d > 0 %}text-green-500{% elif coin.change_7d < 0 %}text-red-500{% endif %}">
+                            {% if coin.change_7d > 0 %}+{{ coin.change_7d }}%{% elif coin.change_7d < 0 %}{{ coin.change_7d }}%{% else %}-{% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right text-gray-400 light:text-gray-600">${{ "{:,.0f}".format(coin.market_cap) }}</td>
+                        <td class="px-6 py-4 text-right text-gray-400 light:text-gray-600">${{ "{:,.0f}".format(coin.volume_24h) }}</td>
+                        <td class="px-6 py-4 text-center">
+                            <canvas class="sparkline" data-prices='{{ coin.sparkline_prices | tojson }}'></canvas>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="px-6 py-4 text-center text-red-500">Failed to load data. Try refreshing.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
             </table>
         </div>
-        
-        <p class="text-center text-gray-500 mt-8 text-sm">Last update: <span id="lastUpdate">{{ last_update }}</span> • Auto-refreshes every 60s • Powered by CoinGecko</p>
+
+        <p class="text-center text-gray-500 mt-8 light:text-gray-400">Last update: {{ last_update }} • Powered by CoinGecko</p>
     </div>
 
     <!-- Modal -->
-    <div class="fixed inset-0 hidden items-center justify-center bg-black/80 z-50" id="modal">
-        <div class="bg-gray-900 rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <span class="close" onclick="document.getElementById('modal').classList.add('hidden')">&times;</span>
-            <div id="modal-body"></div>
+    <div id="coin-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-name" class="text-2xl font-bold"></h2>
+            <p id="modal-symbol"></p>
+            <p id="modal-price"></p>
+            <p id="modal-change-24h"></p>
+            <p id="modal-market-cap"></p>
+            <!-- Add more details as needed -->
         </div>
     </div>
 
     <script>
-        let detailChart = null;
-
-        async function loadCoins() {
-            try {
-                const endpoint = window.location.pathname === '/trending' ? '/api/trending' : '/api/data';
-                const res = await fetch(endpoint);
-                const json = await res.json();
-                const data = json.data || [];
-
-                const tbody = document.getElementById('tableBody');
-                tbody.innerHTML = '';
-
-                data.forEach(coin => {
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover-row cursor-pointer';
-                    tr.onclick = () => openModal(coin.id);
-
-                    const pricesJson = JSON.stringify(coin.sparkline_prices || []);
-
-                    tr.innerHTML = `
-                        <td class="px-6 py-5 text-gray-400">${coin.rank}</td>
-                        <td class="px-6 py-5">
-                            <div class="flex items-center gap-4">
-                                <img src="${coin.logo}" class="w-10 h-10 rounded-full">
-                                <div>
-                                    <div class="font-bold text-lg">${coin.name}</div>
-                                    <div class="text-gray-500">${coin.symbol}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-5 text-right font-bold text-xl">${formatNumber(coin.price)}</td>
-                        <td class="px-6 py-5 text-right">${formatPercent(coin.change_1h)}</td>
-                        <td class="px-6 py-5 text-right">${formatPercent(coin.change_24h)}</td>
-                        <td class="px-6 py-5 text-right">${formatPercent(coin.change_7d)}</td>
-                        <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.volume_24h)}</td>
-                        <td class="px-6 py-5 text-right text-gray-400">${formatNumber(coin.market_cap)}</td>
-                        <td class="px-6 py-5 text-center"><canvas class="sparkline" data-prices='${pricesJson}'></canvas></td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-
-                document.querySelectorAll('.sparkline').forEach(canvas => {
-                    let prices = [];
-                    try { prices = JSON.parse(canvas.dataset.prices); } catch(e) {}
-                    if (prices.length < 2) return;
-                    const up = prices[prices.length - 1] >= prices[0];
-                    new Chart(canvas, {
-                        type: 'line',
-                        data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, fill: false, borderWidth: 2.5 }] },
-                        options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
-                    });
-                });
-
-                document.getElementById('lastUpdate').textContent = json.last_update;
-            } catch (e) {
-                console.error(e);
-                document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="text-center text-red-500">Failed to load data. Try refreshing.</td></tr>';
+        // Theme toggle
+        const html = document.documentElement;
+        const toggleBtn = document.getElementById('toggle-theme');
+        if (localStorage.theme === 'light') {
+            html.classList.remove('dark');
+            html.classList.add('light');
+            toggleBtn.textContent = 'Dark Mode';
+        } else {
+            html.classList.add('dark');
+            html.classList.remove('light');
+            toggleBtn.textContent = 'Light Mode';
+        }
+        toggleBtn.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                localStorage.theme = 'light';
+                toggleBtn.textContent = 'Dark Mode';
+            } else {
+                html.classList.add('dark');
+                html.classList.remove('light');
+                localStorage.theme = 'dark';
+                toggleBtn.textContent = 'Light Mode';
             }
-        }
-
-        function openModal(id) {
-            document.getElementById('modal').classList.remove('hidden');
-            const modalBody = document.getElementById('modal-body');
-            modalBody.innerHTML = '<p>Loading...</p>';
-            fetch(`/api/coin/${id}`)
-                .then(res => res.json())
-                .then(json => {
-                    const detail = json.detail;
-                    const chart = json.chart;
-                    modalBody.innerHTML = `
-                        <h2>${detail.name} (${detail.symbol.toUpperCase()})</h2>
-                        <p>Price: $${detail.market_data.current_price.usd.toLocaleString()}</p>
-                        <p>Market Cap: $${detail.market_data.market_cap.usd.toLocaleString()}</p>
-                        <p>24h Volume: $${detail.market_data.total_volume.usd.toLocaleString()}</p>
-                        <canvas id="modal-chart"></canvas>
-                    `;
-                    const labels = chart.map(p => new Date(p[0]).toLocaleDateString());
-                    const prices = chart.map(p => p[1]);
-                    new Chart(document.getElementById('modal-chart'), {
-                        type: 'line',
-                        data: { labels, datasets: [{ label: 'Price (USD)', data: prices, borderColor: '#0066ff', tension: 0.3 }] },
-                        options: { responsive: true }
-                    });
-                });
-        }
-
-        function formatNumber(num) {
-            if (!num) return '$0';
-            if (num >= 1e9) return '$' + (num / 1e9).toFixed(2) + 'B';
-            if (num >= 1e6) return '$' + (num / 1e6).toFixed(2) + 'M';
-            return '$' + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6});
-        }
-
-        function formatPercent(pct) {
-            if (pct === null || pct === undefined || pct === 0) return '-';
-            const cls = pct >= 0 ? 'text-green' : 'text-red';
-            return `<span class="${cls}">${pct > 0 ? '+' : ''}${pct.toFixed(2)}%</span>`;
-        }
-
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-            document.getElementById('themeToggle').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '🌙' : '☀️';
         });
 
-        loadCoins();
-        setInterval(loadCoins, 60000);
+        // Sparklines
+        document.querySelectorAll('.sparkline').forEach(canvas => {
+            const prices = JSON.parse(canvas.dataset.prices || '[]');
+            if (prices.length < 2) return;
+            const up = prices[prices.length - 1] >= prices[0];
+            new Chart(canvas, {
+                type: 'line',
+                data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2 }] },
+                options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+            });
+        });
+
+        // Search filter
+        const searchInput = document.getElementById('search-input');
+        const tableBody = document.getElementById('crypto-table');
+        const originalRows = Array.from(tableBody.querySelectorAll('tr:not(.no-results)'));
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            tableBody.innerHTML = '';
+            const matches = originalRows.filter(row => {
+                const name = row.querySelector('.font-bold')?.textContent.toLowerCase() || '';
+                const symbol = row.querySelector('.text-gray-500, .text-gray-400')?.textContent.toLowerCase() || '';
+                return name.includes(query) || symbol.includes(query);
+            });
+            if (matches.length) {
+                matches.forEach(row => tableBody.appendChild(row));
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-red-500">No results found.</td></tr>';
+            }
+        });
+
+        // Modal on row click
+        const modal = document.getElementById('coin-modal');
+        const closeBtn = document.querySelector('.close');
+        tableBody.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            if (!row || !row.dataset.coin) return;
+            const coin = JSON.parse(row.dataset.coin);
+            document.getElementById('modal-name').textContent = coin.name;
+            document.getElementById('modal-symbol').textContent = coin.symbol;
+            document.getElementById('modal-price').textContent = `Price: $${coin.price.toFixed(2)}`;
+            document.getElementById('modal-change-24h').textContent = `24h Change: ${coin.change_24h}%`;
+            document.getElementById('modal-market-cap').textContent = `Market Cap: $${coin.market_cap.toLocaleString()}`;
+            modal.style.display = 'block';
+        });
+        closeBtn.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
     </script>
 </body>
 </html>
-''' 
+'''
 
-application = app
+TRENDING_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending - TradeScout Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
+    <style>
+        .hover-row:hover { background-color: #333; cursor: pointer; } /* dark */
+        .light .hover-row:hover { background-color: #eee; }
+        .sparkline { height: 60px; width: 140px; }
+        .modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
+        .modal-content { background-color: #222; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 1rem; color: #fff; }
+        .light .modal-content { background-color: #fff; color: #000; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close:hover { color: #fff; text-decoration: none; cursor: pointer; }
+        .light .close:hover { color: #000; }
+    </style>
+</head>
+<body class="bg-black text-white dark:bg-black dark:text-white light:bg-white light:text-black transition-colors duration-300">
+    <header class="bg-blue-600 text-white py-6 px-8 flex justify-between items-center light:bg-blue-500 light:text-black">
+        <a href="/" class="flex items-center gap-4">
+            <img src="https://i.ibb.co/sJjcKmPs/ttn41attn41attn4.png" alt="Logo" class="w-12 h-12">
+            <div class="text-4xl font-bold">TradeScout Pro</div>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="/" class="px-4 py-2 rounded hover:bg-blue-700 light:hover:bg-blue-400">Home</a>
+            <input id="search-input" type="text" class="px-6 py-3 rounded-full bg-gray-800 text-white light:bg-gray-200 light:text-black" placeholder="Search crypto...">
+            <button id="toggle-theme" class="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 light:bg-gray-300 light:hover:bg-gray-200 light:text-black">Toggle Theme</button>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold mb-6">Top 25 Trending Coins (24h Uptrends)</h1>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <!-- Same metrics cards as index -->
+            <div class="card bg-gray-900 p-6 rounded-xl light:bg-gray-100">
+                <p class="text-gray-400 light:text-gray-600">Total Market Cap</p>
+                <p class="text-3xl font-bold">${{ "{:,.2f}".format(metrics.total_market_cap / 1e12) }}T</p>
+                <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5 light:bg-gray-300">
+                    <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ (metrics.total_market_cap / 5e12 * 100) | min(100) }}%"></div>
+                </div>
+            </div>
+            <div class="card bg-gray-900 p-6 rounded-xl light:bg-gray-100">
+                <p class="text-gray-400 light:text-gray-600">Fear & Greed</p>
+                <p class="text-4xl font-bold">{{ metrics.fear_greed }}</p>
+                <p class="text-gray-400 light:text-gray-600">Fear</p>
+                {% set fg_color = 'bg-red-500' if metrics.fear_greed < 25 else 'bg-orange-500' if metrics.fear_greed < 50 else 'bg-yellow-500' if metrics.fear_greed < 51 else 'bg-green-500' if metrics.fear_greed < 76 else 'bg-lime-500' %}
+                <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5 light:bg-gray-300">
+                    <div class="{{ fg_color }} h-1.5 rounded-full" style="width: {{ metrics.fear_greed }}%"></div>
+                </div>
+            </div>
+            <div class="card bg-gray-900 p-6 rounded-xl light:bg-gray-100">
+                <p class="text-gray-400 light:text-gray-600">Altcoin Season</p>
+                <p class="text-3xl font-bold">{{ metrics.alt_season }}/100</p>
+                <p class="text-gray-400 light:text-gray-600">Bitcoin Season</p>
+                {% set alt_color = 'bg-red-500' if metrics.alt_season < 25 else 'bg-orange-500' if metrics.alt_season < 50 else 'bg-yellow-500' if metrics.alt_season == 50 else 'bg-green-500' if metrics.alt_season < 76 else 'bg-lime-500' %}
+                <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5 light:bg-gray-300">
+                    <div class="{{ alt_color }} h-1.5 rounded-full" style="width: {{ metrics.alt_season }}%"></div>
+                </div>
+            </div>
+            <div class="card bg-gray-900 p-6 rounded-xl light:bg-gray-100">
+                <p class="text-gray-400 light:text-gray-600">BTC Dominance</p>
+                <p class="text-3xl font-bold">{{ metrics.btc_dominance }}%</p>
+                <div class="mt-2 w-full bg-gray-700 rounded-full h-1.5 light:bg-gray-300">
+                    <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ metrics.btc_dominance }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl bg-gray-800 light:bg-gray-200">
+            <table class="w-full text-left">
+                <thead class="bg-gray-700 text-gray-300 text-sm uppercase light:bg-gray-300 light:text-gray-700">
+                    <tr>
+                        <th class="px-6 py-4">#</th>
+                        <th class="px-6 py-4">Name</th>
+                        <th class="px-6 py-4 text-right">Price</th>
+                        <th class="px-6 py-4 text-right">1h %</th>
+                        <th class="px-6 py-4 text-right">24h %</th>
+                        <th class="px-6 py-4 text-right">7d %</th>
+                        <th class="px-6 py-4 text-right">Market Cap</th>
+                        <th class="px-6 py-4 text-right">Volume(24h)</th>
+                        <th class="px-6 py-4 text-center">Last 7 Days</th>
+                    </tr>
+                </thead>
+                <tbody id="crypto-table">
+                    {% if data %}
+                    {% for coin in data %}
+                    <tr class="hover-row border-b border-gray-700 light:border-gray-300" data-coin='{{ coin | tojson }}'>
+                        <td class="px-6 py-4 text-gray-400 light:text-gray-600">{{ coin.rank }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-4">
+                                <img src="{{ coin.logo }}" class="w-10 h-10 rounded-full">
+                                <div>
+                                    <div class="font-bold">{{ coin.name }}</div>
+                                    <div class="text-gray-500 light:text-gray-400">{{ coin.symbol }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-right font-bold">${{ "{:.2f}".format(coin.price) }}</td>
+                        <td class="px-6 py-4 text-right {% if coin.change_1h > 0 %}text-green-500{% elif coin.change_1h < 0 %}text-red-500{% endif %}">
+                            {% if coin.change_1h > 0 %}+{{ coin.change_1h }}%{% elif coin.change_1h < 0 %}{{ coin.change_1h }}%{% else %}-{% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right {% if coin.change_24h > 0 %}text-green-500{% elif coin.change_24h < 0 %}text-red-500{% endif %}">
+                            {% if coin.change_24h > 0 %}+{{ coin.change_24h }}%{% elif coin.change_24h < 0 %}{{ coin.change_24h }}%{% else %}-{% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right {% if coin.change_7d > 0 %}text-green-500{% elif coin.change_7d < 0 %}text-red-500{% endif %}">
+                            {% if coin.change_7d > 0 %}+{{ coin.change_7d }}%{% elif coin.change_7d < 0 %}{{ coin.change_7d }}%{% else %}-{% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right text-gray-400 light:text-gray-600">${{ "{:,.0f}".format(coin.market_cap) }}</td>
+                        <td class="px-6 py-4 text-right text-gray-400 light:text-gray-600">${{ "{:,.0f}".format(coin.volume_24h) }}</td>
+                        <td class="px-6 py-4 text-center">
+                            <canvas class="sparkline" data-prices='{{ coin.sparkline_prices | tojson }}'></canvas>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="px-6 py-4 text-center text-red-500">Failed to load data. Try refreshing.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <p class="text-center text-gray-500 mt-8 light:text-gray-400">Last update: {{ last_update }} • Powered by CoinGecko</p>
+    </div>
+
+    <!-- Modal (same as index) -->
+    <div id="coin-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-name" class="text-2xl font-bold"></h2>
+            <p id="modal-symbol"></p>
+            <p id="modal-price"></p>
+            <p id="modal-change-24h"></p>
+            <p id="modal-market-cap"></p>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle (same as index)
+        const html = document.documentElement;
+        const toggleBtn = document.getElementById('toggle-theme');
+        if (localStorage.theme === 'light') {
+            html.classList.remove('dark');
+            html.classList.add('light');
+            toggleBtn.textContent = 'Dark Mode';
+        } else {
+            html.classList.add('dark');
+            html.classList.remove('light');
+            toggleBtn.textContent = 'Light Mode';
+        }
+        toggleBtn.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                localStorage.theme = 'light';
+                toggleBtn.textContent = 'Dark Mode';
+            } else {
+                html.classList.add('dark');
+                html.classList.remove('light');
+                localStorage.theme = 'dark';
+                toggleBtn.textContent = 'Light Mode';
+            }
+        });
+
+        // Sparklines (same as index)
+        document.querySelectorAll('.sparkline').forEach(canvas => {
+            const prices = JSON.parse(canvas.dataset.prices || '[]');
+            if (prices.length < 2) return;
+            const up = prices[prices.length - 1] >= prices[0];
+            new Chart(canvas, {
+                type: 'line',
+                data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2 }] },
+                options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+            });
+        });
+
+        // Search filter (same as index)
+        const searchInput = document.getElementById('search-input');
+        const tableBody = document.getElementById('crypto-table');
+        const originalRows = Array.from(tableBody.querySelectorAll('tr:not(.no-results)'));
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            tableBody.innerHTML = '';
+            const matches = originalRows.filter(row => {
+                const name = row.querySelector('.font-bold')?.textContent.toLowerCase() || '';
+                const symbol = row.querySelector('.text-gray-500, .text-gray-400')?.textContent.toLowerCase() || '';
+                return name.includes(query) || symbol.includes(query);
+            });
+            if (matches.length) {
+                matches.forEach(row => tableBody.appendChild(row));
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-red-500">No results found.</td></tr>';
+            }
+        });
+
+        // Modal on row click (same as index)
+        const modal = document.getElementById('coin-modal');
+        const closeBtn = document.querySelector('.close');
+        tableBody.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            if (!row || !row.dataset.coin) return;
+            const coin = JSON.parse(row.dataset.coin);
+            document.getElementById('modal-name').textContent = coin.name;
+            document.getElementById('modal-symbol').textContent = coin.symbol;
+            document.getElementById('modal-price').textContent = `Price: $${coin.price.toFixed(2)}`;
+            document.getElementById('modal-change-24h').textContent = `24h Change: ${coin.change_24h}%`;
+            document.getElementById('modal-market-cap').textContent = `Market Cap: $${coin.market_cap.toLocaleString()}`;
+            modal.style.display = 'block';
+        });
+        closeBtn.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    </script>
+</body>
+</html>
+'''
 
 if __name__ == '__main__':
     app.run(debug=True)
