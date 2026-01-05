@@ -1,11 +1,13 @@
 from flask import Flask, render_template_string
 import requests
+import datetime
 
 app = Flask(__name__)
 
 def get_global_metrics():
     try:
-        res = requests.get("https://api.coingecko.com/api/v3/global")
+        res = requests.get("https://api.coingecko.com/api/v3/global", timeout=15)
+        res.raise_for_status()
         data = res.json()['data']
         total_cap = data['total_market_cap']['usd']
         btc_dom = round(data['market_cap_percentage']['btc'], 1)
@@ -30,8 +32,8 @@ def fetch_crypto_data():
         "order": "market_cap_desc",
         "per_page": 100,
         "page": 1,
-        "sparkline": True,
         "price_change_percentage": "1h,24h,7d",
+        "sparkline": True,
     }
     try:
         response = requests.get(url, params=params, timeout=15)
@@ -42,6 +44,7 @@ def fetch_crypto_data():
             sparkline = coin.get("sparkline_in_7d", {}).get("price", [])
             formatted.append({
                 "rank": rank,
+                "id": coin["id"],
                 "name": coin["name"],
                 "symbol": coin["symbol"].upper(),
                 "logo": coin["image"],
@@ -54,20 +57,22 @@ def fetch_crypto_data():
                 "sparkline_prices": sparkline,
             })
         return formatted
-    except:
+    except Exception as e:
+        print("Data fetch error:", e)
         return []
 
 @app.route('/')
 def index():
     metrics = get_global_metrics()
     data = fetch_crypto_data()
-    return render_template_string(HTML_TEMPLATE, data=data, metrics=metrics)
+    last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    return render_template_string(HTML_TEMPLATE, data=data, last_update=last_update, metrics=metrics)
 
 application = app
 
-HTML_TEMPLATE = """
+HTML_TEMPLATE = '''
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,7 +83,7 @@ HTML_TEMPLATE = """
         body { background: #000; color: #fff; }
         .header { background: #0066ff; }
         .card { background: #111; border-radius: 1rem; padding: 1.5rem; text-align: center; }
-        .hover-row:hover { background: #222; }
+        .hover-row:hover { background: #222; cursor: pointer; }
         .sparkline { height: 60px; width: 140px; }
         .text-green { color: #00ff99; }
         .text-red { color: #ff4444; }
@@ -115,7 +120,7 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto rounded-2xl">
             <table class="w-full">
                 <thead class="bg-gray-800 text-gray-300 text-sm uppercase">
                     <tr>
@@ -131,8 +136,9 @@ HTML_TEMPLATE = """
                     </tr>
                 </thead>
                 <tbody>
+                    {% if data %}
                     {% for coin in data %}
-                    <tr class="hover-row">
+                    <tr class="hover-row" onclick="openModal('{{ coin.id }}')">
                         <td class="px-6 py-4 text-gray-400">{{ coin.rank }}</td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-4">
@@ -174,16 +180,49 @@ HTML_TEMPLATE = """
                         <td class="px-6 py-4 text-right text-gray-400">${{ "{:,.0f}".format(coin.market_cap) }}</td>
                         <td class="px-6 py-4 text-right text-gray-400">${{ "{:,.0f}".format(coin.volume_24h) }}</td>
                         <td class="px-6 py-4 text-center">
-                            <canvas class="sparkline" data-prices="{{ coin.sparkline_prices }}"></canvas>
+                            <canvas class="sparkline" data-prices="{{ coin.sparkline_prices | tojson }}"></canvas>
                         </td>
                     </tr>
                     {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="px-6 py-4 text-center text-red">Failed to load data. Try refreshing.</td>
+                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
+        </div>
+
+        <p class="text-center text-gray-500 mt-8">Last update: {{ last_update }} • Powered by CoinGecko</p>
+    </div>
+
+    <div class="fixed inset-0 hidden flex items-center justify-center bg-black/80 z-50" id="modal">
+        <div class="bg-gray-900 rounded-2xl p-8 max-w-4xl w-full">
+            <button class="text-4xl float-right" onclick="document.getElementById('modal').classList.add('hidden')">&times;</button>
+            <h2 class="text-3xl font-bold mb-4">30 Day Candlestick Chart</h2>
+            <canvas id="detailChart"></canvas>
         </div>
     </div>
 
     <script>
+        let detailChart = null;
+
+        function openModal(id) {
+            document.getElementById('modal').classList.remove('hidden');
+            fetch(`https://api.coingecko.com/api/v3/coins/${id}/ohlc?vs_currency=usd&days=30`)
+                .then(res => res.json())
+                .then(raw => {
+                    const candles = raw.map(d => ({ x: d[0], o: d[1], h: d[2], l: d[3], c: d[4] }));
+                    if (detailChart) detailChart.destroy();
+                    detailChart = new Chart(document.getElementById('detailChart'), {
+                        type: 'candlestick',
+                        data: { datasets: [{ data: candles }] },
+                        options: { responsive: true }
+                    });
+                })
+                .catch(e => console.error(e));
+        }
+
         document.querySelectorAll('.sparkline').forEach(canvas => {
             const prices = JSON.parse(canvas.dataset.prices || '[]');
             if (prices.length < 2) return;
@@ -191,13 +230,13 @@ HTML_TEMPLATE = """
             new Chart(canvas, {
                 type: 'line',
                 data: { datasets: [{ data: prices, borderColor: up ? '#00ff99' : '#ff4444', tension: 0.4, pointRadius: 0, borderWidth: 2 }] },
-                options: { responsive: true, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+                options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
             });
         });
     </script>
 </body>
 </html>
-"""
+'''
 
 if __name__ == '__main__':
     app.run(debug=True)
