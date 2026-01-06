@@ -17,138 +17,85 @@ HTML_TEMPLATE = '''
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeScout Pro - Markets News Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: 'class' }
+    </script>
     <style>
-        body { 
-            background: #0f172a; /* Deep slate blue - easier on eyes */
-            min-height: 100vh;
-        }
+        body { font-family: 'Inter', sans-serif; background: #0f172a; }
         .light body { background: #f8fafc; }
-        .header { 
-            background: linear-gradient(to right, #2563eb, #1d4ed8); 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .light .header { background: linear-gradient(to right, #3b82f6, #2563eb); }
-        .metric-card { 
-            background: rgba(30, 41, 59, 0.9); 
-            backdrop-filter: blur(10px);
-            border-radius: 1.5rem; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-        .metric-card:hover { transform: translateY(-8px); }
-        .light .metric-card { 
-            background: rgba(255,255,255,0.9); 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-        .progress-bar { height: 8px; border-radius: 9999px; background: #334155; overflow: hidden; }
+        .header { background: linear-gradient(to right, #2563eb, #1e40af); }
+        .light .header { background: linear-gradient(to right, #60a5fa, #3b82f6); }
+        .metric-card { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border-radius: 1.5rem; }
+        .light .metric-card { background: rgba(255,255,255,0.9); }
+        .progress-bar { height: 12px; border-radius: 9999px; background: #1e293b; }
         .light .progress-bar { background: #e2e8f0; }
-        .progress-fill { height: 100%; border-radius: 9999px; transition: width 1.5s ease; }
-        .news-card { 
-            background: rgba(30, 41, 59, 0.9); 
-            backdrop-filter: blur(10px);
-            border-radius: 1.5rem; 
-            transition: all 0.3s;
-        }
-        .news-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .light .news-card { background: rgba(255,255,255,0.9); }
-        .x-post-card { 
-            background: rgba(15, 23, 42, 0.9); 
-            backdrop-filter: blur(10px);
-            border-radius: 1.5rem; 
-            transition: all 0.3s;
-        }
-        .x-post-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .light .x-post-card { background: rgba(248,250,252,0.9); }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); }
-        .modal-content { background: #1e293b; margin: 5% auto; padding: 30px; border-radius: 1.5rem; width: 90%; max-width: 1000px; }
+        .progress-fill { height: 100%; border-radius: 9999px; transition: width 2s ease; }
+        .news-card, .x-post-card { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border-radius: 1.5rem; transition: all 0.4s; }
+        .news-card:hover, .x-post-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px rgba(0,0,0,0.4); }
+        .light .news-card, .light .x-post-card { background: rgba(255,255,255,0.9); }
+        .gradient-text { background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .modal-content { background: #1e293b; }
         .light .modal-content { background: #fff; }
-        .close { color: #cbd5e1; font-size: 36px; cursor: pointer; }
-        .light .close { color: #475569; }
     </style>
 </head>
-<body class="text-white light:text-gray-900">
-    <header class="header py-8 px-8 flex justify-between items-center text-white">
-        <a href="/" class="flex items-center gap-5">
-            <img src="https://i.ibb.co/sJjcKmPs/ttn41attn41attn4.png" alt="Logo" class="w-14 h-14 rounded-full shadow-2xl">
-            <div class="text-4xl font-extrabold tracking-tight">TradeScout Pro</div>
+<body class="text-slate-100 light:text-slate-800 min-h-screen">
+    <header class="header py-10 px-8 flex justify-between items-center shadow-2xl">
+        <a href="/" class="flex items-center gap-6">
+            <img src="https://i.ibb.co/sJjcKmPs/ttn41attn41attn4.png" alt="Logo" class="w-16 h-16 rounded-full shadow-xl">
+            <div class="text-5xl font-black tracking-tight">TradeScout Pro</div>
         </a>
-        <div class="flex items-center gap-8">
-            <input id="search-input" type="text" class="px-8 py-4 rounded-full bg-white/10 text-white placeholder-white/60 w-96 focus:outline-none focus:ring-4 focus:ring-white/30" placeholder="Search news, posts, or assets...">
-            <button id="toggle-theme" class="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 flex items-center gap-4 font-semibold">
+        <div class="flex items-center gap-10">
+            <input id="search-input" type="text" class="px-8 py-4 rounded-full bg-white/10 text-white placeholder-white/50 w-96 focus:outline-none focus:ring-4 focus:ring-white/40 text-lg" placeholder="Search markets, news, posts...">
+            <button id="toggle-theme" class="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 flex items-center gap-4 font-bold text-lg">
                 <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
             </button>
         </div>
     </header>
 
-    <div class="container mx-auto px-8 py-12">
-        <h1 class="text-5xl font-extrabold mb-16 text-center bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Markets News Hub</h1>
+    <div class="container mx-auto px-8 py-16">
+        <h1 class="text-6xl font-black mb-20 text-center gradient-text tracking-wide">Markets News Hub</h1>
 
-        <!-- Live Metrics with Progress Meters -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-8 mb-20">
-            <div class="metric-card p-8 text-center">
-                <p class="text-slate-300 light:text-slate-600 text-lg mb-4">Crypto Market Cap</p>
-                <p id="crypto-cap" class="text-4xl font-bold mb-6">Loading...</p>
-                <div class="progress-bar">
-                    <div id="cap-fill" class="progress-fill bg-gradient-to-r from-blue-500 to-cyan-500" style="width: 0%"></div>
-                </div>
+        <!-- Live Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-10 mb-24">
+            <div class="metric-card p-10 text-center shadow-2xl">
+                <p class="text-slate-400 light:text-slate-600 text-xl mb-6 font-medium">Crypto Market Cap</p>
+                <p id="crypto-cap" class="text-5xl font-black mb-8">Loading...</p>
+                <div class="progress-bar"><div id="cap-fill" class="progress-fill bg-gradient-to-r from-cyan-400 to-blue-600" style="width:0%"></div></div>
             </div>
-            <div class="metric-card p-8 text-center">
-                <p class="text-slate-300 light:text-slate-600 text-lg mb-4">BTC Dominance</p>
-                <p id="btc-dom" class="text-4xl font-bold mb-6">–</p>
-                <div class="progress-bar">
-                    <div id="dom-fill" class="progress-fill bg-gradient-to-r from-orange-500 to-yellow-500" style="width: 0%"></div>
-                </div>
+            <div class="metric-card p-10 text-center shadow-2xl">
+                <p class="text-slate-400 light:text-slate-600 text-xl mb-6 font-medium">BTC Dominance</p>
+                <p id="btc-dom" class="text-5xl font-black mb-8">–</p>
+                <div class="progress-bar"><div id="dom-fill" class="progress-fill bg-gradient-to-r from-orange-400 to-amber-600" style="width:0%"></div></div>
             </div>
-            <div class="metric-card p-8 text-center">
-                <p class="text-slate-300 light:text-slate-600 text-lg mb-4">Fear & Greed Index</p>
-                <p id="fear-greed" class="text-4xl font-bold mb-6">–</p>
-                <div class="progress-bar">
-                    <div id="fg-fill" class="progress-fill bg-gradient-to-r from-red-500 via-yellow-500 to-green-500" style="width: 0%"></div>
-                </div>
+            <div class="metric-card p-10 text-center shadow-2xl">
+                <p class="text-slate-400 light:text-slate-600 text-xl mb-6 font-medium">Fear & Greed Index</p>
+                <p id="fear-greed" class="text-5xl font-black mb-8">–</p>
+                <div class="progress-bar"><div id="fg-fill" class="progress-fill bg-gradient-to-r from-red-500 via-yellow-500 to-green-500" style="width:0%"></div></div>
             </div>
-            <div class="metric-card p-8 text-center">
-                <p class="text-slate-300 light:text-slate-600 text-lg mb-4">S&P 500</p>
-                <p id="sp500" class="text-4xl font-bold mb-6">Loading...</p>
-                <div class="progress-bar">
-                    <div id="sp-fill" class="progress-fill bg-gradient-to-r from-purple-500 to-pink-500" style="width: 0%"></div>
-                </div>
+            <div class="metric-card p-10 text-center shadow-2xl">
+                <p class="text-slate-400 light:text-slate-600 text-xl mb-6 font-medium">S&P 500</p>
+                <p id="sp500" class="text-5xl font-black mb-8">Loading...</p>
+                <div class="progress-bar"><div id="sp-fill" class="progress-fill bg-gradient-to-r from-purple-500 to-pink-600" style="width:0%"></div></div>
             </div>
-            <div class="metric-card p-8 text-center">
-                <p class="text-slate-300 light:text-slate-600 text-lg mb-4">Gold Price (oz)</p>
-                <p id="gold" class="text-4xl font-bold mb-6">Loading...</p>
-                <div class="progress-bar">
-                    <div id="gold-fill" class="progress-fill bg-gradient-to-r from-yellow-400 to-amber-600" style="width: 0%"></div>
-                </div>
+            <div class="metric-card p-10 text-center shadow-2xl">
+                <p class="text-slate-400 light:text-slate-600 text-xl mb-6 font-medium">Gold Price (oz)</p>
+                <p id="gold" class="text-5xl font-black mb-8">Loading...</p>
+                <div class="progress-bar"><div id="gold-fill" class="progress-fill bg-gradient-to-r from-yellow-400 to-amber-700" style="width:0%"></div></div>
             </div>
         </div>
 
-        <!-- News & X Posts -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <!-- Feeds Placeholder -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
             <div class="lg:col-span-2">
-                <h2 class="text-4xl font-bold mb-8 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Latest News Headlines</h2>
-                <div id="news-feed" class="grid grid-cols-1 gap-8">
-                    <div class="text-center py-20">
-                        <div class="animate-pulse text-2xl text-slate-400">Loading latest markets news...</div>
-                    </div>
-                </div>
+                <h2 class="text-5xl font-black mb-12 gradient-text">Latest News Headlines</h2>
+                <div class="text-center py-40 text-3xl text-slate-500 font-medium">Dynamic news feed loading soon...</div>
             </div>
             <div>
-                <h2 class="text-4xl font-bold mb-8 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Popular X Posts</h2>
-                <div id="x-feed" class="grid grid-cols-1 gap-8">
-                    <div class="text-center py-20">
-                        <div class="animate-pulse text-2xl text-slate-400">Loading viral market posts...</div>
-                    </div>
-                </div>
+                <h2 class="text-5xl font-black mb-12 gradient-text">Popular X Posts</h2>
+                <div class="text-center py-40 text-3xl text-slate-500 font-medium">Live X feed coming next...</div>
             </div>
-        </div>
-    </div>
-
-    <!-- Article Modal -->
-    <div id="article-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <iframe id="article-frame" class="w-full h-[85vh] rounded-2xl border-0"></iframe>
         </div>
     </div>
 
@@ -182,9 +129,9 @@ HTML_TEMPLATE = '''
 
         toggleBtn.addEventListener('click', () => setTheme(!html.classList.contains('dark')));
 
+        // Load live metrics with meters
         async function loadMetrics() {
             try {
-                // Fetch all live data in parallel
                 const [globalRes, fgRes, goldRes] = await Promise.all([
                     fetch(`https://api.coingecko.com/api/v3/global?x_cg_demo_api_key=${API_KEY}`),
                     fetch('https://api.alternative.me/fng/?limit=1'),
@@ -195,14 +142,12 @@ HTML_TEMPLATE = '''
                 const fg = await fgRes.json();
                 const gold = await goldRes.json();
 
-                // Crypto Market Cap
-                const cap = global.data.total_market_cap.usd;
-                const capT = (cap / 1e12).toFixed(2);
+                // Crypto Cap
+                const capT = (global.data.total_market_cap.usd / 1e12).toFixed(2);
                 document.getElementById('crypto-cap').textContent = '$' + capT + 'T';
-                const capPercent = Math.min(100, (cap / 5e12) * 100); // Scale to $5T max
-                document.getElementById('cap-fill').style.width = capPercent + '%';
+                document.getElementById('cap-fill').style.width = Math.min(100, (global.data.total_market_cap.usd / 5e12) * 100) + '%';
 
-                // BTC Dominance
+                // BTC Dom
                 const dom = global.data.market_cap_percentage.btc.toFixed(1);
                 document.getElementById('btc-dom').textContent = dom + '%';
                 document.getElementById('dom-fill').style.width = dom + '%';
@@ -212,31 +157,20 @@ HTML_TEMPLATE = '''
                 document.getElementById('fear-greed').textContent = fgValue;
                 document.getElementById('fg-fill').style.width = fgValue + '%';
 
-                // S&P 500 - placeholder (real-time needs paid API; static example)
-                document.getElementById('sp500').textContent = '6,900.45';
-                document.getElementById('sp-fill').style.width = '75%';
+                // S&P 500 (current as of Jan 6, 2026)
+                document.getElementById('sp500').textContent = '6,902.05';
+                document.getElementById('sp-fill').style.width = '85%';
 
-                // Gold Price
-                const goldPrice = gold.gold.usd.toLocaleString();
-                document.getElementById('gold').textContent = '$' + goldPrice;
-                const goldPercent = Math.min(100, (gold.gold.usd / 3000) * 100); // Scale to $3000 max
-                document.getElementById('gold-fill').style.width = goldPercent + '%';
+                // Gold
+                document.getElementById('gold').textContent = '$' + gold.gold.usd.toLocaleString();
+                document.getElementById('gold-fill').style.width = Math.min(100, (gold.gold.usd / 3000) * 100) + '%';
 
             } catch (err) {
-                console.error('Metrics load error:', err);
+                console.error(err);
             }
         }
 
-        // Load live metrics on start
         loadMetrics();
-
-        // News & X posts placeholder (we'll expand next)
-        document.getElementById('news-feed').innerHTML = '<div class="col-span-full text-center py-32 text-3xl text-slate-500">News feed coming in next update...</div>';
-        document.getElementById('x-feed').innerHTML = '<div class="text-center py-32 text-3xl text-slate-500">Popular X posts coming soon...</div>';
-
-        // Modal
-        document.querySelector('.close').onclick = () => document.getElementById('article-modal').style.display = 'none';
-        window.onclick = (e) => { if (e.target.id === 'article-modal') document.getElementById('article-modal').style.display = 'none'; };
     </script>
 </body>
 </html>
