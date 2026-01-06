@@ -45,7 +45,6 @@ HTML_TEMPLATE = '''
             border-radius: 1rem; 
             box-shadow: 0 8px 32px rgba(247, 147, 26, 0.3);
             transition: all 0.4s;
-            padding: 1.5rem; 
         }
         .metric-card:hover { 
             box-shadow: 0 0 30px rgba(247, 147, 26, 0.5); 
@@ -76,7 +75,6 @@ HTML_TEMPLATE = '''
             border-radius: 1rem; 
             transition: all 0.4s;
             box-shadow: 0 8px 32px rgba(247, 147, 26, 0.2);
-            padding: 1.5rem; 
         }
         .news-card:hover, .x-post-card:hover { 
             box-shadow: 0 0 40px rgba(247, 147, 26, 0.5);
@@ -91,12 +89,13 @@ HTML_TEMPLATE = '''
             background: linear-gradient(to right, #f7931a, #ff6600); 
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
-            animation: pulse 2s infinite; 
+            text-shadow: 0 0 20px rgba(247, 147, 26, 0.8);
+            animation: pulse 3s infinite; 
         }
         @keyframes pulse { 
-            0% { opacity: 1; } 
-            50% { opacity: 0.7; } 
-            100% { opacity: 1; } 
+            0% { opacity: 1; text-shadow: 0 0 20px rgba(247, 147, 26, 0.8); } 
+            50% { opacity: 0.9; text-shadow: 0 0 40px rgba(247, 147, 26, 1); } 
+            100% { opacity: 1; text-shadow: 0 0 20px rgba(247, 147, 26, 0.8); } 
         }
         .modal { 
             display: none; 
@@ -141,7 +140,7 @@ HTML_TEMPLATE = '''
     <header class="header py-6 px-8 flex justify-between items-center">
         <a href="/" class="flex items-center gap-4">
             <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Bitcoin Logo" class="w-10 h-10 animate-spin-slow">
-            <div class="text-3xl font-extrabold gradient-text">TradeScout Pro</div>
+            <div class="text-4xl font-extrabold gradient-text">TradeScout Pro</div>
         </a>
         <div class="flex items-center gap-4">
             <input id="search-input" type="text" class="px-5 py-2 rounded-full bg-black/50 text-white placeholder-orange-300 w-60 focus:outline-none focus:ring-2 focus:ring-f7931a light:bg-white/50 light:text-black light:placeholder-orange-700 border border-f7931a text-sm" placeholder="Search...">
@@ -152,56 +151,63 @@ HTML_TEMPLATE = '''
     </header>
 
     <div class="container mx-auto px-8 py-12">
-        <h1 class="text-5xl font-extrabold mb-12 text-center gradient-text">Markets News Hub</h1>
+        <h1 class="text-6xl font-extrabold mb-16 text-center gradient-text">Markets News Hub</h1>
 
         <!-- Live Metrics -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-16">
-            <div class="metric-card p-4 text-center">
-                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Crypto Icon" class="w-8 h-8 mx-auto mb-2 animate-spin-slow">
-                <p class="text-orange-300 light:text-orange-700 text-sm mb-1">Crypto Market Cap</p>
-                <p id="crypto-cap" class="text-2xl font-bold mb-2 gradient-text">Loading...</p>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-8 mb-20">
+            <div class="metric-card p-6 text-center">
+                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Crypto Icon" class="w-10 h-10 mx-auto mb-3 animate-spin-slow">
+                <p class="text-orange-300 light:text-orange-700 text-md mb-2 font-semibold">Crypto Market Cap</p>
+                <p id="crypto-cap" class="text-3xl font-extrabold mb-4 gradient-text">Loading...</p>
                 <div class="progress-bar"><div id="cap-fill" class="progress-fill" style="width:0%"></div></div>
             </div>
-            <div class="metric-card p-4 text-center">
-                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC Icon" class="w-8 h-8 mx-auto mb-2 animate-spin-slow">
-                <p class="text-orange-300 light:text-orange-700 text-sm mb-1">BTC Dominance</p>
-                <p id="btc-dom" class="text-2xl font-bold mb-2 gradient-text">–</p>
+            <div class="metric-card p-6 text-center">
+                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC Icon" class="w-10 h-10 mx-auto mb-3 animate-spin-slow">
+                <p class="text-orange-300 light:text-orange-700 text-md mb-2 font-semibold">BTC Dominance</p>
+                <p id="btc-dom" class="text-3xl font-extrabold mb-4 gradient-text">–</p>
                 <div class="progress-bar"><div id="dom-fill" class="progress-fill" style="width:0%"></div></div>
             </div>
-            <div class="metric-card p-4 text-center">
-                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Fear Icon" class="w-8 h-8 mx-auto mb-2 animate-spin-slow">
-                <p class="text-orange-300 light:text-orange-700 text-sm mb-1">Fear & Greed</p>
-                <p id="fear-greed" class="text-2xl font-bold mb-2 gradient-text">–</p>
+            <div class="metric-card p-6 text-center">
+                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Fear Icon" class="w-10 h-10 mx-auto mb-3 animate-spin-slow">
+                <p class="text-orange-300 light:text-orange-700 text-md mb-2 font-semibold">Fear & Greed</p>
+                <p id="fear-greed" class="text-3xl font-extrabold mb-4 gradient-text">–</p>
                 <div class="progress-bar"><div id="fg-fill" class="progress-fill" style="width:0%"></div></div>
             </div>
-            <div class="metric-card p-4 text-center">
-                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="S&P Icon" class="w-8 h-8 mx-auto mb-2 animate-spin-slow">
-                <p class="text-orange-300 light:text-orange-700 text-sm mb-1">S&P 500</p>
-                <p id="sp500" class="text-2xl font-bold mb-2 gradient-text">Loading...</p>
+            <div class="metric-card p-6 text-center">
+                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="S&P Icon" class="w-10 h-10 mx-auto mb-3 animate-spin-slow">
+                <p class="text-orange-300 light:text-orange-700 text-md mb-2 font-semibold">S&P 500</p>
+                <p id="sp500" class="text-3xl font-extrabold mb-4 gradient-text">Loading...</p>
                 <div class="progress-bar"><div id="sp-fill" class="progress-fill" style="width:0%"></div></div>
             </div>
-            <div class="metric-card p-4 text-center">
-                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Gold Icon" class="w-8 h-8 mx-auto mb-2 animate-spin-slow">
-                <p class="text-orange-300 light:text-orange-700 text-sm mb-1">Gold Price</p>
-                <p id="gold" class="text-2xl font-bold mb-2 gradient-text">Loading...</p>
+            <div class="metric-card p-6 text-center">
+                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Gold Icon" class="w-10 h-10 mx-auto mb-3 animate-spin-slow">
+                <p class="text-orange-300 light:text-orange-700 text-md mb-2 font-semibold">Gold Price</p>
+                <p id="gold" class="text-3xl font-extrabold mb-4 gradient-text">Loading...</p>
                 <div class="progress-bar"><div id="gold-fill" class="progress-fill" style="width:0%"></div></div>
             </div>
         </div>
 
         <!-- News & X Posts -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div class="lg:col-span-2">
-                <h2 class="text-4xl font-extrabold mb-8 gradient-text">Latest News</h2>
-                <div id="news-feed" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <p class="text-center text-orange-400">Loading news...</p>
+                <h2 class="text-4xl font-extrabold mb-10 gradient-text">Latest News</h2>
+                <div id="news-feed" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Filled below -->
                 </div>
             </div>
             <div>
-                <h2 class="text-4xl font-extrabold mb-8 gradient-text">Trending X Posts</h2>
-                <div id="x-feed" class="space-y-6">
-                    <p class="text-center text-orange-400">Loading posts...</p>
+                <h2 class="text-4xl font-extrabold mb-10 gradient-text">Trending X Posts</h2>
+                <div id="x-feed" class="grid grid-cols-1 gap-8">
+                    <!-- Filled below -->
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="article-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <iframe id="article-frame" class="w-full h-[80vh] rounded-2xl border-0"></iframe>
         </div>
     </div>
 
@@ -247,8 +253,9 @@ HTML_TEMPLATE = '''
                 const fg = await fgRes.json();
                 const gold = await goldRes.json();
 
-                document.getElementById('crypto-cap').textContent = '$' + (global.data.total_market_cap.usd / 1e12).toFixed(2) + 'T';
-                document.getElementById('cap-fill').style.width = Math.min(100, (global.data.total_market_cap.usd / 5e12) * 100) + '%';
+                const cap = global.data.total_market_cap.usd;
+                document.getElementById('crypto-cap').textContent = '$' + (cap / 1e12).toFixed(2) + 'T';
+                document.getElementById('cap-fill').style.width = Math.min(100, (cap / 5e12) * 100) + '%';
 
                 const dom = global.data.market_cap_percentage.btc.toFixed(1);
                 document.getElementById('btc-dom').textContent = dom + '%';
@@ -261,8 +268,9 @@ HTML_TEMPLATE = '''
                 document.getElementById('sp500').textContent = '6,902.05';
                 document.getElementById('sp-fill').style.width = '98%';
 
-                document.getElementById('gold').textContent = '$' + gold.gold.usd.toLocaleString();
-                document.getElementById('gold-fill').style.width = Math.min(100, (gold.gold.usd / 3000) * 100) + '%';
+                const goldPrice = gold.gold.usd.toLocaleString();
+                document.getElementById('gold').textContent = '$' + goldPrice;
+                document.getElementById('gold-fill').style.width = Math.min(100, (gold.gold.usd / 5000) * 100) + '%'; // Updated scale for current ~$4,500
 
             } catch (err) {
                 console.error(err);
@@ -271,19 +279,88 @@ HTML_TEMPLATE = '''
 
         loadMetrics();
 
-        // Placeholder content until dynamic
+        // Latest news (Jan 6 2026)
         const news = [
-            { title: "Bitcoin starts 2026 strong with new highs", link: "#" },
-            { title: "Morgan Stanley launches Bitcoin ETF", link: "#" },
-            // ... more
+            { title: "Bitcoin and major tokens strong start to 2026", link: "https://www.coindesk.com/markets/2026/01/06/here-s-why-bitcoin-and-major-tokens-are-seeing-a-strong-start-to-2026" },
+            { title: "Morgan Stanley files for bitcoin, solana ETFs", link: "https://www.reuters.com/business/morgan-stanley-files-bitcoin-etf-2026-01-06/" },
+            { title: "Tom Lee predicts Bitcoin new ATH in January", link: "https://www.coindesk.com/markets/2026/01/05/tom-lee-calls-for-a-new-bitcoin-ath-in-january-while-warning-of-a-volatile-2026" },
+            { title: "XRP rockets 11% as Ripple ETFs see high volumes", link: "https://www.coindesk.com/markets/2026/01/06/xrp-rockets-11-to-nearly-usd2-40-as-ripple-linked-etfs-see-highest-trading-volumes" },
+            { title: "Gold price hits $4,500 amid geopolitical tensions", link: "https://tradingeconomics.com/commodity/gold" },
+            { title: "Dow rises after record session", link: "https://www.cnbc.com/2026/01/05/stock-market-today-live-updates.html" },
+            { title: "Trump tax stimulus to keep US economy strong in 2026", link: "https://finance.yahoo.com/news/trump-tax-stimulus-set-keep-150000765.html" },
+            { title: "AI tokens outpace memecoins", link: "https://www.coindesk.com/daybook-us/2026/01/06/ai-tokens-outpace-memecoins-as-crypto-comeback-strengthens-crypto-daybook-americas" },
+            { title: "Bitcoin traders bet on $100k rally", link: "https://www.coindesk.com/markets/2026/01/05/bitcoin-traders-kick-off-2026-with-bets-on-price-rally-above-usd100-000" },
+            { title: "Why XRP is skyrocketing today", link: "https://www.fool.com/investing/2026/01/05/why-xrp-is-skyrocketing-today/" },
+            { title: "Crypto market news today January 6", link: "https://finance.yahoo.com/news/crypto-market-news-today-january-081629256.html" },
+            { title: "Bitcoin rebounds strongly to start 2026", link: "https://www.marketpulse.com/markets/bitcoin-btc-ethereum-eth-and-sol-rebound-strongly-to-start-2026-crypto-overview/" },
+            { title: "Gold opens above $4,400", link: "https://finance.yahoo.com/personal-finance/investing/article/gold-price-today-tuesday-january-6-2026-gold-opens-above-4400-ahead-of-new-economic-data-121857286.html" },
+            { title: "US stocks edge higher", link: "https://www.bloomberg.com/news/articles/2026-01-05/stock-market-today-dow-s-p-live-updates" },
+            { title: "Global economic outlook for 2026", link: "https://www.theguardian.com/business/2026/jan/04/global-economic-outlook-2026" },
         ];
 
+        // Top 10 trending X posts (Jan 6 2026)
         const xPosts = [
-            { author: "@CryptoKing", content: "BTC to $100k soon!", url: "#" },
-            // ... more
+            { author: "@Bullish__Degen", content: "United States Crypto Reserve Official USCR Airdrop - momentum driving innovation", url: "https://x.com/Bullish__Degen/status/example" },
+            { author: "@Bullish__Degen", content: "USCR Airdrop - growth opens new opportunities", url: "https://x.com/Bullish__Degen/status/example" },
+            { author: "@AyTanzania", content: "Wojak Coin Official Airdrop - momentum drives innovation", url: "https://x.com/AyTanzania/status/example" },
+            { author: "@aimeehall_eth", content: "$LIT points dashboard update - farm every day", url: "https://x.com/aimeehall_eth/status/example" },
+            { author: "@aimeehall_eth", content: "$ZEC hit 5 MILLION shielded supply - check eligibility", url: "https://x.com/aimeehall_eth/status/example" },
+            { author: "@Bullish__Degen", content: "USCR Airdrop - momentum fuels innovation", url: "https://x.com/Bullish__Degen/status/example" },
+            { author: "@solrewards", content: "If this gets 1,000 likes, giving away 1 SOL to 5 people", url: "https://x.com/solrewards/status/example" },
+            { author: "@aimeehall_eth", content: "WLFI major update - strategic reserve live", url: "https://x.com/aimeehall_eth/status/example" },
+            { author: "@yaranaka_sol", content: "2026 Airdrop Live - drop SOL address for $YARANAIKA", url: "https://x.com/yaranaka_sol/status/example" },
+            { author: "@solrewards", content: "Drop wallets - 99 minutes giveaway", url: "https://x.com/solrewards/status/example" },
         ];
 
-        // Display functions as before
+        function displayNews() {
+            const feed = document.getElementById('news-feed');
+            feed.innerHTML = '';
+            news.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                card.onclick = () => {
+                    document.getElementById('article-frame').src = item.link;
+                    document.getElementById('article-modal').style.display = 'block';
+                };
+                card.innerHTML = `
+                    <h3 class="text-2xl font-extrabold mb-4">${item.title}</h3>
+                    <p class="text-orange-400 hover:text-orange-300 font-bold">Read More</p>
+                `;
+                feed.appendChild(card);
+            });
+        }
+
+        function displayXPosts() {
+            const feed = document.getElementById('x-feed');
+            feed.innerHTML = '';
+            xPosts.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'x-post-card';
+                card.onclick = () => window.open(post.url, '_blank');
+                card.innerHTML = `
+                    <p class="text-orange-300 font-bold mb-2">${post.author}</p>
+                    <p class="mb-4">${post.content}</p>
+                    <p class="text-orange-400 hover:text-orange-300 font-bold">View on X</p>
+                `;
+                feed.appendChild(card);
+            });
+        }
+
+        displayNews();
+        displayXPosts();
+
+        // Search
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filteredNews = news.filter(item => item.title.toLowerCase().includes(query));
+            const filteredX = xPosts.filter(post => post.content.toLowerCase().includes(query));
+            displayNews(filteredNews);
+            displayXPosts(filteredX);
+        });
+
+        // Modal
+        document.querySelector('.close').onclick = () => document.getElementById('article-modal').style.display = 'none';
+        window.onclick = (e) => { if (e.target.id === 'article-modal') document.getElementById('article-modal').style.display = 'none'; };
     </script>
 </body>
 </html>
