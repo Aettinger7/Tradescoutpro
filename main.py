@@ -91,7 +91,7 @@ HTML_TEMPLATE = '''
 <body>
     <header class="header py-6 px-8 flex justify-between items-center fixed w-full top-0 z-50">
         <a href="/" class="flex items-center gap-4">
-            <img src="https://i.ibb.co/dwxtQZt1/image.jpg" 
+            <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko Logo" 
                  class="w-14 h-14 rounded-full animate-spin-slow border-4 border-yellow-500"
                  onerror="this.src='https://via.placeholder.com/56/FFD700/000?text=Neko';">
@@ -102,7 +102,7 @@ HTML_TEMPLATE = '''
 
     <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">
         <section class="text-center mb-20">
-            <img src="https://i.ibb.co/dwxtQZt1/image.jpg" 
+            <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
                  class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500"
                  loading="lazy"
@@ -190,4 +190,3 @@ HTML_TEMPLATE = '''
 
 if __name__ == '__main__':
     app.run(debug=True)
-
