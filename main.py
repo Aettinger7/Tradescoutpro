@@ -100,7 +100,7 @@ HTML_TEMPLATE = '''
         <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy $NEKO Now</a>
     </header>
 
-    <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">
+    <div class="container mx-auto px-6 pt-24 pb-20 max-w-7xl">  <!-- Reduced from pt-32 to pt-24 -->
         <section class="text-center mb-20">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
@@ -118,6 +118,8 @@ HTML_TEMPLATE = '''
                 Copy CA
             </button>
         </section>
+
+        <!-- Keep the rest of your sections unchanged (Live on Toshimart, Chart, Join Clan, Recent Updates, Footer) -->
 
         <section class="mb-20">
             <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Live on Toshimart (Bonding Curve)</h2>
@@ -184,6 +186,13 @@ HTML_TEMPLATE = '''
             <p class="mt-2">Last Update: {{ last_update }}</p>
         </footer>
     </div>
+
+    <!-- Force scroll to top on load (fixes any browser auto-jump) -->
+    <script>
+        window.addEventListener('load', function() {
+            window.scrollTo(0, 0);
+        });
+    </script>
 </body>
 </html>
 '''
