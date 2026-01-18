@@ -8,7 +8,7 @@ def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     return render_template_string(HTML_TEMPLATE, last_update=last_update)
 
-application = app  # For Render/gunicorn compatibility
+application = app  # Required for Render / gunicorn
 
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
@@ -22,15 +22,15 @@ HTML_TEMPLATE = '''
     <style>
         body { 
             margin: 0;
-            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://pbs.twimg.com/media/G-9Z6XQXMAA7ln4.jpg') no-repeat center center fixed; 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://pbs.twimg.com/media/G-9Z6XQXMAA7ln4.jpg') no-repeat center center fixed; 
             background-size: cover; 
-            background-color: #000000; 
+            background-color: #111111; 
             color: #ffffff; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
             min-height: 100vh;
         }
         .header { 
-            background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.85)); 
+            background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.9)); 
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5);
         }
@@ -44,7 +44,7 @@ HTML_TEMPLATE = '''
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
         }
         .card { 
-            background: rgba(0, 0, 0, 0.8); 
+            background: rgba(0, 0, 0, 0.85); 
             border: 2px solid #FF0000; 
             border-radius: 1rem; 
             box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4);
@@ -77,16 +77,33 @@ HTML_TEMPLATE = '''
             color: black;
             transform: scale(1.05);
         }
-        .animate-spin-slow { animation: spin 30s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .hero-img { filter: drop-shadow(0 0 25px rgba(255,215,0,0.6)); }
-        iframe { border: none; width: 100%; height: 500px; }
+        .animate-spin-slow { 
+            animation: spin 30s linear infinite; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        .hero-img { 
+            filter: drop-shadow(0 0 25px rgba(255,215,0,0.6)); 
+            width: 18rem; 
+            height: 18rem; 
+            object-fit: cover;
+        }
+        iframe { 
+            border: none; 
+            width: 100%; 
+            height: 500px; 
+        }
     </style>
 </head>
 <body>
     <header class="header py-6 px-8 flex justify-between items-center fixed w-full top-0 z-50">
         <a href="/" class="flex items-center gap-4">
-            <img src="https://pbs.twimg.com/profile_images/2011108570171834368/79u2WeSG.jpg" alt="Neko Logo" class="w-14 h-14 rounded-full animate-spin-slow border-4 border-yellow-500">
+            <img src="https://pbs.twimg.com/profile_images/2011108570171834368/79u2WeSG.jpg" 
+                 alt="Neko Logo" 
+                 class="w-14 h-14 rounded-full animate-spin-slow border-4 border-yellow-500"
+                 onerror="this.src='https://via.placeholder.com/56?text=Neko';">
             <div class="logo-text">Neko the Samurai Cat</div>
         </a>
         <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy $NEKO Now</a>
@@ -94,14 +111,19 @@ HTML_TEMPLATE = '''
 
     <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">
         <section class="text-center mb-20">
-            <img src="https://pbs.twimg.com/media/G-9XeOXWQAACCmG.jpg" alt="Neko the Samurai Cat" class="w-72 h-72 mx-auto mb-8 rounded-2xl hero-img border-4 border-yellow-500">
+            <img src="https://pbs.twimg.com/profile_images/2011108570171834368/79u2WeSG.jpg" 
+                 alt="Neko the Samurai Cat" 
+                 class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500"
+                 loading="lazy"
+                 onerror="this.src='https://via.placeholder.com/300?text=Neko'; this.alt='Fallback Neko Image';">
             <h1 class="text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
             <p class="text-2xl mb-8">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
             <div class="bg-black/60 inline-block px-8 py-4 rounded-xl mb-6 font-mono text-lg">
                 CA: 0x28973c4ef9ae754b076a024996350d3b16a38453
             </div>
             <br>
-            <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453'); alert('Contract Address Copied!')" class="mt-4 px-8 py-4 bg-yellow-600 text-black rounded-full font-bold hover:bg-yellow-500 text-lg">
+            <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453'); alert('Contract Address Copied!')" 
+                    class="mt-4 px-8 py-4 bg-yellow-600 text-black rounded-full font-bold hover:bg-yellow-500 text-lg">
                 Copy CA
             </button>
         </section>
@@ -132,7 +154,7 @@ HTML_TEMPLATE = '''
             <h2 class="text-5xl font-extrabold mb-10 section-title text-center">$NEKO Chart & Trade</h2>
             <div class="card p-6">
                 <iframe src="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" title="Toshimart Neko Chart" loading="lazy"></iframe>
-                <p class="text-center mt-4 text-gray-400">If embed doesn't load, click <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
+                <p class="text-center mt-4 text-gray-400">If the embed doesn't load, click <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
             </div>
         </section>
 
