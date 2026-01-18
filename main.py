@@ -8,11 +8,11 @@ def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     return render_template_string(HTML_TEMPLATE, last_update=last_update)
 
-application = app
+application = app  # For Render/gunicorn compatibility
 
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,28 +21,18 @@ HTML_TEMPLATE = '''
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
         body { 
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://pbs.twimg.com/media/G-9Z6XQXMAA7ln4.jpg') no-repeat center center fixed; 
+            margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://pbs.twimg.com/media/G-9Z6XQXMAA7ln4.jpg') no-repeat center center fixed; 
             background-size: cover; 
             background-color: #000000; 
             color: #ffffff; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
-        }
-        .hero-bg {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://pbs.twimg.com/media/G-9XeOXWQAACCmG.jpg') no-repeat center/cover;
-        }
-        .light body { 
-            background: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), url('https://pbs.twimg.com/media/G-9Z6XQXMAA7ln4.jpg') no-repeat center center fixed; 
-            background-size: cover; 
-            background-color: #f8fafc; 
-            color: #000000; 
+            min-height: 100vh;
         }
         .header { 
-            background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.8)); 
+            background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.85)); 
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.4);
-        }
-        .light .header { 
-            background: linear-gradient(to right, #FF0000, rgba(255,255,255,0.8)); 
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5);
         }
         .logo-text {
             font-family: 'Cinzel', serif;
@@ -53,120 +43,134 @@ HTML_TEMPLATE = '''
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
         }
-        .metric-card { 
+        .card { 
             background: rgba(0, 0, 0, 0.8); 
             border: 2px solid #FF0000; 
             border-radius: 1rem; 
-            box-shadow: 0 8px 32px rgba(255, 0, 0, 0.3);
-            transition: all 0.4s;
+            box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4);
+            transition: all 0.3s;
         }
-        .metric-card:hover { 
-            box-shadow: 0 0 35px rgba(255, 0, 0, 0.6);
-        }
-        .light .metric-card { 
-            background: rgba(255,255,255,0.9); 
-            border: 2px solid #FF0000; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-        }
-        .progress-bar { 
-            height: 10px; 
-            border-radius: 9999px; 
-            background: #1a1a1a; 
-            overflow: hidden;
-        }
-        .light .progress-bar { 
-            background: #e2e8f0; 
-        }
-        .progress-fill { 
-            height: 100%; 
-            border-radius: 9999px; 
-            background: linear-gradient(to right, #FFD700, #FF0000);
-            transition: width 2s ease-in-out;
-        }
-        .lore-card, .community-card { 
-            background: rgba(0, 0, 0, 0.85); 
-            border: 2px solid #FF0000; 
-            border-radius: 1rem; 
-            transition: all 0.4s;
-            box-shadow: 0 8px 32px rgba(255, 0, 0, 0.2);
-            padding: 1.5rem; 
-        }
-        .lore-card:hover, .community-card:hover { 
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.5);
-            transform: translateY(-5px);
-        }
-        .light .lore-card, .light .community-card { 
-            background: rgba(255,255,255,0.85); 
-            border: 2px solid #FF0000; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        .card:hover { 
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.7);
+            transform: translateY(-4px);
         }
         .section-title {
             font-family: 'Cinzel', serif;
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 900;
             background: linear-gradient(to right, #FFD700, #FF0000);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+        }
+        .btn-buy {
+            background: #FF0000;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 9999px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-buy:hover {
+            background: #FFD700;
+            color: black;
+            transform: scale(1.05);
         }
         .animate-spin-slow { animation: spin 30s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .hero-img { filter: drop-shadow(0 0 20px rgba(255,215,0,0.5)); }
+        .hero-img { filter: drop-shadow(0 0 25px rgba(255,215,0,0.6)); }
+        iframe { border: none; width: 100%; height: 500px; }
     </style>
 </head>
-<body class="transition-all duration-500">
-    <header class="header py-6 px-8 flex justify-between items-center">
+<body>
+    <header class="header py-6 px-8 flex justify-between items-center fixed w-full top-0 z-50">
         <a href="/" class="flex items-center gap-4">
-            <img src="https://pbs.twimg.com/profile_images/2011108570171834368/79u2WeSG.jpg" alt="Neko Logo" class="w-12 h-12 rounded-full animate-spin-slow border-2 border-gold-500">
+            <img src="https://pbs.twimg.com/profile_images/2011108570171834368/79u2WeSG.jpg" alt="Neko Logo" class="w-14 h-14 rounded-full animate-spin-slow border-4 border-yellow-500">
             <div class="logo-text">Neko the Samurai Cat</div>
         </a>
-        <div class="flex items-center gap-4">
-            <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-base shadow-lg">Buy $NEKO Now</a>
-            <button id="toggle-theme" class="px-5 py-2 rounded-full bg-black/50 hover:bg-black/70 light:bg-white/50 light:hover:bg-white/70 flex items-center gap-2 font-bold text-sm text-white light:text-black border border-red-600 shadow-lg">
-                <span id="theme-icon">🌙</span> <span id="theme-text">Dark</span>
-            </button>
-        </div>
+        <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy $NEKO Now</a>
     </header>
 
-    <div class="container mx-auto px-8 py-12">
-        <section class="hero-bg text-center py-20 rounded-2xl mb-16 shadow-2xl">
-            <img src="https://pbs.twimg.com/media/G-9XeOXWQAACCmG.jpg" alt="Neko in Battle" class="w-64 h-64 mx-auto mb-6 rounded-full hero-img border-4 border-gold-500">
-            <h1 class="text-6xl font-extrabold mb-6 section-title">Zenshin Clan: Forward Progress</h1>
-            <p class="text-xl mb-8 max-w-2xl mx-auto">"It is better to be a warrior in a garden than a gardener in a war." – Neko leads with courage on Base.</p>
-            <p class="text-lg mb-6 font-mono bg-black/50 inline-block px-6 py-3 rounded-lg">CA: 0x28973c4ef9ae754b076a024996350d3b16a38453</p>
+    <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">
+        <section class="text-center mb-20">
+            <img src="https://pbs.twimg.com/media/G-9XeOXWQAACCmG.jpg" alt="Neko the Samurai Cat" class="w-72 h-72 mx-auto mb-8 rounded-2xl hero-img border-4 border-yellow-500">
+            <h1 class="text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
+            <p class="text-2xl mb-8">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
+            <div class="bg-black/60 inline-block px-8 py-4 rounded-xl mb-6 font-mono text-lg">
+                CA: 0x28973c4ef9ae754b076a024996350d3b16a38453
+            </div>
             <br>
-            <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453'); alert('CA Copied!')" class="px-6 py-3 bg-gold-600 text-black rounded-full font-bold hover:bg-gold-500">Copy CA</button>
+            <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453'); alert('Contract Address Copied!')" class="mt-4 px-8 py-4 bg-yellow-600 text-black rounded-full font-bold hover:bg-yellow-500 text-lg">
+                Copy CA
+            </button>
         </section>
 
-        <!-- Token Metrics -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-8 mb-20">
-            <div class="metric-card p-6 text-center">
-                <img src="https://pbs.twimg.com/media/G-9d_siWwAACEEY.jpg" alt="Neko Claws" class="w-12 h-12 mx-auto mb-3 rounded-full animate-spin-slow">
-                <p class="text-red-300 light:text-red-700 text-sm mb-2 font-semibold">Price (USD)</p>
-                <p id="neko-price" class="text-3xl font-extrabold mb-4 text-white light:text-black">Loading...</p>
-                <div class="progress-bar"><div id="price-fill" class="progress-fill" style="width:0%"></div></div>
+        <section class="mb-20">
+            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Live on Toshimart (Bonding Curve)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Price / Stats</h3>
+                    <p class="text-3xl font-bold mb-2">Check Live</p>
+                    <p class="text-gray-300 mb-4">Bonding curve – price rises as more buy</p>
+                    <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy inline-block mt-4">View on Toshimart</a>
+                </div>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Market Cap / Liquidity</h3>
+                    <p class="text-gray-300">Dynamic via bonding curve. Early holders get best entry.</p>
+                    <p class="text-sm mt-4 text-gray-400">No Dexscreener yet – coming soon after curve completes</p>
+                </div>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Holders / Volume</h3>
+                    <p class="text-gray-300">Growing clan – join before migration.</p>
+                    <p class="text-sm mt-4 text-gray-400">Trade with ETH on Toshimart</p>
+                </div>
             </div>
-            <!-- Repeat similar for other metrics, using different images like G-9Z6XQXMAA7ln4.jpg, G-jrFGLbQAMHOk0.jpg etc. -->
-            <div class="metric-card p-6 text-center">
-                <img src="https://pbs.twimg.com/media/G-9Z6XQXMAA7ln4.jpg" alt="Neko Zen" class="w-12 h-12 mx-auto mb-3 rounded-full animate-spin-slow">
-                <p class="text-red-300 light:text-red-700 text-sm mb-2 font-semibold">Market Cap</p>
-                <p id="neko-mc" class="text-3xl font-extrabold mb-4 text-white light:text-black">–</p>
-                <div class="progress-bar"><div id="mc-fill" class="progress-fill" style="width:0%"></div></div>
+        </section>
+
+        <section class="mb-20">
+            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">$NEKO Chart & Trade</h2>
+            <div class="card p-6">
+                <iframe src="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" title="Toshimart Neko Chart" loading="lazy"></iframe>
+                <p class="text-center mt-4 text-gray-400">If embed doesn't load, click <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
             </div>
-            <!-- ... add the rest similarly ... -->
-        </div>
+        </section>
 
-        <!-- Rest of the sections (chart, lore, community, X timeline) remain similar to previous version -->
+        <section class="mb-20">
+            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Join the Zenshin Clan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4">X</h3>
+                    <a href="https://x.com/NekoTheSamurai" target="_blank" class="text-yellow-400 hover:underline text-xl">Follow @NekoTheSamurai</a>
+                </div>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Telegram</h3>
+                    <a href="https://t.me/toshimart" target="_blank" class="text-yellow-400 hover:underline text-xl">Toshimart TG</a>
+                </div>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Discord</h3>
+                    <a href="https://discord.com/invite/toshibase" target="_blank" class="text-yellow-400 hover:underline text-xl">Toshi Base</a>
+                </div>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Warpcast</h3>
+                    <a href="https://warpcast.com/toshibase" target="_blank" class="text-yellow-400 hover:underline text-xl">Toshi Base</a>
+                </div>
+            </div>
+        </section>
 
-        <footer class="mt-20 text-center text-sm text-gray-400">
-            <p>Powered by Toshimart on Base | DYOR - Not Financial Advice | Last Update: {{ last_update }}</p>
+        <section class="mb-20">
+            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Recent Clan Updates</h2>
+            <div class="card p-8">
+                <a class="twitter-timeline" data-theme="dark" data-height="600" href="https://twitter.com/NekoTheSamurai?ref_src=twsrc%5Etfw">Tweets by @NekoTheSamurai</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+        </section>
+
+        <footer class="text-center text-gray-400 py-10 border-t border-red-800">
+            <p>Powered by Toshimart on Base • DYOR – Not financial advice • © 2026 Neko on Base</p>
+            <p class="mt-2">Last Update: {{ last_update }}</p>
         </footer>
     </div>
-
-    <!-- Keep the JS from previous version for theme, metrics fetch, lore display -->
-    <script>
-        // ... (paste the full <script> block from the previous code here, including loadNekoMetrics, displayLore, theme toggle) ...
-    </script>
 </body>
 </html>
 '''
