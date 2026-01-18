@@ -8,7 +8,7 @@ def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     return render_template_string(HTML_TEMPLATE, last_update=last_update)
 
-application = app  # Required for Render / gunicorn
+application = app
 
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
@@ -77,33 +77,24 @@ HTML_TEMPLATE = '''
             color: black;
             transform: scale(1.05);
         }
-        .animate-spin-slow { 
-            animation: spin 30s linear infinite; 
-        }
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
+        .animate-spin-slow { animation: spin 30s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hero-img { 
-            filter: drop-shadow(0 0 25px rgba(255,215,0,0.6)); 
             width: 18rem; 
             height: 18rem; 
             object-fit: cover;
+            filter: drop-shadow(0 0 25px rgba(255,215,0,0.6)); 
         }
-        iframe { 
-            border: none; 
-            width: 100%; 
-            height: 500px; 
-        }
+        iframe { border: none; width: 100%; height: 500px; }
     </style>
 </head>
 <body>
     <header class="header py-6 px-8 flex justify-between items-center fixed w-full top-0 z-50">
         <a href="/" class="flex items-center gap-4">
-            <img src="https://pbs.twimg.com/profile_images/2011108570171834368/79u2WeSG.jpg" 
+            <img src="/images/neko-avatar.jpg" 
                  alt="Neko Logo" 
                  class="w-14 h-14 rounded-full animate-spin-slow border-4 border-yellow-500"
-                 onerror="this.src='https://via.placeholder.com/56?text=Neko';">
+                 onerror="this.src='https://via.placeholder.com/56/FFD700/000?text=Neko';">
             <div class="logo-text">Neko the Samurai Cat</div>
         </a>
         <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy $NEKO Now</a>
@@ -111,11 +102,11 @@ HTML_TEMPLATE = '''
 
     <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">
         <section class="text-center mb-20">
-            <img src="https://pbs.twimg.com/profile_images/2011108570171834368/79u2WeSG.jpg" 
+            <img src="/images/neko-avatar.jpg" 
                  alt="Neko the Samurai Cat" 
                  class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500"
                  loading="lazy"
-                 onerror="this.src='https://via.placeholder.com/300?text=Neko'; this.alt='Fallback Neko Image';">
+                 onerror="this.src='https://via.placeholder.com/300/FFD700/000?text=Neko+Hero'; this.alt='Fallback Neko Image';">
             <h1 class="text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
             <p class="text-2xl mb-8">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
             <div class="bg-black/60 inline-block px-8 py-4 rounded-xl mb-6 font-mono text-lg">
@@ -128,6 +119,7 @@ HTML_TEMPLATE = '''
             </button>
         </section>
 
+        <!-- The rest of the sections (Toshimart info, chart iframe, community links, Twitter timeline, footer) remain unchanged from previous version -->
         <section class="mb-20">
             <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Live on Toshimart (Bonding Curve)</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
