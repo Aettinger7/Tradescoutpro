@@ -106,11 +106,11 @@ HTML_TEMPLATE = '''
         <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy $NEKO Now</a>
     </header>
 
-    <div class="container mx-auto px-6 pt-40 pb-20 max-w-7xl">  <!-- Increased to pt-40 to fully clear header -->
+    <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">  <!-- Increased pt-20 to pt-32 for full clearance -->
         <section class="text-center mb-20">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
-                 class="hero-img mx-auto mb-8 mt-16 rounded-full animate-spin-slow border-8 border-yellow-500"  <!-- Added mt-16 for extra clearance -->
+                 class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500"
                  loading="lazy"
                  onerror="this.src='https://via.placeholder.com/300/FFD700/000?text=Neko+Hero'; this.alt='Fallback Neko Image';">
             <h1 class="text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
@@ -124,8 +124,6 @@ HTML_TEMPLATE = '''
                 Copy CA
             </button>
         </section>
-
-        <!-- All other sections remain unchanged – paste them here from your current code if needed -->
 
         <section class="mb-20">
             <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Live on Toshimart (Bonding Curve)</h2>
@@ -149,7 +147,43 @@ HTML_TEMPLATE = '''
             </div>
         </section>
 
-        <!-- Add your chart, join, updates, footer sections here as before -->
+        <section class="mb-20">
+            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">$NEKO Chart & Trade</h2>
+            <div class="card p-6" style="min-height: 520px;">
+                <iframe src="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" title="Toshimart Neko Chart" loading="lazy" style="height: 500px;"></iframe>
+                <p class="text-center mt-4 text-gray-400">If the embed doesn't load, click <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
+            </div>
+        </section>
+
+        <section class="mb-20">
+            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Join the Zenshin Clan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4">X</h3>
+                    <a href="https://x.com/NekoTheSamurai" target="_blank" class="text-yellow-400 hover:underline text-xl">Follow @NekoTheSamurai</a>
+                </div>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Telegram</h3>
+                    <a href="https://t.me/toshimart" target="_blank" class="text-yellow-400 hover:underline text-xl">Toshimart TG</a>
+                </div>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Discord</h3>
+                    <a href="https://discord.com/invite/toshibase" target="_blank" class="text-yellow-400 hover:underline text-xl">Toshi Base</a>
+                </div>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Warpcast</h3>
+                    <a href="https://warpcast.com/toshibase" target="_blank" class="text-yellow-400 hover:underline text-xl">Toshi Base</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-20">
+            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Recent Clan Updates</h2>
+            <div class="card p-8" style="min-height: 620px;">
+                <a class="twitter-timeline" data-theme="dark" data-height="600" href="https://twitter.com/NekoTheSamurai?ref_src=twsrc%5Etfw">Tweets by @NekoTheSamurai</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+        </section>
 
         <footer class="text-center text-gray-400 py-10 border-t border-red-800">
             <p>Powered by Toshimart on Base • DYOR – Not financial advice • © 2026 Neko on Base</p>
