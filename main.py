@@ -16,6 +16,7 @@ HTML_TEMPLATE = '''
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="scroll-restoration" content="manual"> <!-- Helps prevent auto-jump -->
     <title>Neko the Samurai Cat - Official Memecoin Site</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
@@ -87,6 +88,12 @@ HTML_TEMPLATE = '''
         }
         iframe { border: none; width: 100%; height: 500px; }
     </style>
+    <!-- Disable browser scroll restoration -->
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+    </script>
 </head>
 <body>
     <header class="header py-6 px-8 flex justify-between items-center fixed w-full top-0 z-50">
@@ -100,7 +107,7 @@ HTML_TEMPLATE = '''
         <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy $NEKO Now</a>
     </header>
 
-    <div class="container mx-auto px-6 pt-24 pb-20 max-w-7xl">  <!-- Reduced from pt-32 to pt-24 -->
+    <div class="container mx-auto px-6 pt-20 pb-20 max-w-7xl">  <!-- Reduced padding to pt-20 for less initial "down" feel -->
         <section class="text-center mb-20">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
@@ -118,8 +125,6 @@ HTML_TEMPLATE = '''
                 Copy CA
             </button>
         </section>
-
-        <!-- Keep the rest of your sections unchanged (Live on Toshimart, Chart, Join Clan, Recent Updates, Footer) -->
 
         <section class="mb-20">
             <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Live on Toshimart (Bonding Curve)</h2>
@@ -145,8 +150,8 @@ HTML_TEMPLATE = '''
 
         <section class="mb-20">
             <h2 class="text-5xl font-extrabold mb-10 section-title text-center">$NEKO Chart & Trade</h2>
-            <div class="card p-6">
-                <iframe src="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" title="Toshimart Neko Chart" loading="lazy"></iframe>
+            <div class="card p-6" style="min-height: 520px;">
+                <iframe src="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" title="Toshimart Neko Chart" loading="lazy" style="height: 500px;"></iframe>
                 <p class="text-center mt-4 text-gray-400">If the embed doesn't load, click <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
             </div>
         </section>
@@ -175,7 +180,7 @@ HTML_TEMPLATE = '''
 
         <section class="mb-20">
             <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Recent Clan Updates</h2>
-            <div class="card p-8">
+            <div class="card p-8" style="min-height: 620px;">
                 <a class="twitter-timeline" data-theme="dark" data-height="600" href="https://twitter.com/NekoTheSamurai?ref_src=twsrc%5Etfw">Tweets by @NekoTheSamurai</a>
                 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
@@ -187,10 +192,12 @@ HTML_TEMPLATE = '''
         </footer>
     </div>
 
-    <!-- Force scroll to top on load (fixes any browser auto-jump) -->
+    <!-- Force scroll to top after load (with delay for widgets/iframes) -->
     <script>
         window.addEventListener('load', function() {
-            window.scrollTo(0, 0);
+            setTimeout(function() {
+                window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+            }, 500);
         });
     </script>
 </body>
