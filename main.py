@@ -270,14 +270,58 @@ WHITEPAPER_TEMPLATE = '''
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* Same styles as main page for consistency - copy from above if needed */
-        body { margin: 0; background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed; background-size: cover; background-attachment: fixed; background-color: #111111; color: #ffffff; font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; }
-        .header { background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.9)); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5); }
-        .logo-text { font-family: 'Cinzel', serif; font-weight: 900; background: linear-gradient(to right, #FFD700, #FF0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
-        .card { background: rgba(0, 0, 0, 0.85); border: 2px solid #FF0000; border-radius: 1rem; box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4); }
-        .section-title { font-family: 'Cinzel', serif; font-weight: 900; background: linear-gradient(to right, #FFD700, #FF0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 25px rgba(255, 215, 0, 0.7); }
-        .btn-red { background: #FF0000; color: white; padding: 12px 28px; border-radius: 9999px; font-weight: bold; text-decoration: none; transition: all 0.3s; }
-        .btn-red:hover { background: #FFD700; color: black; transform: scale(1.05); }
+        body { 
+            margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed;
+            background-size: cover;
+            background-attachment: fixed;
+            background-color: #111111; 
+            color: #ffffff; 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            min-height: 100vh;
+        }
+        .header { 
+            background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.9)); 
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5);
+        }
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            background: linear-gradient(to right, #FFD700, #FF0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+        .card { 
+            background: rgba(0, 0, 0, 0.85); 
+            border: 2px solid #FF0000; 
+            border-radius: 1rem; 
+            box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4);
+        }
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            background: linear-gradient(to right, #FFD700, #FF0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+        }
+        .btn-red {
+            background: #FF0000;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 9999px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-red:hover {
+            background: #FFD700;
+            color: black;
+            transform: scale(1.05);
+        }
         .animate-spin-slow { animation: spin 30s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -285,7 +329,9 @@ WHITEPAPER_TEMPLATE = '''
 <body>
     <header class="header py-4 px-4 sm:py-6 sm:px-8 flex justify-between items-center fixed w-full top-0 z-50">
         <a href="/" class="flex items-center gap-3 sm:gap-4">
-            <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="w-10 h-10 sm:w-14 sm:h-14 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover">
+            <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
+                 alt="Neko Logo" 
+                 class="w-10 h-10 sm:w-14 sm:h-14 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover">
             <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
         </a>
         <div class="flex items-center gap-4">
@@ -302,11 +348,43 @@ WHITEPAPER_TEMPLATE = '''
             <p class="text-sm text-gray-500">Last Update: {{ last_update }}</p>
         </section>
 
-        <div class="card p-8 sm:p-12">
-            <!-- Whitepaper content as before (paste the full overview, token details, tokenomics, lore, roadmap, risks from previous message) -->
+        <div class="card p-8 sm:p-12 prose prose-invert max-w-none">
             <h2 class="section-title text-3xl sm:text-4xl mb-6">Overview</h2>
-            <p class="text-lg mb-8 leading-relaxed">Neko the Samurai Cat ($NEKO) is a community-driven memecoin launched on the Base blockchain via Toshimart...</p>
-            <!-- ... add the rest of the whitepaper sections here from previous response ... -->
+            <p class="text-lg mb-8 leading-relaxed">Neko the Samurai Cat ($NEKO) is a community-driven memecoin launched on the Base blockchain via Toshimart, the premier memecoin launchpad. Inspired by Japanese samurai culture and the spirit of "Zenshin" (Forward Progress), Neko embodies a warrior cat who walks the path of shadows to protect the light, enjoys simple moments, and faces storms with unyielding resolve. The project blends meme culture, daily motivational lore from the clan's guardian, and on-chain bonding curve dynamics to foster an engaged "Zenshin Clan" community.</p>
+
+            <h2 class="section-title text-3xl sm:text-4xl mb-6 mt-12">Token Details</h2>
+            <ul class="list-disc pl-8 text-lg space-y-4 mb-8">
+                <li><strong>Symbol/Name:</strong> $NEKO / Neko the Samurai Cat</li>
+                <li><strong>Contract Address (Base):</strong> 0x28973c4ef9ae754b076a024996350d3b16a38453</li>
+                <li><strong>Launch Platform:</strong> Toshimart</li>
+                <li><strong>Launch Date:</strong> ~January 13, 2026</li>
+                <li><strong>Current Status:</strong> Bonding curve ~98.91% complete • Market Cap ~$1.6K • Holders ~10 • No Dexscreener yet (post-curve)</li>
+            </ul>
+
+            <h2 class="section-title text-3xl sm:text-4xl mb-6 mt-12">Tokenomics & Mechanics</h2>
+            <p class="text-lg mb-6 leading-relaxed">Fair launch with no presale or team allocations. All supply enters via the Toshimart bonding curve:</p>
+            <ul class="list-disc pl-8 text-lg space-y-4 mb-8">
+                <li><strong>Bonding Curve:</strong> Price increases progressively with buys → early participants get better entry prices</li>
+                <li><strong>Taxes:</strong> 0% buy/sell</li>
+                <li><strong>Liquidity:</strong> Automatically migrates to a DEX pool (likely Uniswap on Base) upon curve completion</li>
+                <li><strong>Distribution:</strong> 100% to community via open buying</li>
+                <li><strong>Dev Holdings:</strong> Minimal (~0.35% visible on launchpad)</li>
+            </ul>
+
+            <h2 class="section-title text-3xl sm:text-4xl mb-6 mt-12">Lore & Vision</h2>
+            <p class="text-lg mb-8 leading-relaxed">Neko shares daily wisdom on X (@NekoTheSamurai): resilience ("I am the storm"), gratitude ("Slow mornings are always the best!"), and forward progress ("Zenshin means 'Forward Progress'"). The Zenshin Clan is built on honor, fun, and steady advancement—no aggressive hype, just consistent community growth on Base.</p>
+
+            <h2 class="section-title text-3xl sm:text-4xl mb-6 mt-12">Roadmap (Community-Driven)</h2>
+            <ul class="list-disc pl-8 text-lg space-y-4 mb-8">
+                <li><strong>Phase 1 (Current):</strong> Complete bonding curve, grow clan via X, Telegram, Discord</li>
+                <li><strong>Phase 2:</strong> DEX migration, LP lock/renounce proof, Dexscreener listing</li>
+                <li><strong>Phase 3:</strong> Expanded lore (art drops, memes, possible mini-games)</li>
+                <li><strong>Phase 4:</strong> Long-term clan events, potential Base ecosystem partnerships</li>
+            </ul>
+
+            <h2 class="section-title text-3xl sm:text-4xl mb-6 mt-12">Risks & Disclaimer</h2>
+            <p class="text-lg text-red-300 leading-relaxed mb-4">Memecoins are highly speculative and volatile. $NEKO is early-stage with low liquidity—high risk of total loss. No guarantees of value, utility, or returns. Do Your Own Research (DYOR). This is not financial advice. Community project only.</p>
+            <p class="text-sm text-gray-500">© 2026 Neko on Base • Powered by Toshimart</p>
         </div>
 
         <div class="text-center mt-12">
