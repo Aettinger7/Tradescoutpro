@@ -10,8 +10,13 @@ def index():
 
 @app.route('/art')
 def art():
-    # Only your new image
-    image_url = "https://i.ibb.co/3m5Qd14L/Gemini-Generated-Image-sqgje0sqgje0sqgj.png"
+    images = [
+        "https://i.ibb.co/23RRSb0m/Gemini-Generated-Image-su90ubsu90ubsu90.png",
+        "https://i.ibb.co/pjvzgzXH/Gemini-Generated-Image-2gwj062gwj062gwj.png",
+        "https://i.ibb.co/3m5Qd14L/Gemini-Generated-Image-sqgje0sqgje0sqgj.png",
+        "https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png",
+        "https://i.ibb.co/9HzF9yZ1/Gemini-Generated-Image-zx03uzx03uzx03uz.png"
+    ]
 
     art_html = f'''
     <!DOCTYPE html>
@@ -35,13 +40,13 @@ def art():
                 backdrop-filter: blur(10px); position: fixed; top: 0; width: 100%; z-index: 50;
             }}
             .gallery {{ 
-                display: flex; justify-content: center; align-items: center; 
-                min-height: calc(100vh - 120px); padding: 2rem 1rem;
+                display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); 
+                gap: 2rem; max-width: 1600px; margin: 0 auto; padding: 8rem 1.5rem 4rem;
             }}
-            .art-wrapper {{ 
-                max-width: 90%; cursor: pointer; transition: transform 0.3s;
+            .art-item {{ 
+                cursor: pointer; transition: transform 0.3s;
             }}
-            .art-wrapper:hover {{ transform: scale(1.02); }}
+            .art-item:hover {{ transform: scale(1.02); }}
             .art-img {{ 
                 width: 100%; height: auto; display: block; 
                 border-radius: 16px; box-shadow: 0 10px 30px rgba(255,215,0,0.3);
@@ -87,12 +92,14 @@ def art():
                 Neko Art Gallery
             </h1>
             <div class="gallery">
-                <div class="art-wrapper" onclick="openModal('{image_url}')">
-                    <img src="{image_url}" alt="Neko Artwork" class="art-img" loading="lazy">
+                ''' + ''.join(f'''
+                <div class="art-item" onclick="openModal('{img}')">
+                    <img src="{img}" alt="Neko Artwork" class="art-img" loading="lazy">
                 </div>
+                ''' for img in images) + '''
             </div>
-            <p class="text-center text-gray-400 mt-10 text-lg">
-                Click the image to view full high-resolution version • Right-click or long-press to save
+            <p class="text-center text-gray-400 mt-12 text-lg">
+                Click any image to view full high-resolution version • Right-click or long-press to save
             </p>
         </main>
 
