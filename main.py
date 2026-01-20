@@ -23,7 +23,7 @@ HTML_TEMPLATE = '''
     <style>
         body { 
             margin: 0;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('YOUR_NEW_IMAGE_URL_HERE.jpg') no-repeat center center fixed; 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url(https://ibb.co/rGvcbx3h) no-repeat center center fixed; 
             background-size: cover; 
             background-color: #111111; 
             color: #ffffff; 
