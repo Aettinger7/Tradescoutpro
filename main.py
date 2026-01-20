@@ -1,82 +1,50 @@
-HTML_TEMPLATE = '''
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neko the Samurai Cat - Official Memecoin Site</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow-x: hidden;
-            background: linear-gradient(to bottom, #111111, #1a1a1a);
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            min-height: 100vh;
-        }
-        .logo-container {
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 4px solid #FFD700; /* gold */
-            box-shadow: 0 0 15px rgba(255,215,0,0.5);
-        }
-        .logo-img { width: 100%; height: 100%; object-fit: cover; }
-        .neko-red { color: #991B1B; } /* deep red for samurai vibe */
-        .gold-text { color: #FFD700; }
-    </style>
-</head>
-<body class="bg-black text-white">
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-red-950 to-black p-4 flex items-center justify-between fixed w-full top-0 z-50 shadow-lg">
-        <div class="flex items-center gap-4">
-            <div class="logo-container">
-                <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko the Samurai Cat Logo" class="logo-img">
-            </div>
-            <h1 class="text-2xl md:text-3xl font-bold gold-text">Neko the Samurai Cat</h1>
-        </div>
-        <div class="text-sm text-gray-400">Zenshin Clan – Forward Progress</div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="pt-24 pb-12 px-4 md:px-8 max-w-5xl mx-auto text-center">
-        <h2 class="text-5xl md:text-6xl font-extrabold gold-text mb-6">Warrior in a Garden</h2>
-        <p class="text-xl md:text-2xl mb-8 text-gray-300">Claws sharpened on Base. Join the Zenshin Clan.</p>
-
-        <!-- Big Buy CTA -->
-        <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" 
-           target="_blank" rel="noopener noreferrer"
-           class="inline-block bg-red-700 hover:bg-red-600 text-white text-2xl font-bold px-12 py-6 rounded-full shadow-2xl transform hover:scale-105 transition mb-12">
-           Buy $NEKO Now on Toshimart
-        </a>
-
-        <!-- Token Info Card -->
-        <div class="bg-gray-900/80 backdrop-blur-md p-8 rounded-2xl border border-gold-500/30 mb-12">
-            <h3 class="text-3xl gold-text mb-6">Token Details</h3>
-            <p class="text-lg mb-4">Contract Address (Base):</p>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-6">
-                <code class="bg-black px-4 py-2 rounded font-mono text-yellow-300 break-all">0x28973c4ef9ae754b076a024996350d3b16a38453</code>
-                <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453'); alert('CA copied!')" 
-                        class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">Copy CA</button>
-            </div>
-            <p class="text-gray-400">Live on Toshimart Bonding Curve • Price rises with buys • Early holders win</p>
-            <p class="mt-4 text-sm text-gray-500">Dexscreener coming after curve completion</p>
-        </div>
-
-        <!-- Socials -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-            <a href="https://x.com/NekoTheSamurai" target="_blank" class="bg-gray-800 hover:bg-gray-700 p-6 rounded-xl">Follow @NekoTheSamurai on X</a>
-            <a href="https://t.me/toshimart" target="_blank" class="bg-gray-800 hover:bg-gray-700 p-6 rounded-xl">Toshimart Telegram</a>
-            <a href="https://discord.com/invite/toshibase" target="_blank" class="bg-gray-800 hover:bg-gray-700 p-6 rounded-xl">Toshi Base Discord</a>
-            <a href="https://warpcast.com/toshibase" target="_blank" class="bg-gray-800 hover:bg-gray-700 p-6 rounded-xl">Toshi Base Warpcast</a>
-        </div>
-
-        <!-- Status / Last Update -->
-        <p class="text-sm text-gray-500">Site last updated: {{ last_update }}</p>
-        <p class="text-sm text-gray-600 mt-2">Bonding curve at ~99% – clan growing fast. Zenshin!</p>
-    </main>
-</body>
-</html>
-'''
+2026-01-20T18:57:25.697780205Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2026-01-20T18:57:25.697782725Z     return self.load_wsgiapp()
+2026-01-20T18:57:25.697785245Z            ~~~~~~~~~~~~~~~~~^^
+2026-01-20T18:57:25.697788085Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2026-01-20T18:57:25.697790665Z     return util.import_app(self.app_uri)
+2026-01-20T18:57:25.697793315Z            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+2026-01-20T18:57:25.697795905Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/util.py", line 417, in import_app
+2026-01-20T18:57:25.697798785Z     raise AppImportError("Failed to find attribute %r in %r." % (name, module))
+2026-01-20T18:57:25.697807066Z gunicorn.errors.AppImportError: Failed to find attribute 'app' in 'main'.
+2026-01-20T18:57:32.029070777Z ==> Exited with status 1
+2026-01-20T18:57:32.102611974Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+2026-01-20T18:57:36.028382913Z ==> Running 'gunicorn main:app'
+2026-01-20T18:57:37.130834137Z Traceback (most recent call last):
+2026-01-20T18:57:37.13097084Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/util.py", line 413, in import_app
+2026-01-20T18:57:37.130977221Z     app = getattr(mod, name)
+2026-01-20T18:57:37.130980341Z AttributeError: module 'main' has no attribute 'app'
+2026-01-20T18:57:37.131014262Z 
+2026-01-20T18:57:37.131021322Z During handling of the above exception, another exception occurred:
+2026-01-20T18:57:37.131023432Z 
+2026-01-20T18:57:37.131025542Z Traceback (most recent call last):
+2026-01-20T18:57:37.132561399Z   File "/opt/render/project/src/.venv/bin/gunicorn", line 8, in <module>
+2026-01-20T18:57:37.132572669Z     sys.exit(run())
+2026-01-20T18:57:37.132575759Z              ~~~^^
+2026-01-20T18:57:37.132578639Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/app/wsgiapp.py", line 66, in run
+2026-01-20T18:57:37.132580899Z     WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+2026-01-20T18:57:37.132582959Z     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+2026-01-20T18:57:37.132585089Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/app/base.py", line 235, in run
+2026-01-20T18:57:37.132587179Z     super().run()
+2026-01-20T18:57:37.13258929Z     ~~~~~~~~~~~^^
+2026-01-20T18:57:37.132591499Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/app/base.py", line 71, in run
+2026-01-20T18:57:37.132593519Z     Arbiter(self).run()
+2026-01-20T18:57:37.13259578Z     ~~~~~~~^^^^^^
+2026-01-20T18:57:37.13259795Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/arbiter.py", line 57, in __init__
+2026-01-20T18:57:37.13260008Z     self.setup(app)
+2026-01-20T18:57:37.13260217Z     ~~~~~~~~~~^^^^^
+2026-01-20T18:57:37.13260434Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/arbiter.py", line 117, in setup
+2026-01-20T18:57:37.1326064Z     self.app.wsgi()
+2026-01-20T18:57:37.1326085Z     ~~~~~~~~~~~~~^^
+2026-01-20T18:57:37.13261066Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2026-01-20T18:57:37.13261356Z     self.callable = self.load()
+2026-01-20T18:57:37.13261562Z                     ~~~~~~~~~^^
+2026-01-20T18:57:37.13261775Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2026-01-20T18:57:37.13261982Z     return self.load_wsgiapp()
+2026-01-20T18:57:37.13262187Z            ~~~~~~~~~~~~~~~~~^^
+2026-01-20T18:57:37.13262449Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2026-01-20T18:57:37.13262739Z     return util.import_app(self.app_uri)
+2026-01-20T18:57:37.13262956Z            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+2026-01-20T18:57:37.132631651Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/gunicorn/util.py", line 417, in import_app
+2026-01-20T18:57:37.132633831Z     raise AppImportError("Failed to find attribute %r in %r." % (name, module))
+2026-01-20T18:57:37.132635911Z gunicorn.errors.AppImportError: Failed to find attribute 'app' in 'main'.
