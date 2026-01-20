@@ -1,3 +1,15 @@
+from flask import Flask, render_template_string
+import datetime
+
+app = Flask(__name__)  # ← must be 'app' here for gunicorn main:app
+
+@app.route('/')
+def index():
+    last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    return render_template_string(HTML_TEMPLATE, last_update=last_update)
+
+# Remove this line unless you have a specific reason for it
+# application = app
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en">
