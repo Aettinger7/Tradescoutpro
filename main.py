@@ -40,7 +40,6 @@ HTML_TEMPLATE = '''
         .logo-text {
             font-family: 'Cinzel', serif;
             font-weight: 900;
-            font-size: 1.5rem sm:2.5rem;
             background: linear-gradient(to right, #FFD700, #FF0000);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -59,7 +58,6 @@ HTML_TEMPLATE = '''
         }
         .section-title {
             font-family: 'Cinzel', serif;
-            font-size: 2rem sm:3rem;
             font-weight: 900;
             background: linear-gradient(to right, #FFD700, #FF0000);
             -webkit-background-clip: text;
@@ -83,17 +81,14 @@ HTML_TEMPLATE = '''
         .animate-spin-slow { animation: spin 30s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hero-img { 
-            width: 12rem sm:18rem; 
-            height: 12rem sm:18rem; 
             object-fit: cover;
             filter: drop-shadow(0 0 25px rgba(255,215,0,0.6)); 
+            aspect-ratio: 1 / 1;
         }
         iframe { border: none; width: 100%; height: 500px; }
         .tweet-card { cursor: pointer; }
         .tweet-media { max-width: 100%; height: auto; border-radius: 0.5rem; }
         .spinner-logo { 
-            width: 2rem; 
-            height: 2rem; 
             object-fit: cover; 
             aspect-ratio: 1 / 1;
         }
@@ -117,7 +112,7 @@ HTML_TEMPLATE = '''
                  alt="Neko Logo" 
                  class="w-10 h-10 sm:w-14 sm:h-14 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover"
                  onerror="this.src='https://via.placeholder.com/56/FFD700/000?text=Neko';">
-            <div class="logo-text">Neko the Samurai Cat</div>
+            <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
         </a>
         <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-base sm:text-lg">Buy $NEKO Now</a>
     </header>
@@ -126,7 +121,7 @@ HTML_TEMPLATE = '''
         <section class="text-center mb-20">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
-                 class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500 object-cover"
+                 class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500 w-48 sm:w-72 h-48 sm:h-72"
                  loading="lazy"
                  onerror="this.src='https://via.placeholder.com/300/FFD700/000?text=Neko+Hero'; this.alt='Fallback Neko Image';">
             <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
@@ -142,7 +137,7 @@ HTML_TEMPLATE = '''
         </section>
 
         <section class="mb-20">
-            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Live on Toshimart (Bonding Curve)</h2>
+            <h2 class="section-title text-3xl sm:text-5xl font-extrabold mb-10 text-center">Live on Toshimart (Bonding Curve)</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 <div class="card p-6 sm:p-8 text-center">
                     <h3 class="text-xl sm:text-2xl font-bold mb-4 text-yellow-400">Price / Stats</h3>
@@ -164,7 +159,7 @@ HTML_TEMPLATE = '''
         </section>
 
         <section class="mb-20">
-            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">$NEKO Chart & Trade</h2>
+            <h2 class="section-title text-3xl sm:text-5xl font-extrabold mb-10 text-center">$NEKO Chart & Trade</h2>
             <div class="card p-4 sm:p-6" style="min-height: 520px;">
                 <iframe src="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" title="Toshimart Neko Chart" loading="lazy" style="height: 500px;"></iframe>
                 <p class="text-center mt-4 text-gray-400">If the embed doesn't load, click <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
@@ -172,7 +167,7 @@ HTML_TEMPLATE = '''
         </section>
 
         <section class="mb-20">
-            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Join the Zenshin Clan</h2>
+            <h2 class="section-title text-3xl sm:text-5xl font-extrabold mb-10 text-center">Join the Zenshin Clan</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 <div class="card p-6 sm:p-8 text-center">
                     <h3 class="text-xl sm:text-2xl font-bold mb-4">X</h3>
@@ -194,12 +189,12 @@ HTML_TEMPLATE = '''
         </section>
 
         <section class="mb-20">
-            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Recent Clan Updates</h2>
+            <h2 class="section-title text-3xl sm:text-5xl font-extrabold mb-10 text-center">Recent Clan Updates</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Tweet 1 -->
                 <a href="https://x.com/NekoTheSamurai/status/2013677063660622204" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
                     <div class="flex items-center gap-2">
-                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500 object-cover" loading="lazy">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo w-8 h-8 rounded-full animate-spin-slow border-2 border-yellow-500" loading="lazy">
                         <p class="text-gray-300 italic">"Neko of the Zenshin clan! Zenshin means 'Forward Progress'. Find $neko on @toshimart CA: 0x28973c4ef9ae754b076a024996350d3b16a38453"</p>
                     </div>
                     <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Tweet Media" class="tweet-media" loading="lazy">
@@ -208,7 +203,7 @@ HTML_TEMPLATE = '''
                 <!-- Tweet 2 -->
                 <a href="https://x.com/NekoTheSamurai/status/2013672007116955790" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
                     <div class="flex items-center gap-2">
-                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500 object-cover" loading="lazy">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo w-8 h-8 rounded-full animate-spin-slow border-2 border-yellow-500" loading="lazy">
                         <p class="text-gray-300 italic">"GM fren! Neko hopes you have an amazing day!"</p>
                     </div>
                     <button class="btn-buy text-sm self-end">View on X</button>
@@ -216,7 +211,7 @@ HTML_TEMPLATE = '''
                 <!-- Tweet 3 -->
                 <a href="https://x.com/NekoTheSamurai/status/2013668982323323071" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
                     <div class="flex items-center gap-2">
-                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500 object-cover" loading="lazy">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo w-8 h-8 rounded-full animate-spin-slow border-2 border-yellow-500" loading="lazy">
                         <p class="text-gray-300 italic">"GM! Soft paws, sharp steel. I walk the path of shadows to protect the light of the village. $neko $toshi @baseapp"</p>
                     </div>
                     <video controls class="tweet-media">
@@ -228,7 +223,7 @@ HTML_TEMPLATE = '''
                 <!-- Tweet 4 -->
                 <a href="https://x.com/NekoTheSamurai/status/2013667665399668882" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
                     <div class="flex items-center gap-2">
-                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500 object-cover" loading="lazy">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo w-8 h-8 rounded-full animate-spin-slow border-2 border-yellow-500" loading="lazy">
                         <p class="text-gray-300 italic">"'Fate whispers to Neko, 'You cannot withstand the storm.' Neko whispers back, 'I am the storm.'' You can find $neko on @toshimart 0x28973c4ef9ae754b076a024996350d3b16a38453"</p>
                     </div>
                     <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Tweet Media" class="tweet-media" loading="lazy">
@@ -237,7 +232,7 @@ HTML_TEMPLATE = '''
                 <!-- Tweet 5 -->
                 <a href="https://x.com/NekoTheSamurai/status/2013666263554498876" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
                     <div class="flex items-center gap-2">
-                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500 object-cover" loading="lazy">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo w-8 h-8 rounded-full animate-spin-slow border-2 border-yellow-500" loading="lazy">
                         <p class="text-gray-300 italic">"GM! Slow mornings are always the best! Neko always stops to enjoy the small things in life. 0x28973c4ef9ae754b076a024996350d3b16a38453 Join us on @toshimart"</p>
                     </div>
                     <video controls class="tweet-media">
