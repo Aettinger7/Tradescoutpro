@@ -10,7 +10,31 @@ def index():
 
 @app.route('/art')
 def art():
-    art_html = '''
+    # Direct high-res image URLs from your ImgBB links
+    images = [
+        {
+            "thumb": "https://i.ibb.co/HTDz0zgc/Neko-art-1.jpg",
+            "full": "https://i.ibb.co/HTDz0zgc/Neko-art-1.jpg",  # same if no separate high-res version
+            "alt": "Neko Samurai Warrior 1"
+        },
+        {
+            "thumb": "https://i.ibb.co/jZV1HGs9/Neko-art-2.jpg",
+            "full": "https://i.ibb.co/jZV1HGs9/Neko-art-2.jpg",
+            "alt": "Neko Samurai Portrait 2"
+        },
+        {
+            "thumb": "https://i.ibb.co/rGvcbx3h/Neko-art-3.jpg",
+            "full": "https://i.ibb.co/rGvcbx3h/Neko-art-3.jpg",
+            "alt": "Neko Garden Scene 3"
+        },
+        {
+            "thumb": "https://i.ibb.co/23mD7cZC/Neko-art-4.jpg",
+            "full": "https://i.ibb.co/23mD7cZC/Neko-art-4.jpg",
+            "alt": "Neko Battle Pose 4"
+        }
+    ]
+
+    art_html = f'''
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -20,7 +44,7 @@ def art():
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
         <style>
-            body {
+            body {{
                 margin: 0;
                 background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
                             url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed;
@@ -29,32 +53,67 @@ def art():
                 color: white;
                 min-height: 100vh;
                 font-family: 'Helvetica Neue', Arial, sans-serif;
-            }
-            .gallery-grid {
+            }}
+            .gallery-grid {{
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
                 gap: 1.5rem;
                 max-width: 1400px;
                 margin: 0 auto;
                 padding: 2rem 1rem;
-            }
-            .art-card {
+            }}
+            .art-card {{
                 background: rgba(0,0,0,0.6);
                 border: 2px solid #FF0000;
                 border-radius: 1rem;
                 overflow: hidden;
                 box-shadow: 0 8px 32px rgba(255,0,0,0.3);
                 transition: all 0.3s;
-            }
-            .art-card:hover {
+                cursor: pointer;
+            }}
+            .art-card:hover {{
                 transform: scale(1.03);
                 box-shadow: 0 12px 48px rgba(255,215,0,0.5);
-            }
-            .art-img {
+            }}
+            .art-img {{
                 width: 100%;
                 height: auto;
                 display: block;
-            }
+                object-fit: cover;
+            }}
+            /* Modal */
+            .modal {{
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.95);
+                z-index: 1000;
+                align-items: center;
+                justify-content: center;
+            }}
+            .modal.active {{
+                display: flex;
+            }}
+            .modal-content {{
+                max-width: 90%;
+                max-height: 90vh;
+                position: relative;
+            }}
+            .modal-img {{
+                max-width: 100%;
+                max-height: 85vh;
+                object-fit: contain;
+                border: 4px solid #FFD700;
+                border-radius: 0.5rem;
+            }}
+            .close-btn {{
+                position: absolute;
+                top: -40px;
+                right: 0;
+                font-size: 2rem;
+                color: white;
+                cursor: pointer;
+            }}
         </style>
     </head>
     <body>
@@ -80,28 +139,48 @@ def art():
             </div>
         </header>
 
-        <main class="pt-24">
+        <main class="pt-24 px-4">
             <h1 class="text-4xl md:text-6xl font-extrabold text-center my-12 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
                 Neko Art Gallery
             </h1>
             <div class="gallery-grid">
-                <div class="art-card">
-                    <img src="https://i.ibb.co/HTDz0zgc/Neko-art-1.jpg" alt="Neko Samurai Art 1" class="art-img">
+                {' '.join(f'''
+                <div class="art-card" onclick="openModal('{img['full']}', '{img['alt']}')">
+                    <img src="{img['thumb']}" alt="{img['alt']}" class="art-img" loading="lazy">
                 </div>
-                <div class="art-card">
-                    <img src="https://i.ibb.co/jZV1HGs9/Neko-art-2.jpg" alt="Neko Samurai Art 2" class="art-img">
-                </div>
-                <div class="art-card">
-                    <img src="https://i.ibb.co/rGvcbx3h/Neko-art-3.jpg" alt="Neko Samurai Art 3" class="art-img">
-                </div>
-                <div class="art-card">
-                    <img src="https://i.ibb.co/23mD7cZC/Neko-art-4.jpg" alt="Neko Samurai Art 4" class="art-img">
-                </div>
+                ''' for img in images)}
             </div>
             <p class="text-center text-gray-400 mt-12 mb-8 text-lg">
-                More epic Neko artwork coming soon • Follow @NekoTheSamurai for updates
+                Click any artwork to view full size • Right-click or long-press to save • More coming soon
             </p>
         </main>
+
+        <!-- Modal -->
+        <div id="imageModal" class="modal" onclick="closeModal(event)">
+            <div class="modal-content relative">
+                <span class="close-btn absolute top-[-3rem] right-0 text-4xl cursor-pointer" onclick="closeModal()">×</span>
+                <img id="modalImage" class="modal-img" src="" alt="Enlarged Art">
+            </div>
+        </div>
+
+        <script>
+            function openModal(src, alt) {{
+                const modal = document.getElementById('imageModal');
+                const img = document.getElementById('modalImage');
+                img.src = src;
+                img.alt = alt;
+                modal.classList.add('active');
+                modal.style.display = 'flex';
+            }}
+
+            function closeModal(e) {{
+                const modal = document.getElementById('imageModal');
+                if (e.target === modal || e.target.classList.contains('close-btn')) {{
+                    modal.classList.remove('active');
+                    modal.style.display = 'none';
+                }}
+            }}
+        </script>
     </body>
     </html>
     '''
