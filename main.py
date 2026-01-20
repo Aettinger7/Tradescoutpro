@@ -23,8 +23,10 @@ HTML_TEMPLATE = '''
     <style>
         body { 
             margin: 0;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url(https://ibb.co/rGvcbx3h) no-repeat center center fixed; 
-            background-size: cover; 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed;
+            background-size: cover;
+            background-attachment: fixed;
             background-color: #111111; 
             color: #ffffff; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
@@ -93,8 +95,8 @@ HTML_TEMPLATE = '''
             history.scrollRestoration = 'manual';
         }
     </script>
-    <!-- Preload the background image for faster load -->
-    <link rel="preload" as="image" href="YOUR_NEW_IMAGE_URL_HERE.jpg">
+    <!-- Preload background for faster render -->
+    <link rel="preload" as="image" href="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png">
 </head>
 <body>
     <header class="header py-6 px-8 flex justify-between items-center fixed w-full top-0 z-50">
@@ -108,7 +110,7 @@ HTML_TEMPLATE = '''
         <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy $NEKO Now</a>
     </header>
 
-    <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">  <!-- Increased pt-20 to pt-32 for full clearance -->
+    <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">
         <section class="text-center mb-20">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
@@ -198,11 +200,14 @@ HTML_TEMPLATE = '''
             setTimeout(function() {
                 window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
             }, 500);
+
+            // Debug: Check background load
+            const bgUrl = 'https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png';
+            const img = new Image();
+            img.src = bgUrl;
+            img.onload = () => console.log('Background image loaded successfully from ImgBB!');
+            img.onerror = () => console.error('Background image failed to load. Check browser console/Network tab for status (e.g., 403, 404).');
         });
-        // Debug: Log if background image fails
-        const bgImage = new Image();
-        bgImage.src = 'YOUR_NEW_IMAGE_URL_HERE.jpg';
-        bgImage.onerror = function() { console.error('Background image failed to load! Check URL or hosting.'); };
     </script>
 </body>
 </html>
