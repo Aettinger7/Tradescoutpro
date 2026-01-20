@@ -40,7 +40,7 @@ HTML_TEMPLATE = '''
         .logo-text {
             font-family: 'Cinzel', serif;
             font-weight: 900;
-            font-size: 2.5rem;
+            font-size: 1.5rem sm:2.5rem;
             background: linear-gradient(to right, #FFD700, #FF0000);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -59,7 +59,7 @@ HTML_TEMPLATE = '''
         }
         .section-title {
             font-family: 'Cinzel', serif;
-            font-size: 3rem;
+            font-size: 2rem sm:3rem;
             font-weight: 900;
             background: linear-gradient(to right, #FFD700, #FF0000);
             -webkit-background-clip: text;
@@ -83,12 +83,15 @@ HTML_TEMPLATE = '''
         .animate-spin-slow { animation: spin 30s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hero-img { 
-            width: 18rem; 
-            height: 18rem; 
+            width: 12rem sm:18rem; 
+            height: 12rem sm:18rem; 
             object-fit: cover;
             filter: drop-shadow(0 0 25px rgba(255,215,0,0.6)); 
         }
         iframe { border: none; width: 100%; height: 500px; }
+        .tweet-card { cursor: pointer; }
+        .tweet-media { max-width: 100%; height: auto; border-radius: 0.5rem; }
+        .spinner-logo { width: 2rem; height: 2rem; }
     </style>
     <script>
         if ('scrollRestoration' in history) {
@@ -99,52 +102,52 @@ HTML_TEMPLATE = '''
     <link rel="preload" as="image" href="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png">
 </head>
 <body>
-    <header class="header py-6 px-8 flex justify-between items-center fixed w-full top-0 z-50">
+    <header class="header py-4 px-4 sm:py-6 sm:px-8 flex justify-between items-center fixed w-full top-0 z-50">
         <a href="/" class="flex items-center gap-4">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko Logo" 
-                 class="w-14 h-14 rounded-full animate-spin-slow border-4 border-yellow-500"
+                 class="w-10 h-10 sm:w-14 sm:h-14 rounded-full animate-spin-slow border-4 border-yellow-500"
                  onerror="this.src='https://via.placeholder.com/56/FFD700/000?text=Neko';">
             <div class="logo-text">Neko the Samurai Cat</div>
         </a>
-        <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy $NEKO Now</a>
+        <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-base sm:text-lg">Buy $NEKO Now</a>
     </header>
 
-    <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">
+    <div class="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-20 max-w-7xl">
         <section class="text-center mb-20">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
                  class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500"
                  loading="lazy"
                  onerror="this.src='https://via.placeholder.com/300/FFD700/000?text=Neko+Hero'; this.alt='Fallback Neko Image';">
-            <h1 class="text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
-            <p class="text-2xl mb-8">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
-            <div class="bg-black/60 inline-block px-8 py-4 rounded-xl mb-6 font-mono text-lg">
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
+            <p class="text-xl sm:text-2xl mb-8">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
+            <div class="bg-black/60 inline-block px-6 sm:px-8 py-4 rounded-xl mb-6 font-mono text-base sm:text-lg">
                 CA: 0x28973c4ef9ae754b076a024996350d3b16a38453
             </div>
             <br>
             <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453'); alert('Contract Address Copied!')" 
-                    class="mt-4 px-8 py-4 bg-yellow-600 text-black rounded-full font-bold hover:bg-yellow-500 text-lg">
+                    class="mt-4 px-6 sm:px-8 py-3 sm:py-4 bg-yellow-600 text-black rounded-full font-bold hover:bg-yellow-500 text-base sm:text-lg">
                 Copy CA
             </button>
         </section>
 
         <section class="mb-20">
-            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Live on Toshimart (Bonding Curve)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="card p-8 text-center">
-                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Price / Stats</h3>
-                    <p class="text-3xl font-bold mb-2">Check Live</p>
+            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Live on Toshimart (Bonding Curve)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4 text-yellow-400">Price / Stats</h3>
+                    <p class="text-2xl sm:text-3xl font-bold mb-2">Check Live</p>
                     <p class="text-gray-300 mb-4">Bonding curve – price rises as more buy</p>
                     <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy inline-block mt-4">View on Toshimart</a>
                 </div>
-                <div class="card p-8 text-center">
-                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Market Cap / Liquidity</h3>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4 text-yellow-400">Market Cap / Liquidity</h3>
                     <p class="text-gray-300">Dynamic via bonding curve. Early holders get best entry.</p>
                     <p class="text-sm mt-4 text-gray-400">No Dexscreener yet – coming soon after curve completes</p>
                 </div>
-                <div class="card p-8 text-center">
-                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Holders / Volume</h3>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4 text-yellow-400">Holders / Volume</h3>
                     <p class="text-gray-300">Growing clan – join before migration.</p>
                     <p class="text-sm mt-4 text-gray-400">Trade with ETH on Toshimart</p>
                 </div>
@@ -152,40 +155,88 @@ HTML_TEMPLATE = '''
         </section>
 
         <section class="mb-20">
-            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">$NEKO Chart & Trade</h2>
-            <div class="card p-6" style="min-height: 520px;">
+            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">$NEKO Chart & Trade</h2>
+            <div class="card p-4 sm:p-6" style="min-height: 520px;">
                 <iframe src="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" title="Toshimart Neko Chart" loading="lazy" style="height: 500px;"></iframe>
                 <p class="text-center mt-4 text-gray-400">If the embed doesn't load, click <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
             </div>
         </section>
 
         <section class="mb-20">
-            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Join the Zenshin Clan</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="card p-8 text-center">
-                    <h3 class="text-2xl font-bold mb-4">X</h3>
-                    <a href="https://x.com/NekoTheSamurai" target="_blank" class="text-yellow-400 hover:underline text-xl">Follow @NekoTheSamurai</a>
+            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Join the Zenshin Clan</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">X</h3>
+                    <a href="https://x.com/NekoTheSamurai" target="_blank" class="text-yellow-400 hover:underline text-lg sm:text-xl">Follow @NekoTheSamurai</a>
                 </div>
-                <div class="card p-8 text-center">
-                    <h3 class="text-2xl font-bold mb-4">Telegram</h3>
-                    <a href="https://t.me/toshimart" target="_blank" class="text-yellow-400 hover:underline text-xl">Toshimart TG</a>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Telegram</h3>
+                    <a href="https://t.me/toshimart" target="_blank" class="text-yellow-400 hover:underline text-lg sm:text-xl">Toshimart TG</a>
                 </div>
-                <div class="card p-8 text-center">
-                    <h3 class="text-2xl font-bold mb-4">Discord</h3>
-                    <a href="https://discord.com/invite/toshibase" target="_blank" class="text-yellow-400 hover:underline text-xl">Toshi Base</a>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Discord</h3>
+                    <a href="https://discord.com/invite/toshibase" target="_blank" class="text-yellow-400 hover:underline text-lg sm:text-xl">Toshi Base</a>
                 </div>
-                <div class="card p-8 text-center">
-                    <h3 class="text-2xl font-bold mb-4">Warpcast</h3>
-                    <a href="https://warpcast.com/toshibase" target="_blank" class="text-yellow-400 hover:underline text-xl">Toshi Base</a>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Warpcast</h3>
+                    <a href="https://warpcast.com/toshibase" target="_blank" class="text-yellow-400 hover:underline text-lg sm:text-xl">Toshi Base</a>
                 </div>
             </div>
         </section>
 
         <section class="mb-20">
-            <h2 class="text-5xl font-extrabold mb-10 section-title text-center">Recent Clan Updates</h2>
-            <div class="card p-8" style="min-height: 620px;">
-                <a class="twitter-timeline" data-theme="dark" data-height="600" href="https://twitter.com/NekoTheSamurai?ref_src=twsrc%5Etfw">Tweets by @NekoTheSamurai</a>
-                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Recent Clan Updates</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tweet 1 -->
+                <a href="https://x.com/NekoTheSamurai/status/2013677063660622204" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500">
+                        <p class="text-gray-300 italic">"Neko of the Zenshin clan! Zenshin means 'Forward Progress'. Find $neko on @toshimart CA: 0x28973c4ef9ae754b076a024996350d3b16a38453"</p>
+                    </div>
+                    <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Tweet Media" class="tweet-media" loading="lazy">
+                    <button class="btn-buy text-sm self-end">View on X</button>
+                </a>
+                <!-- Tweet 2 -->
+                <a href="https://x.com/NekoTheSamurai/status/2013672007116955790" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500">
+                        <p class="text-gray-300 italic">"GM fren! Neko hopes you have an amazing day!"</p>
+                    </div>
+                    <button class="btn-buy text-sm self-end">View on X</button>
+                </a>
+                <!-- Tweet 3 -->
+                <a href="https://x.com/NekoTheSamurai/status/2013668982323323071" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500">
+                        <p class="text-gray-300 italic">"GM! Soft paws, sharp steel. I walk the path of shadows to protect the light of the village. $neko $toshi @baseapp"</p>
+                    </div>
+                    <video controls class="tweet-media">
+                        <source src="https://video.twimg.com/tweet_video/G_H8qiGXgAACZpp.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <button class="btn-buy text-sm self-end">View on X</button>
+                </a>
+                <!-- Tweet 4 -->
+                <a href="https://x.com/NekoTheSamurai/status/2013667665399668882" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500">
+                        <p class="text-gray-300 italic">"'Fate whispers to Neko, 'You cannot withstand the storm.' Neko whispers back, 'I am the storm.'' You can find $neko on @toshimart 0x28973c4ef9ae754b076a024996350d3b16a38453"</p>
+                    </div>
+                    <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Tweet Media" class="tweet-media" loading="lazy">
+                    <button class="btn-buy text-sm self-end">View on X</button>
+                </a>
+                <!-- Tweet 5 -->
+                <a href="https://x.com/NekoTheSamurai/status/2013666263554498876" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500">
+                        <p class="text-gray-300 italic">"GM! Slow mornings are always the best! Neko always stops to enjoy the small things in life. 0x28973c4ef9ae754b076a024996350d3b16a38453 Join us on @toshimart"</p>
+                    </div>
+                    <video controls class="tweet-media">
+                        <source src="https://video.twimg.com/amplify_video/2013665903586484224/vid/avc1/464x688/3jkq97b-iiBAga0l.mp4?tag=23" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <button class="btn-buy text-sm self-end">View on X</button>
+                </a>
             </div>
         </section>
 
@@ -200,13 +251,6 @@ HTML_TEMPLATE = '''
             setTimeout(function() {
                 window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
             }, 500);
-
-            // Debug: Check background load
-            const bgUrl = 'https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png';
-            const img = new Image();
-            img.src = bgUrl;
-            img.onload = () => console.log('Background image loaded successfully from ImgBB!');
-            img.onerror = () => console.error('Background image failed to load. Check browser console/Network tab for status (e.g., 403, 404).');
         });
     </script>
 </body>
