@@ -28,132 +28,63 @@ def art():
         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
         <style>
             body { 
-                margin: 0;
-                background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed; 
-                background-size: cover; 
-                background-attachment: fixed; 
-                background-color: #111111; 
-                color: #ffffff; 
-                font-family: 'Helvetica Neue', Arial, sans-serif; 
-                min-height: 100vh;
+                margin: 0; padding: 0; overflow-x: hidden;
+                background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                            url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed; 
+                background-size: cover; background-attachment: fixed; 
+                background-color: #000; color: #fff; font-family: sans-serif; min-height: 100vh;
             }
-            .header { 
+            header { 
                 background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.9)); 
-                backdrop-filter: blur(10px);
-                box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5);
+                backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(255,0,0,0.5);
+                position: fixed; top: 0; left: 0; right: 0; z-index: 50;
             }
-            .gallery-grid { 
+            .gallery { 
                 display: grid; 
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
                 gap: 1.5rem; 
                 max-width: 1400px; 
                 margin: 0 auto; 
                 padding: 7rem 1rem 3rem;
             }
-            .art-card { 
-                cursor: pointer; 
-                border: 2px solid #FF0000; 
-                border-radius: 1rem; 
-                overflow: hidden; 
-                box-shadow: 0 8px 32px rgba(255,0,0,0.4); 
-                transition: all 0.3s;
-            }
-            .art-card:hover { 
-                box-shadow: 0 0 40px rgba(255, 0, 0, 0.7); 
-                transform: translateY(-4px);
-            }
-            .art-img { 
+            .art-image { 
                 width: 100%; 
                 height: auto; 
                 display: block; 
-                image-rendering: crisp-edges; 
-                image-rendering: -webkit-optimize-contrast;
+                border-radius: 0.75rem;
             }
-            #modal { 
-                display: none; 
-                position: fixed; 
-                inset: 0; 
-                background: rgba(0,0,0,0.95); 
-                z-index: 1000; 
-                align-items: center; 
-                justify-content: center; 
-            }
-            #modal.active { 
-                display: flex; 
-            }
-            #modal-content { 
-                position: relative; 
-                max-width: 95%; 
-                max-height: 95%; 
-            }
-            #modal-img { 
-                max-width: 100%; 
-                max-height: 100%; 
-                object-fit: contain; 
-                border: 4px solid #FFD700; 
-                border-radius: 0.5rem;
-            }
-            .close { 
-                position: absolute; 
-                top: -30px; 
-                right: 0; 
-                color: #fff; 
-                font-size: 40px; 
-                font-weight: bold; 
-                cursor: pointer; 
+            .instruction {
+                text-align: center; color: #ccc; margin: 1rem 0 3rem; font-size: 1.1rem;
             }
         </style>
     </head>
     <body>
-        <header class="header py-4 px-6 flex justify-between items-center fixed w-full top-0 z-50">
+        <header class="py-4 px-6 flex justify-between items-center">
             <a href="/" class="flex items-center gap-4">
-                <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
-                     alt="Neko Logo" 
-                     class="w-14 h-14 rounded-full animate-spin-slow border-4 border-yellow-500"
-                     onerror="this.src='https://via.placeholder.com/56/FFD700/000?text=Neko';">
-                <div class="logo-text">Neko the Samurai Cat</div>
+                <div class="w-12 h-12 rounded-full overflow-hidden border-4 border-yellow-500 flex-shrink-0">
+                    <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
+                         alt="Neko Logo" class="w-full h-full object-cover animate-spin-slow">
+                </div>
+                <div class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
+                    Neko the Samurai Cat
+                </div>
             </a>
-            <a href="/" class="btn-buy text-lg bg-red-600 hover:bg-yellow-500 text-white hover:text-black px-6 py-2 rounded-full font-bold transition-all">Back to Home</a>
+            <a href="/" class="bg-red-600 hover:bg-yellow-500 text-white hover:text-black px-6 py-2 rounded-full font-bold transition-all">
+                Back to Home
+            </a>
         </header>
 
         <main class="pt-24">
-            <h1 class="text-5xl md:text-6xl font-extrabold text-center my-12 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
                 Neko Art Gallery
             </h1>
-            <div class="gallery-grid">
+            <p class="instruction">Right-click (or long-press on mobile) any image to save in full quality</p>
+            <div class="gallery">
                 ''' + ''.join(f'''
-                <div class="art-card" onclick="openModal('{img}')">
-                    <img src="{img}" alt="Neko Art" class="art-img" loading="lazy">
-                </div>
+                <img src="{img}" alt="Neko Art" class="art-image" loading="lazy">
                 ''' for img in images) + '''
             </div>
-            <p class="text-center text-gray-400 mt-12 mb-8 text-lg">
-                Click any artwork to view full size • Right-click or long-press to save • More coming soon
-            </p>
         </main>
-
-        <!-- Modal -->
-        <div id="modal" class="modal" onclick="closeModal(event)">
-            <div id="modal-content" class="relative">
-                <span class="close absolute top-[-40px] right-0 text-5xl cursor-pointer" onclick="closeModal()">×</span>
-                <img id="modal-img" src="" alt="Enlarged Neko Art">
-            </div>
-        </div>
-
-        <script>
-            function openModal(src) {
-                const modal = document.getElementById('modal');
-                const img = document.getElementById('modal-img');
-                img.src = src;
-                modal.classList.add('active');
-            }
-            function closeModal(e) {
-                const modal = document.getElementById('modal');
-                if (e.target === modal || e.target.classList.contains('close')) {
-                    modal.classList.remove('active');
-                }
-            }
-        </script>
     </body>
     </html>
     '''
@@ -165,14 +96,14 @@ HTML_TEMPLATE = '''
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="scroll-restoration" content="manual">
     <title>Neko the Samurai Cat - Official Memecoin Site</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
         body { 
             margin: 0;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed; 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed; 
             background-size: cover; 
             background-attachment: fixed; 
             background-color: #111111; 
@@ -238,18 +169,13 @@ HTML_TEMPLATE = '''
         }
         iframe { border: none; width: 100%; height: 500px; }
     </style>
-    <script>
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-    </script>
 </head>
 <body>
     <header class="header py-6 px-8 flex justify-between items-center fixed w-full top-0 z-50">
         <a href="/" class="flex items-center gap-4">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko Logo" 
-                 class="w-14 h-14 rounded-full animate-spin-slow border-4 border-yellow-500"
+                 class="w-14 h-14 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover"
                  onerror="this.src='https://via.placeholder.com/56/FFD700/000?text=Neko';">
             <div class="logo-text">Neko the Samurai Cat</div>
         </a>
@@ -263,7 +189,7 @@ HTML_TEMPLATE = '''
         <section class="text-center mb-20">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
-                 class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500"
+                 class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500 object-cover"
                  loading="lazy"
                  onerror="this.src='https://via.placeholder.com/300/FFD700/000?text=Neko+Hero'; this.alt='Fallback Neko Image';">
             <h1 class="text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
