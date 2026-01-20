@@ -23,7 +23,7 @@ HTML_TEMPLATE = '''
     <style>
         body { 
             margin: 0;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://pbs.twimg.com/media/G-9Z6XQXMAA7ln4.jpg') no-repeat center center fixed; 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('YOUR_NEW_IMAGE_URL_HERE.jpg') no-repeat center center fixed; 
             background-size: cover; 
             background-color: #111111; 
             color: #ffffff; 
@@ -93,6 +93,8 @@ HTML_TEMPLATE = '''
             history.scrollRestoration = 'manual';
         }
     </script>
+    <!-- Preload the background image for faster load -->
+    <link rel="preload" as="image" href="YOUR_NEW_IMAGE_URL_HERE.jpg">
 </head>
 <body>
     <header class="header py-6 px-8 flex justify-between items-center fixed w-full top-0 z-50">
@@ -197,6 +199,10 @@ HTML_TEMPLATE = '''
                 window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
             }, 500);
         });
+        // Debug: Log if background image fails
+        const bgImage = new Image();
+        bgImage.src = 'YOUR_NEW_IMAGE_URL_HERE.jpg';
+        bgImage.onerror = function() { console.error('Background image failed to load! Check URL or hosting.'); };
     </script>
 </body>
 </html>
