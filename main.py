@@ -10,14 +10,10 @@ def index():
 
 @app.route('/art')
 def art():
-    images = [
-        "https://i.ibb.co/HTDz0zgc/Neko-art-1.jpg",
-        "https://i.ibb.co/jZV1HGs9/Neko-art-2.jpg",
-        "https://i.ibb.co/rGvcbx3h/Neko-art-3.jpg",
-        "https://i.ibb.co/23mD7cZC/Neko-art-4.jpg"
-    ]
+    # Only your new image
+    image_url = "https://i.ibb.co/3m5Qd14L/Gemini-Generated-Image-sqgje0sqgje0sqgj.png"
 
-    art_html = '''
+    art_html = f'''
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -27,35 +23,47 @@ def art():
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
         <style>
-            body { 
+            body {{ 
                 margin: 0; padding: 0; overflow-x: hidden;
-                background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
                             url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed; 
                 background-size: cover; background-attachment: fixed; 
                 background-color: #000; color: #fff; font-family: sans-serif; min-height: 100vh;
-            }
-            header { 
+            }}
+            header {{ 
                 background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.9)); 
-                backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(255,0,0,0.5);
-                position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-            }
-            .gallery { 
-                display: grid; 
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-                gap: 1.5rem; 
-                max-width: 1400px; 
-                margin: 0 auto; 
-                padding: 7rem 1rem 3rem;
-            }
-            .art-image { 
-                width: 100%; 
-                height: auto; 
-                display: block; 
-                border-radius: 0.75rem;
-            }
-            .instruction {
-                text-align: center; color: #ccc; margin: 1rem 0 3rem; font-size: 1.1rem;
-            }
+                backdrop-filter: blur(10px); position: fixed; top: 0; width: 100%; z-index: 50;
+            }}
+            .gallery {{ 
+                display: flex; justify-content: center; align-items: center; 
+                min-height: calc(100vh - 120px); padding: 2rem 1rem;
+            }}
+            .art-wrapper {{ 
+                max-width: 90%; cursor: pointer; transition: transform 0.3s;
+            }}
+            .art-wrapper:hover {{ transform: scale(1.02); }}
+            .art-img {{ 
+                width: 100%; height: auto; display: block; 
+                border-radius: 16px; box-shadow: 0 10px 30px rgba(255,215,0,0.3);
+            }}
+            #modal {{ 
+                display: none; position: fixed; inset: 0; z-index: 1000; 
+                background: rgba(0,0,0,0.96); align-items: center; justify-content: center;
+            }}
+            #modal.active {{ display: flex; }}
+            #modal-content {{ 
+                position: relative; width: 95vw; height: 95vh; display: flex; 
+                align-items: center; justify-content: center; padding: 1rem;
+            }}
+            #modal-img {{ 
+                max-width: 100%; max-height: 100%; object-fit: contain; 
+                border: 5px solid #FFD700; border-radius: 12px; 
+                box-shadow: 0 0 60px rgba(255,255,255,0.4);
+            }}
+            .close {{ 
+                position: absolute; top: 1.5rem; right: 2rem; 
+                color: white; font-size: 4.5rem; font-weight: bold; cursor: pointer; 
+            }}
         </style>
     </head>
     <body>
@@ -75,16 +83,37 @@ def art():
         </header>
 
         <main class="pt-24">
-            <h1 class="text-5xl md:text-6xl font-extrabold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-center mb-10 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
                 Neko Art Gallery
             </h1>
-            <p class="instruction">Right-click (or long-press on mobile) any image to save in full quality</p>
             <div class="gallery">
-                ''' + ''.join(f'''
-                <img src="{img}" alt="Neko Art" class="art-image" loading="lazy">
-                ''' for img in images) + '''
+                <div class="art-wrapper" onclick="openModal('{image_url}')">
+                    <img src="{image_url}" alt="Neko Artwork" class="art-img" loading="lazy">
+                </div>
             </div>
+            <p class="text-center text-gray-400 mt-10 text-lg">
+                Click the image to view full high-resolution version • Right-click or long-press to save
+            </p>
         </main>
+
+        <div id="modal" onclick="if(event.target === this) closeModal()">
+            <span class="close" onclick="closeModal()">×</span>
+            <div id="modal-content">
+                <img id="modal-img" src="" alt="Full Resolution Neko Art">
+            </div>
+        </div>
+
+        <script>
+            function openModal(src) {{
+                document.getElementById('modal-img').src = src;
+                document.getElementById('modal').classList.add('active');
+                document.getElementById('modal').style.display = 'flex';
+            }}
+            function closeModal() {{
+                document.getElementById('modal').classList.remove('active');
+                document.getElementById('modal').style.display = 'none';
+            }}
+        </script>
     </body>
     </html>
     '''
