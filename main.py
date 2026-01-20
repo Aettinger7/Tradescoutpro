@@ -6,12 +6,12 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-    return render_template_string(HTML_TEMPLATE, last_update=last_update)
+    return render_template_string(HTML_TEMPLATE, last_update=last_update, current_path='/')
 
 @app.route('/whitepaper')
 def whitepaper():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-    return render_template_string(WHITEPAPER_TEMPLATE, last_update=last_update)
+    return render_template_string(WHITEPAPER_TEMPLATE, last_update=last_update, current_path='/whitepaper')
 
 application = app
 
@@ -72,16 +72,26 @@ HTML_TEMPLATE = '''
         .btn-red {
             background: #FF0000;
             color: white;
-            padding: 12px 28px;
+            padding: 10px 24px;
             border-radius: 9999px;
             font-weight: bold;
             text-decoration: none;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         .btn-red:hover {
             background: #FFD700;
             color: black;
             transform: scale(1.05);
+        }
+        .btn-active {
+            background: #FF0000;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 9999px;
+            font-weight: bold;
+            opacity: 0.8;
+            cursor: default;
         }
         .animate-spin-slow { animation: spin 30s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -91,7 +101,6 @@ HTML_TEMPLATE = '''
             aspect-ratio: 1 / 1;
         }
         iframe { border: none; width: 100%; height: 500px; }
-        .tweet-card { cursor: pointer; }
         .tweet-media { max-width: 100%; height: auto; border-radius: 0.5rem; }
         .spinner-logo { 
             object-fit: cover; 
@@ -119,8 +128,14 @@ HTML_TEMPLATE = '''
             <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
         </a>
         <div class="flex items-center gap-4 flex-wrap">
-            <a href="/" class="text-yellow-400 hover:underline text-base sm:text-lg">Home</a>
-            <a href="/whitepaper" class="btn-red text-base sm:text-lg">Whitepaper</a>
+            {% if current_path != '/' %}
+                <a href="/" class="btn-red text-base sm:text-lg">Home</a>
+            {% endif %}
+            {% if current_path == '/' %}
+                <a href="/whitepaper" class="btn-red text-base sm:text-lg">Whitepaper</a>
+            {% else %}
+                <span class="btn-active text-base sm:text-lg">Whitepaper</span>
+            {% endif %}
             <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red text-base sm:text-lg">Buy $NEKO Now</a>
         </div>
     </header>
@@ -131,7 +146,7 @@ HTML_TEMPLATE = '''
                  alt="Neko the Samurai Cat" 
                  class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500 w-48 sm:w-72 h-48 sm:h-72"
                  loading="lazy"
-                 onerror="this.src='https://via.placeholder.com/300/FFD700/000?text=Neko+Hero';">
+                 onerror="this.src='https://via.placeholder.com/300/FFD700/000?text=Neko+Hero'; this.alt='Fallback Neko Image';">
             <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
             <p class="text-xl sm:text-2xl mb-8">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
             <div class="bg-black/60 inline-block px-6 sm:px-8 py-4 rounded-xl mb-6 font-mono text-base sm:text-lg">
@@ -270,58 +285,14 @@ WHITEPAPER_TEMPLATE = '''
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            margin: 0;
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
-                        url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed;
-            background-size: cover;
-            background-attachment: fixed;
-            background-color: #111111; 
-            color: #ffffff; 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            min-height: 100vh;
-        }
-        .header { 
-            background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.9)); 
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5);
-        }
-        .logo-text {
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            background: linear-gradient(to right, #FFD700, #FF0000);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-        }
-        .card { 
-            background: rgba(0, 0, 0, 0.85); 
-            border: 2px solid #FF0000; 
-            border-radius: 1rem; 
-            box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4);
-        }
-        .section-title {
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            background: linear-gradient(to right, #FFD700, #FF0000);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
-        }
-        .btn-red {
-            background: #FF0000;
-            color: white;
-            padding: 12px 28px;
-            border-radius: 9999px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        .btn-red:hover {
-            background: #FFD700;
-            color: black;
-            transform: scale(1.05);
-        }
+        body { margin: 0; background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed; background-size: cover; background-attachment: fixed; background-color: #111111; color: #ffffff; font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; }
+        .header { background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.9)); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5); }
+        .logo-text { font-family: 'Cinzel', serif; font-weight: 900; background: linear-gradient(to right, #FFD700, #FF0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+        .card { background: rgba(0, 0, 0, 0.85); border: 2px solid #FF0000; border-radius: 1rem; box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4); }
+        .section-title { font-family: 'Cinzel', serif; font-weight: 900; background: linear-gradient(to right, #FFD700, #FF0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 25px rgba(255, 215, 0, 0.7); }
+        .btn-red { background: #FF0000; color: white; padding: 10px 24px; border-radius: 9999px; font-weight: bold; text-decoration: none; transition: all 0.3s; white-space: nowrap; }
+        .btn-red:hover { background: #FFD700; color: black; transform: scale(1.05); }
+        .btn-active { background: #FF0000; color: white; padding: 10px 24px; border-radius: 9999px; font-weight: bold; opacity: 0.8; cursor: default; }
         .animate-spin-slow { animation: spin 30s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -334,9 +305,15 @@ WHITEPAPER_TEMPLATE = '''
                  class="w-10 h-10 sm:w-14 sm:h-14 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover">
             <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
         </a>
-        <div class="flex items-center gap-4">
-            <a href="/" class="text-yellow-400 hover:underline text-base sm:text-lg">Home</a>
-            <span class="btn-red text-base sm:text-lg cursor-default opacity-80">Whitepaper</span>
+        <div class="flex items-center gap-4 flex-wrap">
+            {% if current_path != '/' %}
+                <a href="/" class="btn-red text-base sm:text-lg">Home</a>
+            {% endif %}
+            {% if current_path == '/' %}
+                <a href="/whitepaper" class="btn-red text-base sm:text-lg">Whitepaper</a>
+            {% else %}
+                <span class="btn-active text-base sm:text-lg">Whitepaper</span>
+            {% endif %}
             <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red text-base sm:text-lg">Buy $NEKO Now</a>
         </div>
     </header>
