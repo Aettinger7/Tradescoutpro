@@ -20,9 +20,13 @@ def art():
 
     gallery_html = ""
     for img in images:
-        gallery_html += '<div class="art-item" onclick="openModal(\'' + img + '\')"><img src="' + img + '" alt="Neko Artwork" class="art-img" loading="lazy"></div>'
+        gallery_html += f'''
+        <div class="art-item" onclick="openModal('{img}')">
+            <img src="{img}" alt="Neko Artwork" class="art-img" loading="lazy" referrerpolicy="no-referrer" onerror="this.src='https://via.placeholder.com/340x340/111/fff?text=Image+Failed'; this.alt='Image failed to load';">
+        </div>
+        '''
 
-    art_html = '''
+    art_html = f'''
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -31,16 +35,16 @@ def art():
         <title>Neko Art Gallery - Zenshin Clan</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            body { margin: 0; padding: 0; overflow-x: hidden; background: #000; color: #fff; min-height: 100vh; font-family: sans-serif; }
-            header { background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.9)); backdrop-filter: blur(10px); position: fixed; top: 0; width: 100%; z-index: 50; }
-            .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem; max-width: 1600px; margin: 0 auto; padding: 8rem 1.5rem 4rem; }
-            .art-item { cursor: pointer; transition: transform 0.3s; }
-            .art-item:hover { transform: scale(1.02); }
-            .art-img { width: 100%; height: auto; display: block; border-radius: 16px; box-shadow: 0 10px 30px rgba(255,215,0,0.3); }
-            #modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.96); align-items: center; justify-content: center; }
-            #modal.active { display: flex; }
-            #modal-img { max-width: 95vw; max-height: 95vh; object-fit: contain; border: 5px solid #FFD700; border-radius: 12px; box-shadow: 0 0 60px rgba(255,255,255,0.4); }
-            .close { position: absolute; top: 1.5rem; right: 2rem; color: white; font-size: 4.5rem; font-weight: bold; cursor: pointer; }
+            body {{ margin: 0; padding: 0; overflow-x: hidden; background: #000; color: #fff; min-height: 100vh; font-family: sans-serif; }}
+            header {{ background: linear-gradient(to right, #FF0000, rgba(0,0,0,0.9)); backdrop-filter: blur(10px); position: fixed; top: 0; width: 100%; z-index: 50; }}
+            .gallery {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem; max-width: 1600px; margin: 0 auto; padding: 8rem 1.5rem 4rem; }}
+            .art-item {{ cursor: pointer; transition: transform 0.3s; }}
+            .art-item:hover {{ transform: scale(1.02); }}
+            .art-img {{ width: 100%; height: auto; display: block; border-radius: 16px; box-shadow: 0 10px 30px rgba(255,215,0,0.3); }}
+            #modal {{ display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.96); align-items: center; justify-content: center; }}
+            #modal.active {{ display: flex; }}
+            #modal-img {{ max-width: 95vw; max-height: 95vh; object-fit: contain; border: 5px solid #FFD700; border-radius: 12px; box-shadow: 0 0 60px rgba(255,255,255,0.4); }}
+            .close {{ position: absolute; top: 1.5rem; right: 2rem; color: white; font-size: 4.5rem; font-weight: bold; cursor: pointer; }}
         </style>
     </head>
     <body>
@@ -76,15 +80,16 @@ def art():
         </div>
 
         <script>
-            function openModal(src) {
+            function openModal(src) {{
                 document.getElementById('modal-img').src = src;
                 document.getElementById('modal').classList.add('active');
                 document.getElementById('modal').style.display = 'flex';
-            }
-            function closeModal() {
+            }}
+            function closeModal() {{
                 document.getElementById('modal').classList.remove('active');
                 document.getElementById('modal').style.display = 'none';
-            }
+            }}
+            console.log('Art page loaded - images should appear');
         </script>
     </body>
     </html>
