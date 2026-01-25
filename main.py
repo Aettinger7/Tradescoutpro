@@ -73,45 +73,47 @@ SHARED_HEAD = '''
             text-shadow: 0 0 20px rgba(255, 69, 0, 0.6);
         }
         .btn-red {
-            background: #c8102e;
+            background: linear-gradient(135deg, #FF4500, #c8102e);
             color: white;
-            padding: 0.75rem 1.5rem;
+            padding: 0.85rem 1.75rem;
             border-radius: 9999px;
             font-weight: 700;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: all 0.35s ease;
             white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(200, 16, 46, 0.4);
-            font-size: 0.875rem;
+            box-shadow: 0 6px 20px rgba(200, 16, 46, 0.5), inset 0 1px 3px rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,215,0,0.15);
+            font-size: 0.95rem;
         }
         .btn-red:hover {
-            background: #FFD700;
+            background: linear-gradient(135deg, #FFD700, #FF8C00);
             color: #000;
-            transform: translateY(-2px) scale(1.06);
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+            transform: translateY(-3px) scale(1.07);
+            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.7), inset 0 1px 4px rgba(255,255,255,0.25);
             border: 1px solid #FFD700;
         }
         .btn-active {
-            background: #FFD700;
+            background: linear-gradient(135deg, #FFD700, #FF8C00);
             color: #000;
-            padding: 0.75rem 1.5rem;
+            padding: 0.85rem 1.75rem;
             border-radius: 9999px;
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6), inset 0 1px 3px rgba(255,255,255,0.2);
             cursor: default;
-            font-size: 0.875rem;
+            border: 1px solid #FFD700;
+            font-size: 0.95rem;
         }
         @media (min-width: 640px) {
-            .btn-red, .btn-active { 
-                padding: 0.85rem 1.75rem;
-                font-size: 1rem;
+            .btn-red, .btn-active {
+                padding: 1rem 2rem;
+                font-size: 1.05rem;
             }
         }
         .animate-spin-slow { animation: spin 32s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hero-img { 
             object-fit: cover;
-            filter: drop-shadow(0 0 30px rgba(255,215,0,0.7)); 
+            filter: drop-shadow(0 0 35px rgba(255,215,0,0.7)); 
             aspect-ratio: 1 / 1;
         }
         iframe { border: none; width: 100%; height: 520px; }
@@ -126,14 +128,14 @@ SHARED_HEAD = '''
 '''
 
 HEADER_SNIPPET = '''
-<header class="header py-5 sm:py-7 px-4 sm:px-8 fixed w-full top-0 z-50">
+<header class="header py-5 sm:py-6 px-4 sm:px-8 fixed w-full top-0 z-50">
     <div class="flex justify-between items-center max-w-7xl mx-auto">
         <a href="/" class="flex items-center gap-3 sm:gap-5">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko Logo" 
-                 class="w-11 h-11 sm:w-16 sm:h-16 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover"
-                 onerror="this.src='https://via.placeholder.com/64/FFD700/000?text=Neko';">
-            <div class="logo-text text-2xl sm:text-3xl">Neko the Samurai Cat</div>
+                 class="w-10 h-10 sm:w-14 sm:h-14 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover"
+                 onerror="this.src='https://via.placeholder.com/56/FFD700/000?text=Neko';">
+            <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
         </a>
         <div class="flex items-center gap-2 sm:gap-5 flex-wrap">
             {% if current_path != '/' %}
@@ -171,7 +173,7 @@ HTML_TEMPLATE = SHARED_HEAD + '''
                     Now Live on Uniswap • CA: 0x28973c4ef9ae754b076a024996350d3b16a38453
                 </div>
                 <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453'); alert('CA Copied!')" 
-                        class="mt-6 px-10 sm:px-12 md:px-16 py-5 sm:py-6 bg-yellow-600 text-black rounded-full font-bold hover:bg-yellow-400 text-lg sm:text-xl shadow-xl hover:shadow-2xl transition-all">
+                        class="mt-6 px-10 sm:px-12 md:px-16 py-5 sm:py-6 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black rounded-full font-bold hover:from-yellow-400 hover:to-yellow-500 text-lg sm:text-xl shadow-xl hover:shadow-2xl transition-all duration-300">
                     Copy CA
                 </button>
             </div>
@@ -203,27 +205,30 @@ LORE_TEMPLATE = SHARED_HEAD + '''
     <div class="container mx-auto px-5 sm:px-8 lg:px-10 pt-32 sm:pt-40 md:pt-48 pb-20 md:pb-28 max-w-5xl">
         <section class="text-center mb-16 sm:mb-20 md:mb-24">
             <h1 class="section-title text-5xl sm:text-6xl md:text-8xl mb-8">Neko Lore</h1>
-            <p class="text-2xl text-gray-300">The Way of the Samurai Cat</p>
+            <p class="text-2xl text-gray-300">The Path of the Samurai Cat</p>
         </section>
         <div class="card p-8 sm:p-12 md:p-16 space-y-8 text-lg sm:text-xl leading-relaxed">
             <p>Neko is the silent guardian of the village: soft paws tread quietly in the dawn mist, yet claws are always ready to defend the light. Born under cherry blossoms and forged in shadow, Neko walks the path of Zenshin—forward progress without haste, honor without pride.</p>
             
-            <p>"Fate whispers to Neko, 'You cannot withstand the storm.' Neko whispers back, 'I am the storm.'" This is not arrogance, but acceptance of one's own power when the moment demands it.</p>
+            <p>"Fate whispers to Neko, 'You cannot withstand the storm.' Neko whispers back, 'I am the storm.'" This is not arrogance, but acceptance of one's own power when the moment demands it. The true warrior does not seek the storm — the storm finds the warrior.</p>
             
-            <p>Every dawn brings new lessons: enjoy slow mornings with tea and reflection, sharpen the blade in silence, protect what is precious without seeking glory. The warrior in the garden tends to both peace and strength.</p>
+            <p>Every dawn brings new lessons: enjoy slow mornings with tea and reflection, sharpen the blade in silence, protect what is precious without seeking glory. The warrior in the garden tends to both peace and strength, knowing that true power lies in restraint.</p>
             
-            <div class="bg-black/60 p-6 rounded-xl border border-yellow-600/30">
-                <p class="font-bold text-yellow-400 mb-4">Core Principles of the Zenshin Clan:</p>
-                <ul class="list-disc pl-6 space-y-3">
-                    <li>Soft paws, sharp steel</li>
-                    <li>Forward Progress (Zenshin) – never stagnant, always advancing</li>
-                    <li>Warrior in a garden – balance of strength and serenity</li>
-                    <li>Honor the small moments – gratitude in every breath</li>
-                    <li>Protect the light – stand for what matters</li>
+            <div class="bg-black/60 p-8 rounded-2xl border border-yellow-600/40 shadow-inner">
+                <p class="font-bold text-yellow-400 text-xl mb-6">Core Principles of the Zenshin Clan:</p>
+                <ul class="list-disc pl-8 space-y-4 text-lg">
+                    <li><strong>Soft paws, sharp steel</strong> – Gentleness in peace, ferocity in protection</li>
+                    <li><strong>Forward Progress (Zenshin)</strong> – Never stagnant, always advancing with purpose</li>
+                    <li><strong>Warrior in a garden</strong> – Balance of strength and serenity</li>
+                    <li><strong>Honor the small moments</strong> – Gratitude in every breath, every sunrise</li>
+                    <li><strong>Protect the light</strong> – Stand for what matters, even when unseen</li>
+                    <li><strong>No glory without duty</strong> – True honor is quiet, not loud</li>
                 </ul>
             </div>
             
-            <p>The clan grows not through noise, but through shared wisdom and quiet resolve. Join us on this path. Zenshin.</p>
+            <p>The clan grows not through noise or hype, but through shared wisdom, quiet resolve, and consistent action. Neko does not promise riches or fame — only the path. Those who walk it become stronger. Those who stray are left behind.</p>
+            
+            <p>Join the Zenshin Clan. Forward progress awaits. Zenshin.</p>
         </div>
         <div class="text-center mt-16">
             <a href="/" class="btn-red text-xl sm:text-2xl px-12 sm:px-16 py-6 sm:py-8 inline-block">Back to Home</a>
@@ -250,6 +255,9 @@ ART_TEMPLATE = SHARED_HEAD + '''
             </div>
             <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
                 <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Warrior Pose" class="w-full h-auto object-cover">
+            </div>
+            <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
+                <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko Shadow Guardian" class="w-full h-auto object-cover">
             </div>
             <div class="card p-10 flex items-center justify-center h-80 sm:h-96 col-span-1 sm:col-span-2 lg:col-span-1">
                 <p class="text-gray-400 text-center text-xl sm:text-2xl">More clan art drops coming soon – Zenshin!</p>
