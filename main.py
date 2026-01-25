@@ -142,7 +142,7 @@ HTML_TEMPLATE = '''
         <section id="chart" class="py-16 sm:py-24">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">$NEKO Live Chart</h2>
             <div class="card p-4 sm:p-6 overflow-hidden" style="min-height: 520px;">
-                <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1&theme=dark&trades=0&info=0" title="NEKO Chart" loading="lazy" style="width: 100%; height: 500px; border: none;"></iframe>
+                <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1&theme=dark&trades=0&info=0" title="NEKO Chart" loading="lazy" style="width: 100%; height: 500px; border: 0;"></iframe>
                 <p class="text-center mt-4 text-gray-400">If the chart doesn't load, click <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
             </div>
         </section>
