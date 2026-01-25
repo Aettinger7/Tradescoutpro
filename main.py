@@ -3,132 +3,232 @@ import datetime
 
 app = Flask(__name__)
 
-# SHARED_HEAD defined FIRST - this fixes the NameError
-SHARED_HEAD = '''
+@app.route('/')
+def index():
+    last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    return render_template_string(HTML_TEMPLATE, last_update=last_update)
+
+application = app
+
+HTML_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neko the Samurai Cat</title>
+    <title>Neko the Samurai Cat - $NEKO on Base</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
             background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)),
-                        url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed !important;
-            background-size: cover !important;
-            background-attachment: fixed !important;
-            background-color: #0a0a0a !important;
+                        url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed;
+            background-size: cover;
+            background-attachment: fixed;
             color: #ffffff;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            scroll-behavior: smooth;
         }
         .header {
-            background: linear-gradient(to right, #c8102e, rgba(0,0,0,0.92));
+            background: rgba(200,16,46,0.9);
             backdrop-filter: blur(12px);
-            box-shadow: 0 4px 25px rgba(200,16,46,0.6);
+            box-shadow: 0 4px 20px rgba(200,16,46,0.6);
             position: fixed;
             top: 0;
             width: 100%;
-            z-index: 50;
+            z-index: 1000;
         }
-        .logo-text {
+        .btn-buy {
+            background: linear-gradient(135deg, #FF4500, #c8102e);
+            color: white;
+            padding: 0.8rem 1.6rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            transition: all 0.35s ease;
+            box-shadow: 0 6px 20px rgba(200,16,46,0.6);
+            border: 2px solid #FFD700;
+        }
+        .btn-buy:hover {
+            background: linear-gradient(135deg, #FFD700, #FF8C00);
+            color: black;
+            transform: translateY(-3px) scale(1.08);
+            box-shadow: 0 12px 40px rgba(255,215,0,0.7);
+            border: 2px solid #FFD700;
+        }
+        .section-title {
             font-family: 'Cinzel', serif;
-            font-weight: 900;
             background: linear-gradient(to right, #FFD700, #FF4500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(255,215,0,0.7);
+            text-shadow: 0 0 20px rgba(255,69,0,0.6);
         }
-        .btn-red {
-            background: #c8102e;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: bold;
-            transition: all 0.3s;
+        .card {
+            background: rgba(10,10,10,0.88);
+            border: 2px solid #c8102e;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 35px rgba(200,16,46,0.4);
+            transition: all 0.4s ease;
         }
-        .btn-red:hover {
-            background: #FFD700;
-            color: black;
-            transform: scale(1.05);
+        .card:hover {
+            box-shadow: 0 15px 50px rgba(200,16,46,0.7);
+            transform: translateY(-6px);
         }
-        .btn-active {
-            background: #FFD700;
-            color: black;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: bold;
-            cursor: default;
+        .hero-img {
+            filter: drop-shadow(0 0 30px rgba(255,215,0,0.7));
         }
     </style>
 </head>
-'''
-
-HEADER_SNIPPET = '''
-<header class="header py-4 px-4 sm:py-6 sm:px-8 flex justify-between items-center">
-    <a href="/" class="flex items-center gap-3">
-        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
-             alt="Neko Logo" 
-             class="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-4 border-yellow-500">
-        <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
-    </a>
-    <div class="flex gap-3 flex-wrap">
-        {% if current_path != '/' %}
-            <a href="/" class="btn-red">Home</a>
-        {% endif %}
-        <a href="/lore" class="btn-red">Lore</a>
-        <a href="/art" class="btn-red">Art</a>
-        <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red">Buy on Uniswap</a>
-    </div>
-</header>
-'''
-
-HTML_TEMPLATE = SHARED_HEAD + '''
 <body>
-    ''' + HEADER_SNIPPET + '''
-    <div class="pt-20 p-4 max-w-7xl mx-auto">
-        <section class="text-center mb-12">
+    <header class="header py-4 px-6 flex justify-between items-center">
+        <a href="#" class="flex items-center gap-4">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
-                 alt="Neko" 
-                 class="w-48 h-48 sm:w-64 sm:h-64 mx-auto mb-6 rounded-full border-8 border-yellow-500">
-            <h1 class="text-5xl sm:text-7xl font-bold mb-4">Zenshin Clan</h1>
-            <p class="text-xl sm:text-2xl mb-6">"Forward Progress" – Warrior in a garden</p>
-            <div class="bg-black/60 p-4 rounded-xl inline-block font-mono text-sm sm:text-base mb-6">
+                 alt="Neko Logo" 
+                 class="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-yellow-500">
+            <div class="logo-text text-2xl sm:text-3xl">Neko the Samurai Cat</div>
+        </a>
+        <nav class="flex gap-3 sm:gap-6 flex-wrap">
+            <a href="#trade" class="btn-buy">Trade</a>
+            <a href="#join" class="btn-buy">Join</a>
+            <a href="#lore" class="btn-buy">Lore</a>
+            <a href="#art" class="btn-buy">Art</a>
+        </nav>
+    </header>
+
+    <main class="pt-28 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
+        <!-- Hero -->
+        <section id="hero" class="text-center py-16 sm:py-24">
+            <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
+                 alt="Neko the Samurai Cat" 
+                 class="hero-img mx-auto mb-8 rounded-full border-8 border-yellow-500 w-48 sm:w-64 md:w-80 h-48 sm:h-64 md:h-80 animate-spin-slow">
+            <h1 class="text-5xl sm:text-7xl md:text-8xl font-extrabold section-title mb-6">Zenshin Clan</h1>
+            <p class="text-xl sm:text-2xl md:text-3xl mb-8">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
+            <div class="bg-black/70 inline-block px-8 py-5 rounded-2xl font-mono text-base sm:text-lg mb-8 shadow-lg">
                 CA: 0x28973c4ef9ae754b076a024996350d3b16a38453
             </div>
-            <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453'); alert('Copied!')" 
-                    class="bg-yellow-600 text-black px-8 py-4 rounded-full font-bold hover:bg-yellow-500">
-                Copy CA
-            </button>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy on Uniswap</a>
+                <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-lg">Buy on Toshimart</a>
+            </div>
         </section>
 
-        <section class="mb-12">
-            <h2 class="text-4xl font-bold mb-6 text-center">Trade Info</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="card p-6">
-                    <h3 class="text-2xl font-bold mb-4">Live on Uniswap</h3>
-                    <p>Swap now on Base chain</p>
-                    <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red mt-4 block text-center">Swap Now</a>
+        <!-- Trade Section -->
+        <section id="trade" class="py-16 sm:py-24">
+            <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Trade $NEKO Live</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Uniswap (Primary)</h3>
+                    <p class="text-gray-300 mb-6">Live V3 pool on Base chain</p>
+                    <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy block text-center py-4">Swap Now</a>
                 </div>
-                <div class="card p-6">
-                    <h3 class="text-2xl font-bold mb-4">Dexscreener</h3>
-                    <p>Charts & stats</p>
-                    <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="btn-red mt-4 block text-center">View Chart</a>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Dexscreener Chart</h3>
+                    <p class="text-gray-300 mb-6">Real-time price, volume, liquidity</p>
+                    <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="btn-buy block text-center py-4">View Chart</a>
                 </div>
-                <div class="card p-6">
-                    <h3 class="text-2xl font-bold mb-4">Toshimart</h3>
-                    <p>Original launch</p>
-                    <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red mt-4 block text-center">View on Toshimart</a>
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4 text-yellow-400">Toshimart (Legacy)</h3>
+                    <p class="text-gray-300 mb-6">Original launch platform</p>
+                    <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy block text-center py-4">View on Toshimart</a>
                 </div>
             </div>
         </section>
 
-        <footer class="text-center text-gray-400 py-10 border-t border-red-800">
-            <p>© 2026 Neko on Base • DYOR</p>
-            <p>Last Update: {{ last_update }}</p>
+        <!-- Chart Embed -->
+        <section id="chart" class="py-16 sm:py-24">
+            <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">$NEKO Live Chart</h2>
+            <div class="card p-4 sm:p-6 overflow-hidden" style="min-height: 520px;">
+                <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1" title="NEKO Chart" loading="lazy"></iframe>
+            </div>
+        </section>
+
+        <!-- Join Clan -->
+        <section id="join" class="py-16 sm:py-24">
+            <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Join the Zenshin Clan</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card p-6 text-center">
+                    <h3 class="text-2xl font-bold mb-4">X</h3>
+                    <a href="https://x.com/NekoTheSamurai" target="_blank" class="text-yellow-400 hover:underline text-lg">Follow @NekoTheSamurai</a>
+                </div>
+                <div class="card p-6 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Telegram</h3>
+                    <a href="https://t.me/toshimart" target="_blank" class="text-yellow-400 hover:underline text-lg">Toshimart TG</a>
+                </div>
+                <div class="card p-6 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Discord</h3>
+                    <a href="https://discord.com/invite/toshibase" target="_blank" class="text-yellow-400 hover:underline text-lg">Toshi Base</a>
+                </div>
+                <div class="card p-6 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Warpcast</h3>
+                    <a href="https://warpcast.com/toshibase" target="_blank" class="text-yellow-400 hover:underline text-lg">Toshi Base</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lore -->
+        <section id="lore" class="py-16 sm:py-24">
+            <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Neko Lore</h2>
+            <div class="card p-8 space-y-6 text-lg leading-relaxed">
+                <p>Neko is the silent guardian of the village: soft paws tread quietly in the dawn mist, yet claws are always ready to defend the light. Born under cherry blossoms and forged in shadow, Neko walks the path of Zenshin—forward progress without haste, honor without pride.</p>
+                <p>"Fate whispers to Neko, 'You cannot withstand the storm.' Neko whispers back, 'I am the storm.'" This is not arrogance, but acceptance of one's own power when the moment demands it. The true warrior does not seek the storm — the storm finds the warrior.</p>
+                <p>Every dawn brings new lessons: enjoy slow mornings with tea and reflection, sharpen the blade in silence, protect what is precious without seeking glory. The warrior in the garden tends to both peace and strength.</p>
+                <p>The clan grows not through noise or hype, but through shared wisdom, quiet resolve, and consistent action. Neko does not promise riches or fame — only the path. Those who walk it become stronger. Those who stray are left behind.</p>
+                <p>Join the Zenshin Clan. Forward progress awaits. Zenshin.</p>
+            </div>
+        </section>
+
+        <!-- Art -->
+        <section id="art" class="py-16 sm:py-24">
+            <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Neko Art Gallery</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
+                    <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" class="w-full h-auto object-cover">
+                </div>
+                <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
+                    <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" class="w-full h-auto object-cover">
+                </div>
+                <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
+                    <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art 1" class="w-full h-auto object-cover">
+                </div>
+                <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
+                    <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Clan Art 2" class="w-full h-auto object-cover">
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending -->
+        <section class="py-16 sm:py-24">
+            <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Top 10 Trending Base Coins</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <a href="https://dexscreener.com/base/search?q=toshi" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#1 - $TOSHI</h3>
+                    <p class="text-gray-300 mt-2">Base cat meme leader</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=doginme" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#2 - $DOGINME</h3>
+                    <p class="text-gray-300 mt-2">High-energy dog meme</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=yuki" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#3 - $YUKI</h3>
+                    <p class="text-gray-300 mt-2">Popular cat token</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=moto" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#4 - $MOTO</h3>
+                    <p class="text-gray-300 mt-2">Speed meme coin</p>
+                </a>
+                <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="card p-6 text-center hover:bg-red-900/50 border-4 border-yellow-400">
+                    <h3 class="text-2xl font-bold text-yellow-400">#5 - $NEKO</h3>
+                    <p class="text-gray-300 mt-2">Zenshin Clan Samurai Cat</p>
+                </a>
+                <!-- Add placeholders or real trending links for #6-10 -->
+            </div>
+        </section>
+
+        <footer class="text-center text-gray-400 py-12 border-t border-red-800 mt-12">
+            <p>Now Live on Uniswap (Base) • DYOR – Not financial advice • © 2026 Neko on Base</p>
+            <p class="mt-4">Last Update: {{ last_update }}</p>
         </footer>
-    </div>
+    </main>
 </body>
 </html>
 '''
