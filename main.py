@@ -3,7 +3,7 @@ import datetime
 
 app = Flask(__name__)
 
-# Define shared parts FIRST
+# SHARED_HEAD defined FIRST - this fixes the NameError
 SHARED_HEAD = '''
 <head>
     <meta charset="UTF-8">
@@ -15,18 +15,18 @@ SHARED_HEAD = '''
         body {
             margin: 0;
             background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)),
-                        url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed;
-            background-size: cover;
-            background-attachment: fixed;
-            background-color: #0a0a0a;
+                        url('https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png') no-repeat center center fixed !important;
+            background-size: cover !important;
+            background-attachment: fixed !important;
+            background-color: #0a0a0a !important;
             color: #ffffff;
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
         }
         .header {
-            background: linear-gradient(to right, #c8102e, #000);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(200,16,46,0.5);
+            background: linear-gradient(to right, #c8102e, rgba(0,0,0,0.92));
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 25px rgba(200,16,46,0.6);
             position: fixed;
             top: 0;
             width: 100%;
@@ -38,6 +38,7 @@ SHARED_HEAD = '''
             background: linear-gradient(to right, #FFD700, #FF4500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255,215,0,0.7);
         }
         .btn-red {
             background: #c8102e;
@@ -52,6 +53,14 @@ SHARED_HEAD = '''
             color: black;
             transform: scale(1.05);
         }
+        .btn-active {
+            background: #FFD700;
+            color: black;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            cursor: default;
+        }
     </style>
 </head>
 '''
@@ -65,6 +74,9 @@ HEADER_SNIPPET = '''
         <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
     </a>
     <div class="flex gap-3 flex-wrap">
+        {% if current_path != '/' %}
+            <a href="/" class="btn-red">Home</a>
+        {% endif %}
         <a href="/lore" class="btn-red">Lore</a>
         <a href="/art" class="btn-red">Art</a>
         <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red">Buy on Uniswap</a>
@@ -85,7 +97,6 @@ HTML_TEMPLATE = SHARED_HEAD + '''
             <div class="bg-black/60 p-4 rounded-xl inline-block font-mono text-sm sm:text-base mb-6">
                 CA: 0x28973c4ef9ae754b076a024996350d3b16a38453
             </div>
-            <br>
             <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453'); alert('Copied!')" 
                     class="bg-yellow-600 text-black px-8 py-4 rounded-full font-bold hover:bg-yellow-500">
                 Copy CA
@@ -93,20 +104,23 @@ HTML_TEMPLATE = SHARED_HEAD + '''
         </section>
 
         <section class="mb-12">
-            <h2 class="text-4xl font-bold mb-6 text-center">Lore</h2>
-            <div class="bg-black/80 p-8 rounded-2xl">
-                <p class="text-lg mb-4">Neko is the silent guardian: soft paws, sharp steel. Born under cherry blossoms, forged in shadow. Walks the path of Zenshin – forward progress without haste, honor without pride.</p>
-                <p class="text-lg mb-4">"I am the storm." Daily wisdom: enjoy slow mornings, sharpen the blade in silence, protect the light.</p>
-                <p class="text-lg">Join the clan. Zenshin.</p>
-            </div>
-        </section>
-
-        <section class="mb-12">
-            <h2 class="text-4xl font-bold mb-6 text-center">Art Gallery</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Portrait" class="rounded-xl shadow-2xl">
-                <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Blossoms" class="rounded-xl shadow-2xl">
-                <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art" class="rounded-xl shadow-2xl">
+            <h2 class="text-4xl font-bold mb-6 text-center">Trade Info</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-6">
+                    <h3 class="text-2xl font-bold mb-4">Live on Uniswap</h3>
+                    <p>Swap now on Base chain</p>
+                    <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red mt-4 block text-center">Swap Now</a>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-2xl font-bold mb-4">Dexscreener</h3>
+                    <p>Charts & stats</p>
+                    <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="btn-red mt-4 block text-center">View Chart</a>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-2xl font-bold mb-4">Toshimart</h3>
+                    <p>Original launch</p>
+                    <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red mt-4 block text-center">View on Toshimart</a>
+                </div>
             </div>
         </section>
 
