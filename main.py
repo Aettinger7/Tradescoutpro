@@ -104,7 +104,7 @@ HTML_TEMPLATE = '''
         <section id="hero" class="text-center py-16 sm:py-24">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
-                 class="hero-img mx-auto mb-8 rounded-full border-8 border-yellow-500 w-48 sm:w-64 md:w-80 h-48 sm:h-64 md:h-80 animate-spin-slow">
+                 class="mx-auto mb-8 rounded-full border-8 border-yellow-500 w-48 sm:w-64 md:w-80 h-48 sm:h-64 md:h-80 animate-spin-slow">
             <h1 class="text-5xl sm:text-7xl md:text-8xl font-extrabold section-title mb-6">Zenshin Clan</h1>
             <p class="text-xl sm:text-2xl md:text-3xl mb-8">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
             <div class="bg-black/70 inline-block px-8 py-5 rounded-2xl font-mono text-base sm:text-lg mb-8 shadow-lg">
@@ -142,7 +142,7 @@ HTML_TEMPLATE = '''
         <section id="chart" class="py-16 sm:py-24">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">$NEKO Live Chart</h2>
             <div class="card p-4 sm:p-6 overflow-hidden" style="min-height: 520px;">
-                <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1" title="NEKO Chart" loading="lazy" style="height: 500px;"></iframe>
+                <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1&theme=dark&trades=0&info=0" title="NEKO Chart" loading="lazy" style="width: 100%; height: 500px; border: none;"></iframe>
                 <p class="text-center mt-4 text-gray-400">If the chart doesn't load, click <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
             </div>
         </section>
@@ -186,17 +186,17 @@ HTML_TEMPLATE = '''
         <section id="art" class="py-16 sm:py-24">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Neko Art Gallery</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
-                <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                    <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" class="w-full h-auto object-cover animate-spin-slow">
+                <div class="overflow-hidden rounded-2xl shadow-2xl">
+                    <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" class="w-full h-auto object-cover">
                 </div>
-                <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                    <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" class="w-full h-auto object-cover animate-spin-slow">
+                <div class="overflow-hidden rounded-2xl shadow-2xl">
+                    <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" class="w-full h-auto object-cover">
                 </div>
-                <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                    <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Neko Clan Art 1" class="w-full h-auto object-cover animate-spin-slow">
+                <div class="overflow-hidden rounded-2xl shadow-2xl">
+                    <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art 1" class="w-full h-auto object-cover">
                 </div>
-                <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                    <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Neko Clan Art 2" class="w-full h-auto object-cover animate-spin-slow">
+                <div class="overflow-hidden rounded-2xl shadow-2xl">
+                    <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Clan Art 2" class="w-full h-auto object-cover">
                 </div>
             </div>
         </section>
@@ -227,23 +227,23 @@ HTML_TEMPLATE = '''
                 </a>
                 <a href="https://dexscreener.com/base/search?q=brett" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
                     <h3 class="text-2xl font-bold text-yellow-400">#6 - $BRETT</h3>
-                    <p class="text-gray-300 mt-2">Popular Base meme coin</p>
+                    <p class="text-gray-300 mt-2">Base's blue frog meme</p>
                 </a>
                 <a href="https://dexscreener.com/base/search?q=keycat" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
                     <h3 class="text-2xl font-bold text-yellow-400">#7 - $KEYCAT</h3>
-                    <p class="text-gray-300 mt-2">Keyboard cat on Base</p>
+                    <p class="text-gray-300 mt-2">Keyboard cat meme</p>
                 </a>
                 <a href="https://dexscreener.com/base/search?q=miggles" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
                     <h3 class="text-2xl font-bold text-yellow-400">#8 - $MIGGLES</h3>
-                    <p class="text-gray-300 mt-2">Cute cat meme</p>
+                    <p class="text-gray-300 mt-2">Miggles the cat</p>
                 </a>
                 <a href="https://dexscreener.com/base/search?q=popcat" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
                     <h3 class="text-2xl font-bold text-yellow-400">#9 - $POPCAT</h3>
-                    <p class="text-gray-300 mt-2">Popcat on Base</p>
+                    <p class="text-gray-300 mt-2">Popcat meme on Base</p>
                 </a>
                 <a href="https://dexscreener.com/base/search?q=benji" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
                     <h3 class="text-2xl font-bold text-yellow-400">#10 - $BENJI</h3>
-                    <p class="text-gray-300 mt-2">Benji the dog on Base</p>
+                    <p class="text-gray-300 mt-2">Benji the dog meme</p>
                 </a>
             </div>
         </section>
