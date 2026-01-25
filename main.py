@@ -8,23 +8,14 @@ def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     return render_template_string(HTML_TEMPLATE, last_update=last_update, current_path='/')
 
-@app.route('/lore')
-def lore():
-    last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-    return render_template_string(LORE_TEMPLATE, last_update=last_update, current_path='/lore')
-
-@app.route('/art')
-def art():
-    last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-    return render_template_string(ART_TEMPLATE, last_update=last_update, current_path='/art')
-
 application = app
 
-SHARED_HEAD = '''
+HTML_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="scroll-restoration" content="manual">
     <title>Neko the Samurai Cat - Official Memecoin Site</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
@@ -38,12 +29,16 @@ SHARED_HEAD = '''
             background-color: #0a0a0a !important; 
             color: #ffffff; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
-            min-height: 100vh;
         }
         .header { 
             background: linear-gradient(to right, #c8102e, rgba(0,0,0,0.92)); 
             backdrop-filter: blur(12px);
             box-shadow: 0 4px 25px rgba(200, 16, 46, 0.6);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
         }
         .logo-text {
             font-family: 'Cinzel', serif;
@@ -92,37 +87,14 @@ SHARED_HEAD = '''
             box-shadow: 0 12px 35px rgba(255, 215, 0, 0.7), inset 0 1px 4px rgba(255,255,255,0.25);
             border: 1px solid #FFD700;
         }
-        .btn-active {
-            background: linear-gradient(135deg, #FFD700, #FF8C00);
-            color: #000;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: 700;
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6), inset 0 1px 3px rgba(255,255,255,0.2);
-            cursor: default;
-            border: 1px solid #FFD700;
-            font-size: 0.875rem;
-        }
-        @media (min-width: 640px) {
-            .btn-red, .btn-active { font-size: 1rem; padding: 0.85rem 1.75rem; }
-        }
-        .animate-spin-slow { animation: spin 32s linear infinite; }
+        .animate-spin-slow { animation: spin 30s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hero-img { 
             object-fit: cover;
-            filter: drop-shadow(0 0 30px rgba(255,215,0,0.7)); 
+            filter: drop-shadow(0 0 25px rgba(255,215,0,0.6)); 
             aspect-ratio: 1 / 1;
         }
         iframe { border: none; width: 100%; height: 500px; }
-        .tweet-media { max-width: 100%; height: auto; border-radius: 0.5rem; }
-        .spinner-logo { 
-            object-fit: cover; 
-            aspect-ratio: 1 / 1;
-        }
-        img.rounded-full { 
-            object-fit: cover; 
-            aspect-ratio: 1 / 1;
-        }
     </style>
     <script>
         if ('scrollRestoration' in history) {
@@ -131,46 +103,27 @@ SHARED_HEAD = '''
     </script>
     <link rel="preload" as="image" href="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png">
 </head>
-'''
-
-HEADER_SNIPPET = '''
-<header class="header py-4 px-4 sm:py-6 sm:px-8 flex justify-between items-center fixed w-full top-0 z-50">
-    <a href="/" class="flex items-center gap-3 sm:gap-4">
-        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
-             alt="Neko Logo" 
-             class="w-10 h-10 sm:w-14 sm:h-14 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover"
-             onerror="this.src='https://via.placeholder.com/56/FFD700/000?text=Neko';">
-        <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
-    </a>
-    <div class="flex items-center gap-3 sm:gap-4">
-        {% if current_path != '/' %}
-            <a href="/" class="btn-red">Home</a>
-        {% endif %}
-        {% if current_path == '/lore' %}
-            <span class="btn-active">Lore</span>
-        {% else %}
-            <a href="/lore" class="btn-red">Lore</a>
-        {% endif %}
-        {% if current_path == '/art' %}
-            <span class="btn-active">Art</span>
-        {% else %}
-            <a href="/art" class="btn-red">Art</a>
-        {% endif %}
-        <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red">Buy on Uniswap</a>
-    </div>
-</header>
-'''
-
-HTML_TEMPLATE = SHARED_HEAD + '''
 <body>
-    ''' + HEADER_SNIPPET + '''
-    <div class="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-20 max-w-7xl">
-        <section class="text-center mb-20">
+    <header class="header py-4 px-4 sm:py-6 sm:px-8 flex justify-between items-center fixed w-full top-0 z-50">
+        <a href="/" class="flex items-center gap-3 sm:gap-4">
+            <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
+                 alt="Neko Logo" 
+                 class="w-10 h-10 sm:w-14 sm:h-14 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover">
+            <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
+        </a>
+        <div class="flex items-center gap-3 sm:gap-4">
+            <a href="#lore" class="btn-red">Lore</a>
+            <a href="#art" class="btn-red">Art</a>
+            <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red">Buy on Uniswap</a>
+        </div>
+    </header>
+
+    <main class="pt-20 p-4 text-center">
+        <section id="hero" class="mb-12">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko the Samurai Cat" 
                  class="hero-img mx-auto mb-8 rounded-full animate-spin-slow border-8 border-yellow-500 w-48 sm:w-72 h-48 sm:h-72"
-                 loading="lazy"
-                 onerror="this.src='https://via.placeholder.com/300/FFD700/000?text=Neko+Hero'; this.alt='Fallback Neko Image';">
+                 loading="lazy">
             <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-6 section-title">Zenshin Clan</h1>
             <p class="text-xl sm:text-2xl mb-8">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
             <div class="bg-black/60 inline-block px-6 sm:px-8 py-4 rounded-xl mb-6 font-mono text-base sm:text-lg">
@@ -183,7 +136,7 @@ HTML_TEMPLATE = SHARED_HEAD + '''
             </button>
         </section>
 
-        <section class="mb-20">
+        <section id="trade" class="mb-12">
             <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Live on Toshimart (Bonding Curve)</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 <div class="card p-6 sm:p-8 text-center">
@@ -205,7 +158,7 @@ HTML_TEMPLATE = SHARED_HEAD + '''
             </div>
         </section>
 
-        <section class="mb-20">
+        <section id="chart" class="mb-12">
             <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">$NEKO Chart & Trade</h2>
             <div class="card p-4 sm:p-6" style="min-height: 520px;">
                 <iframe src="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" title="Toshimart Neko Chart" loading="lazy" style="height: 500px;"></iframe>
@@ -213,7 +166,7 @@ HTML_TEMPLATE = SHARED_HEAD + '''
             </div>
         </section>
 
-        <section class="mb-20">
+        <section id="join" class="mb-12">
             <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Join the Zenshin Clan</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 <div class="card p-6 sm:p-8 text-center">
@@ -235,10 +188,46 @@ HTML_TEMPLATE = SHARED_HEAD + '''
             </div>
         </section>
 
-        <section class="mb-20">
+        <section id="lore" class="mb-12">
+            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Neko Lore</h2>
+            <div class="card p-6 sm:p-8">
+                <p class="text-lg mb-4">Neko of the Zenshin clan! Zenshin means 'Forward Progress'. Find $neko on @toshimart CA: 0x28973c4ef9ae754b076a024996350d3b16a38453</p>
+                <p class="text-lg mb-4">GM fren! Neko hopes you have an amazing day!</p>
+                <p class="text-lg mb-4">GM! Soft paws, sharp steel. I walk the path of shadows to protect the light of the village. $neko $toshi @baseapp</p>
+                <p class="text-lg mb-4">'Fate whispers to Neko, 'You cannot withstand the storm.' Neko whispers back, 'I am the storm.'' You can find $neko on @toshimart 0x28973c4ef9ae754b076a024996350d3b16a38453</p>
+                <p class="text-lg">GM! Slow mornings are always the best! Neko always stops to enjoy the small things in life. 0x28973c4ef9ae754b076a024996350d3b16a38453 Join us on @toshimart</p>
+            </div>
+        </section>
+
+        <section id="art" class="mb-12">
+            <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Neko Art Gallery</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="rounded-xl">
+                <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Tweet Media" class="rounded-xl">
+                <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Tweet Media" class="rounded-xl">
+                <!-- Add more art images as needed -->
+            </div>
+        </section>
+
+        <section class="mb-12">
             <h2 class="text-3xl sm:text-5xl font-extrabold mb-10 section-title text-center">Top 10 Trending Base Coins</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Trending coins cards -->
+                <a href="https://x.com/NekoTheSamurai/status/2013677063660622204" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500 object-cover" loading="lazy">
+                        <p class="text-gray-300 italic">"Neko of the Zenshin clan! Zenshin means 'Forward Progress'. Find $neko on @toshimart CA: 0x28973c4ef9ae754b076a024996350d3b16a38453"</p>
+                    </div>
+                    <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Tweet Media" class="tweet-media" loading="lazy">
+                    <button class="btn-red text-sm self-end">View on X</button>
+                </a>
+                <a href="https://x.com/NekoTheSamurai/status/2013672007116955790" target="_blank" class="tweet-card card p-6 flex flex-col gap-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Logo" class="spinner-logo rounded-full animate-spin-slow border-2 border-yellow-500 object-cover" loading="lazy">
+                        <p class="text-gray-300 italic">"GM fren! Neko hopes you have an amazing day!"</p>
+                    </div>
+                    <button class="btn-red text-sm self-end">View on X</button>
+                </a>
+                <!-- Add the other tweet cards here -->
             </div>
         </section>
 
@@ -254,20 +243,20 @@ HTML_TEMPLATE = SHARED_HEAD + '''
 LORE_TEMPLATE = SHARED_HEAD + '''
 <body>
     ''' + HEADER_SNIPPET + '''
-    <div class="container mx-auto px-5 sm:px-8 lg:px-10 pt-32 sm:pt-40 md:pt-48 pb-20 md:pb-28 max-w-5xl">
-        <section class="text-center mb-16 sm:mb-20 md:mb-24">
-            <h1 class="section-title text-5xl sm:text-6xl md:text-8xl mb-8">Neko Lore</h1>
-            <p class="text-2xl text-gray-300">The Way of the Samurai Cat</p>
+    <div class="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-20 max-w-7xl">
+        <section class="text-center mb-20">
+            <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-6 section-title">Neko Lore</h1>
+            <p class="text-xl sm:text-2xl mb-8">The Path of the Samurai Cat</p>
         </section>
-        <div class="card p-8 sm:p-12 md:p-16 space-y-8 text-lg sm:text-xl leading-relaxed">
-            <p>Neko is the silent guardian of the village: soft paws tread quietly in the dawn mist, yet claws are always ready to defend the light. Born under cherry blossoms and forged in shadow, Neko walks the path of Zenshin—forward progress without haste, honor without pride.</p>
-            <p>"Fate whispers to Neko, 'You cannot withstand the storm.' Neko whispers back, 'I am the storm.'" This is not arrogance, but acceptance of one's own power when the moment demands it. The true warrior does not seek the storm — the storm finds the warrior.</p>
-            <p>Every dawn brings new lessons: enjoy slow mornings with tea and reflection, sharpen the blade in silence, protect what is precious without seeking glory. The warrior in the garden tends to both peace and strength, knowing that true power lies in restraint.</p>
-            <p>The clan grows not through noise or hype, but through shared wisdom, quiet resolve, and consistent action. Neko does not promise riches or fame — only the path. Those who walk it become stronger. Those who stray are left behind.</p>
-            <p>Join the Zenshin Clan. Forward progress awaits. Zenshin.</p>
+        <div class="card p-6 sm:p-8">
+            <p class="text-lg mb-4">Neko is the silent guardian of the village: soft paws tread quietly in the dawn mist, yet claws are always ready to defend the light. Born under cherry blossoms and forged in shadow, Neko walks the path of Zenshin—forward progress without haste, honor without pride.</p>
+            <p class="text-lg mb-4">"Fate whispers to Neko, 'You cannot withstand the storm.' Neko whispers back, 'I am the storm.'" This is not arrogance, but acceptance of one's own power when the moment demands it. The true warrior does not seek the storm — the storm finds the warrior.</p>
+            <p class="text-lg mb-4">Every dawn brings new lessons: enjoy slow mornings with tea and reflection, sharpen the blade in silence, protect what is precious without seeking glory. The warrior in the garden tends to both peace and strength, knowing that true power lies in restraint.</p>
+            <p class="text-lg mb-4">The clan grows not through noise or hype, but through shared wisdom, quiet resolve, and consistent action. Neko does not promise riches or fame — only the path. Those who walk it become stronger. Those who stray are left behind.</p>
+            <p class="text-lg">Join the Zenshin Clan. Forward progress awaits. Zenshin.</p>
         </div>
-        <div class="text-center mt-16">
-            <a href="/" class="btn-red text-xl sm:text-2xl px-12 sm:px-16 py-6 sm:py-8 inline-block">Back to Home</a>
+        <div class="text-center mt-12">
+            <a href="/" class="btn-red text-xl px-12 py-6 inline-block">Back to Home</a>
         </div>
     </div>
 </body>
@@ -277,36 +266,20 @@ LORE_TEMPLATE = SHARED_HEAD + '''
 ART_TEMPLATE = SHARED_HEAD + '''
 <body>
     ''' + HEADER_SNIPPET + '''
-    <div class="container mx-auto px-5 sm:px-8 lg:px-10 pt-32 sm:pt-40 md:pt-48 pb-20 md:pb-28 max-w-6xl">
-        <section class="text-center mb-16 sm:mb-20 md:mb-24">
-            <h1 class="section-title text-5xl sm:text-6xl md:text-8xl mb-8">Neko Art Gallery</h1>
-            <p class="text-2xl text-gray-300">Visions of the Samurai Cat</p>
+    <div class="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-20 max-w-7xl">
+        <section class="text-center mb-20">
+            <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-6 section-title">Neko Art Gallery</h1>
+            <p class="text-xl sm:text-2xl mb-8">Visions of the Samurai Cat</p>
         </section>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
-            <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" class="w-full h-auto object-cover">
-            </div>
-            <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" class="w-full h-auto object-cover">
-            </div>
-            <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Neko Clan Art 1" class="w-full h-auto object-cover">
-            </div>
-            <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Neko Clan Art 2" class="w-full h-auto object-cover">
-            </div>
-            <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                <img src="https://video.twimg.com/tweet_video/G_H8qiGXgAACZpp.mp4" alt="Neko Animated Art" class="w-full h-auto object-cover">
-            </div>
-            <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                <img src="https://video.twimg.com/amplify_video/2013665903586484224/vid/avc1/464x688/3jkq97b-iiBAga0l.mp4?tag=23" alt="Neko Morning Art" class="w-full h-auto object-cover">
-            </div>
-            <div class="card p-10 flex items-center justify-center h-80 sm:h-96 col-span-1 sm:col-span-2 lg:col-span-1">
-                <p class="text-gray-400 text-center text-xl sm:text-2xl">More clan art drops coming soon – Zenshin!</p>
-            </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" class="rounded-xl shadow-2xl w-full h-auto">
+            <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" class="rounded-xl shadow-2xl w-full h-auto">
+            <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Neko Clan Art 1" class="rounded-xl shadow-2xl w-full h-auto">
+            <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Neko Clan Art 2" class="rounded-xl shadow-2xl w-full h-auto">
+            <!-- Add additional images here if you have more -->
         </div>
-        <div class="text-center mt-16">
-            <a href="/" class="btn-red text-xl sm:text-2xl px-12 sm:px-16 py-6 sm:py-8 inline-block">Back to Home</a>
+        <div class="text-center mt-12">
+            <a href="/" class="btn-red text-xl px-12 py-6 inline-block">Back to Home</a>
         </div>
     </div>
 </body>
