@@ -75,32 +75,32 @@ SHARED_HEAD = '''
         .btn-red {
             background: linear-gradient(135deg, #FF4500, #c8102e);
             color: white;
-            padding: 0.85rem 1.75rem;
+            padding: 0.9rem 1.8rem;
             border-radius: 9999px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.35s ease;
             white-space: nowrap;
             box-shadow: 0 6px 20px rgba(200, 16, 46, 0.5), inset 0 1px 3px rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,215,0,0.15);
+            border: 2px solid #FFD700;
             font-size: 0.95rem;
         }
         .btn-red:hover {
             background: linear-gradient(135deg, #FFD700, #FF8C00);
             color: #000;
-            transform: translateY(-3px) scale(1.07);
-            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.7), inset 0 1px 4px rgba(255,255,255,0.25);
-            border: 1px solid #FFD700;
+            transform: translateY(-3px) scale(1.08);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.7), inset 0 1px 4px rgba(255,255,255,0.25);
+            border: 2px solid #FFD700;
         }
         .btn-active {
             background: linear-gradient(135deg, #FFD700, #FF8C00);
             color: #000;
-            padding: 0.85rem 1.75rem;
+            padding: 0.9rem 1.8rem;
             border-radius: 9999px;
             font-weight: 700;
             box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6), inset 0 1px 3px rgba(255,255,255,0.2);
             cursor: default;
-            border: 1px solid #FFD700;
+            border: 2px solid #FFD700;
             font-size: 0.95rem;
         }
         @media (min-width: 640px) {
@@ -128,16 +128,16 @@ SHARED_HEAD = '''
 '''
 
 HEADER_SNIPPET = '''
-<header class="header py-5 sm:py-6 px-4 sm:px-8 fixed w-full top-0 z-50">
+<header class="header py-5 sm:py-7 px-4 sm:px-8 fixed w-full top-0 z-50">
     <div class="flex justify-between items-center max-w-7xl mx-auto">
         <a href="/" class="flex items-center gap-3 sm:gap-5">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko Logo" 
-                 class="w-10 h-10 sm:w-14 sm:h-14 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover"
-                 onerror="this.src='https://via.placeholder.com/56/FFD700/000?text=Neko';">
-            <div class="logo-text text-xl sm:text-3xl">Neko the Samurai Cat</div>
+                 class="w-11 h-11 sm:w-16 sm:h-16 rounded-full animate-spin-slow border-4 border-yellow-500 object-cover"
+                 onerror="this.src='https://via.placeholder.com/64/FFD700/000?text=Neko';">
+            <div class="logo-text text-2xl sm:text-3xl">Neko the Samurai Cat</div>
         </a>
-        <div class="flex items-center gap-2 sm:gap-5 flex-wrap">
+        <div class="flex items-center gap-3 sm:gap-6 flex-wrap">
             {% if current_path != '/' %}
                 <a href="/" class="btn-red">Home</a>
             {% endif %}
@@ -179,8 +179,103 @@ HTML_TEMPLATE = SHARED_HEAD + '''
             </div>
         </section>
 
-        <!-- Keep your existing sections: Trade Live on Uniswap, Live Chart, Join Clan, Top 10 Trending -->
-        <!-- Insert them here from your last working homepage version -->
+        <section class="mb-24 sm:mb-28 md:mb-32">
+            <h2 class="section-title text-3xl sm:text-4xl md:text-5xl font-extrabold mb-10 text-center">Trade Live on Uniswap</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4 text-yellow-400">Live Price & Chart</h3>
+                    <p class="text-gray-300 mb-4">Real-time trading on Uniswap V3 (Base)</p>
+                    <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-red inline-block mt-4">Swap on Uniswap</a>
+                </div>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4 text-yellow-400">Dexscreener</h3>
+                    <p class="text-gray-300">Full charts, trades, liquidity info</p>
+                    <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="btn-red inline-block mt-4">View on Dexscreener</a>
+                </div>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4 text-yellow-400">Liquidity & Holders</h3>
+                    <p class="text-gray-300">Check pool stats & community growth</p>
+                    <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="btn-red inline-block mt-4">Explore Stats</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-24 sm:mb-28 md:mb-32">
+            <h2 class="section-title text-3xl sm:text-4xl md:text-5xl font-extrabold mb-10 text-center">$NEKO Live Chart</h2>
+            <div class="card p-4 sm:p-6 md:p-8" style="min-height: 520px;">
+                <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1" title="NEKO Dexscreener Chart" loading="lazy" style="height: 500px;"></iframe>
+                <p class="text-center mt-4 text-gray-400">If the embed doesn't load, click <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
+            </div>
+        </section>
+
+        <section class="mb-24 sm:mb-28 md:mb-32">
+            <h2 class="section-title text-3xl sm:text-4xl md:text-5xl font-extrabold mb-10 text-center">Join the Zenshin Clan</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">X</h3>
+                    <a href="https://x.com/NekoTheSamurai" target="_blank" class="text-yellow-400 hover:underline text-lg sm:text-xl">Follow @NekoTheSamurai</a>
+                </div>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Telegram</h3>
+                    <a href="https://t.me/toshimart" target="_blank" class="text-yellow-400 hover:underline text-lg sm:text-xl">Toshimart TG</a>
+                </div>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Discord</h3>
+                    <a href="https://discord.com/invite/toshibase" target="_blank" class="text-yellow-400 hover:underline text-lg sm:text-xl">Toshi Base</a>
+                </div>
+                <div class="card p-6 sm:p-8 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Warpcast</h3>
+                    <a href="https://warpcast.com/toshibase" target="_blank" class="text-yellow-400 hover:underline text-lg sm:text-xl">Toshi Base</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-24 sm:mb-28 md:mb-32">
+            <h2 class="section-title text-3xl sm:text-4xl md:text-5xl font-extrabold mb-10 text-center">Top 10 Trending Base Coins</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <a href="https://toshimart.xyz/0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#1 - $TOSHI</h3>
+                    <p class="text-gray-300 mt-2">The original Base cat meme leader</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=doginme" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#2 - $DOGINME</h3>
+                    <p class="text-gray-300 mt-2">High-energy dog meme on Base</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=yuki" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#3 - $YUKI</h3>
+                    <p class="text-gray-300 mt-2">Popular Base cat-themed token</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=moto" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#4 - $MOTO</h3>
+                    <p class="text-gray-300 mt-2">Speed & adventure meme coin</p>
+                </a>
+                <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="card p-6 text-center hover:bg-red-900/50 border-4 border-yellow-400">
+                    <h3 class="text-2xl font-bold text-yellow-400">#5 - $NEKO</h3>
+                    <p class="text-gray-300 mt-2">Neko the Samurai Cat - Zenshin Clan!</p>
+                </a>
+                <a href="https://dexscreener.com/base" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#6 - Trending #6</h3>
+                    <p class="text-gray-300 mt-2">Check Dexscreener for latest</p>
+                </a>
+                <a href="https://dexscreener.com/base" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#7 - Trending #7</h3>
+                    <p class="text-gray-300 mt-2">Check Dexscreener for latest</p>
+                </a>
+                <a href="https://dexscreener.com/base" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#8 - Trending #8</h3>
+                    <p class="text-gray-300 mt-2">Check Dexscreener for latest</p>
+                </a>
+                <a href="https://dexscreener.com/base" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#9 - Trending #9</h3>
+                    <p class="text-gray-300 mt-2">Check Dexscreener for latest</p>
+                </a>
+                <a href="https://dexscreener.com/base" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#10 - Trending #10</h3>
+                    <p class="text-gray-300 mt-2">Check Dexscreener for latest</p>
+                </a>
+            </div>
+            <p class="text-center text-gray-400 mt-8 text-sm sm:text-base">Top 5 fixed per clan lore; others dynamic. Links to buy/trade pages. DYOR!</p>
+        </section>
 
         <footer class="text-center text-gray-400 py-16 sm:py-20 border-t border-red-800 mt-16">
             <p>Now Live on Uniswap (Base) • DYOR – Not financial advice • © 2026 Neko on Base</p>
@@ -254,10 +349,13 @@ ART_TEMPLATE = SHARED_HEAD + '''
                 <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" class="w-full h-auto object-cover">
             </div>
             <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Warrior Pose" class="w-full h-auto object-cover">
+                <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Neko Clan Art 1" class="w-full h-auto object-cover">
             </div>
             <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko Shadow Guardian" class="w-full h-auto object-cover">
+                <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Neko Clan Art 2" class="w-full h-auto object-cover">
+            </div>
+            <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
+                <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Warrior Pose" class="w-full h-auto object-cover">
             </div>
             <div class="card p-10 flex items-center justify-center h-80 sm:h-96 col-span-1 sm:col-span-2 lg:col-span-1">
                 <p class="text-gray-400 text-center text-xl sm:text-2xl">More clan art drops coming soon – Zenshin!</p>
