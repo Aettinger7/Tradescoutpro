@@ -74,8 +74,12 @@ HTML_TEMPLATE = '''
             box-shadow: 0 15px 50px rgba(200,16,46,0.7);
             transform: translateY(-6px);
         }
-        .hero-img {
-            filter: drop-shadow(0 0 30px rgba(255,215,0,0.7));
+        .animate-spin-slow {
+            animation: spin 30s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -84,7 +88,7 @@ HTML_TEMPLATE = '''
         <a href="#" class="flex items-center gap-4">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
                  alt="Neko Logo" 
-                 class="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-yellow-500">
+                 class="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-yellow-500 animate-spin-slow">
             <div class="logo-text text-2xl sm:text-3xl">Neko the Samurai Cat</div>
         </a>
         <nav class="flex gap-3 sm:gap-6 flex-wrap">
@@ -138,7 +142,8 @@ HTML_TEMPLATE = '''
         <section id="chart" class="py-16 sm:py-24">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">$NEKO Live Chart</h2>
             <div class="card p-4 sm:p-6 overflow-hidden" style="min-height: 520px;">
-                <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1" title="NEKO Chart" loading="lazy"></iframe>
+                <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1" title="NEKO Chart" loading="lazy" style="height: 500px;"></iframe>
+                <p class="text-center mt-4 text-gray-400">If the chart doesn't load, click <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="text-yellow-400 underline">here</a> to open directly.</p>
             </div>
         </section>
 
@@ -171,56 +176,75 @@ HTML_TEMPLATE = '''
             <div class="card p-8 space-y-6 text-lg leading-relaxed">
                 <p>Neko is the silent guardian of the village: soft paws tread quietly in the dawn mist, yet claws are always ready to defend the light. Born under cherry blossoms and forged in shadow, Neko walks the path of Zenshin—forward progress without haste, honor without pride.</p>
                 <p>"Fate whispers to Neko, 'You cannot withstand the storm.' Neko whispers back, 'I am the storm.'" This is not arrogance, but acceptance of one's own power when the moment demands it. The true warrior does not seek the storm — the storm finds the warrior.</p>
-                <p>Every dawn brings new lessons: enjoy slow mornings with tea and reflection, sharpen the blade in silence, protect what is precious without seeking glory. The warrior in the garden tends to both peace and strength.</p>
+                <p>Every dawn brings new lessons: enjoy slow mornings with tea and reflection, sharpen the blade in silence, protect what is precious without seeking glory. The warrior in the garden tends to both peace and strength, knowing that true power lies in restraint.</p>
                 <p>The clan grows not through noise or hype, but through shared wisdom, quiet resolve, and consistent action. Neko does not promise riches or fame — only the path. Those who walk it become stronger. Those who stray are left behind.</p>
                 <p>Join the Zenshin Clan. Forward progress awaits. Zenshin.</p>
             </div>
         </section>
 
-        <!-- Art -->
+        <!-- Art Gallery -->
         <section id="art" class="py-16 sm:py-24">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Neko Art Gallery</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
                 <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                    <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" class="w-full h-auto object-cover">
+                    <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" class="w-full h-auto object-cover animate-spin-slow">
                 </div>
                 <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                    <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" class="w-full h-auto object-cover">
+                    <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" class="w-full h-auto object-cover animate-spin-slow">
                 </div>
                 <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                    <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art 1" class="w-full h-auto object-cover">
+                    <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Neko Clan Art 1" class="w-full h-auto object-cover animate-spin-slow">
                 </div>
                 <div class="overflow-hidden rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-500">
-                    <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Clan Art 2" class="w-full h-auto object-cover">
+                    <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Neko Clan Art 2" class="w-full h-auto object-cover animate-spin-slow">
                 </div>
             </div>
         </section>
 
-        <!-- Trending -->
+        <!-- Trending Coins -->
         <section class="py-16 sm:py-24">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Top 10 Trending Base Coins</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <a href="https://dexscreener.com/base/search?q=toshi" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
                     <h3 class="text-2xl font-bold text-yellow-400">#1 - $TOSHI</h3>
-                    <p class="text-gray-300 mt-2">Base cat meme leader</p>
+                    <p class="text-gray-300 mt-2">The original Base cat meme leader</p>
                 </a>
                 <a href="https://dexscreener.com/base/search?q=doginme" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
                     <h3 class="text-2xl font-bold text-yellow-400">#2 - $DOGINME</h3>
-                    <p class="text-gray-300 mt-2">High-energy dog meme</p>
+                    <p class="text-gray-300 mt-2">High-energy dog meme on Base</p>
                 </a>
                 <a href="https://dexscreener.com/base/search?q=yuki" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
                     <h3 class="text-2xl font-bold text-yellow-400">#3 - $YUKI</h3>
-                    <p class="text-gray-300 mt-2">Popular cat token</p>
+                    <p class="text-gray-300 mt-2">Popular Base cat-themed token</p>
                 </a>
                 <a href="https://dexscreener.com/base/search?q=moto" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
                     <h3 class="text-2xl font-bold text-yellow-400">#4 - $MOTO</h3>
-                    <p class="text-gray-300 mt-2">Speed meme coin</p>
+                    <p class="text-gray-300 mt-2">Speed & adventure meme coin</p>
                 </a>
                 <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="card p-6 text-center hover:bg-red-900/50 border-4 border-yellow-400">
                     <h3 class="text-2xl font-bold text-yellow-400">#5 - $NEKO</h3>
-                    <p class="text-gray-300 mt-2">Zenshin Clan Samurai Cat</p>
+                    <p class="text-gray-300 mt-2">Neko the Samurai Cat - Zenshin Clan!</p>
                 </a>
-                <!-- Add placeholders or real trending links for #6-10 -->
+                <a href="https://dexscreener.com/base/search?q=brett" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#6 - $BRETT</h3>
+                    <p class="text-gray-300 mt-2">Popular Base meme coin</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=keycat" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#7 - $KEYCAT</h3>
+                    <p class="text-gray-300 mt-2">Keyboard cat on Base</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=miggles" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#8 - $MIGGLES</h3>
+                    <p class="text-gray-300 mt-2">Cute cat meme</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=popcat" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#9 - $POPCAT</h3>
+                    <p class="text-gray-300 mt-2">Popcat on Base</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=benji" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#10 - $BENJI</h3>
+                    <p class="text-gray-300 mt-2">Benji the dog on Base</p>
+                </a>
             </div>
         </section>
 
