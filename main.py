@@ -15,11 +15,15 @@ HTML_TEMPLATE = '''
     <style>
         body {
             margin: 0;
-            background: linear-gradient(to bottom, #000000, #0a0f1a);
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.78), rgba(10, 15, 30, 0.85)),
+                url('https://i.ibb.co/dwX85LhB/your-background-image.jpg') no-repeat center center fixed;
+            background-size: cover;
             color: #d0d0d8;
             font-family: Arial, sans-serif;
             scroll-behavior: smooth;
             overflow-x: hidden;
+            min-height: 100vh;
         }
         .header {
             background: rgba(10, 15, 30, 0.95);
@@ -79,13 +83,24 @@ HTML_TEMPLATE = '''
         .glow-blue {
             box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
         }
-        /* Prevent horizontal overflow on mobile */
-        .no-scroll-x {
-            overflow-x: hidden;
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        /* Extra mobile safety */
+        @media (max-width: 640px) {
+            body {
+                background-attachment: scroll; /* fixed can glitch on some mobile browsers */
+                background-position: center top;
+            }
+            main {
+                padding-top: 120px; /* more space under fixed header */
+            }
         }
     </style>
 </head>
-<body class="no-scroll-x">
+<body>
     <header class="header py-4 px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
         <a href="#" class="flex items-center gap-4">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
@@ -101,7 +116,7 @@ HTML_TEMPLATE = '''
         </nav>
     </header>
 
-    <main class="pt-32 sm:pt-28 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto no-scroll-x">
+    <main class="pt-32 sm:pt-28 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto">
         <!-- Hero -->
         <section id="hero" class="text-center py-12 sm:py-24">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
@@ -143,7 +158,7 @@ HTML_TEMPLATE = '''
         <!-- Chart Embed -->
         <section id="chart" class="py-12 sm:py-24">
             <h2 class="text-3xl sm:text-5xl font-extrabold mb-8 sm:mb-12 section-title text-center">$NEKO Live Chart</h2>
-            <div class="card p-3 sm:p-6 overflow-hidden" style="min-height: 420px; max-height: 600px;">
+            <div class="card p-3 sm:p-6 overflow-hidden w-full" style="min-height: 420px; max-height: 600px;">
                 <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1&theme=dark&trades=0&info=0" 
                         title="NEKO Chart" loading="lazy" class="w-full h-[400px] sm:h-[500px] border-0"></iframe>
                 <p class="text-center mt-3 sm:mt-4 text-gray-400 text-sm">If the chart doesn't load, click <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="text-[#00d4ff] underline">here</a>.</p>
