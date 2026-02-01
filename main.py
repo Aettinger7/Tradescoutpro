@@ -152,7 +152,7 @@ HTML_TEMPLATE = '''
                 <div class="card p-6 sm:p-8 text-center">
                     <h3 class="text-xl sm:text-2xl font-bold mb-4 text-[#00d4ff]">Dexscreener Chart</h3>
                     <p class="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">Real-time price, volume, liquidity</p>
-                    <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="btn-buy block text-center py-3 sm:py-4 text-sm sm:text-base">View Chart</a>
+                    <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" class="btn-buy block text-center py-3 sm:py-4 text-sm sm:text-base">View Chart</a>
                 </div>
                 <div class="card p-6 sm:p-8 text-center">
                     <h3 class="text-xl sm:text-2xl font-bold mb-4 text-[#00d4ff]">Toshimart (Legacy)</h3>
@@ -166,9 +166,9 @@ HTML_TEMPLATE = '''
         <section id="chart" class="py-12 sm:py-24">
             <h2 class="text-3xl sm:text-5xl font-extrabold mb-8 sm:mb-12 section-title text-center">$NEKO Live Chart</h2>
             <div class="card p-3 sm:p-6 overflow-hidden w-full" style="min-height: 420px; max-height: 600px;">
-                <iframe src="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570?embed=1&theme=dark&trades=0&info=0" 
+                <iframe src="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e?embed=1&theme=dark&trades=0&info=0" 
                         title="NEKO Chart" loading="lazy" class="w-full h-[400px] sm:h-[500px] border-0"></iframe>
-                <p class="text-center mt-3 sm:mt-4 text-gray-400 text-sm">If the chart doesn't load, click <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="text-[#00d4ff] underline">here</a>.</p>
+                <p class="text-center mt-3 sm:mt-4 text-gray-400 text-sm">If the chart doesn't load, click <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" class="text-[#00d4ff] underline">here</a>.</p>
             </div>
         </section>
 
@@ -246,7 +246,7 @@ HTML_TEMPLATE = '''
                     <h3 class="text-xl sm:text-2xl font-bold text-[#00d4ff]">#4 - $MOTO</h3>
                     <p class="text-gray-400 mt-2 text-sm sm:text-base">Speed & adventure meme coin</p>
                 </a>
-                <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="card p-6 text-center hover:bg-[#0a1f3a] border-4 border-[#ffd700]">
+                <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" class="card p-6 text-center hover:bg-[#0a1f3a] border-4 border-[#ffd700]">
                     <h3 class="text-xl sm:text-2xl font-bold text-[#00d4ff]">#5 - $NEKO</h3>
                     <p class="text-gray-400 mt-2 text-sm sm:text-base">Neko the Samurai Cat - Zenshin Clan!</p>
                 </a>
