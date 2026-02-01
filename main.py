@@ -16,7 +16,7 @@ HTML_TEMPLATE = '''
         body {
             margin: 0;
             background: 
-                linear-gradient(rgba(0, 0, 0, 0.82), rgba(10, 15, 30, 0.88)),
+                linear-gradient(rgba(0, 0, 0, 0.85), rgba(10, 15, 30, 0.9)),
                 url('https://i.ibb.co/d8cGt8y/your-image.jpg') no-repeat center center fixed;
             background-size: cover;
             color: #d0d0d8;
@@ -24,6 +24,10 @@ HTML_TEMPLATE = '''
             scroll-behavior: smooth;
             overflow-x: hidden;
             min-height: 100vh;
+        }
+        .header, main, footer, .card {
+            background: rgba(15, 20, 40, 0.88);
+            backdrop-filter: blur(4px); /* subtle blur to smooth any bg artifacts */
         }
         .header {
             background: rgba(10, 15, 30, 0.95);
@@ -61,7 +65,6 @@ HTML_TEMPLATE = '''
             text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
         }
         .card {
-            background: rgba(15, 20, 40, 0.88);
             border: 2px solid #bdc3c7;
             border-radius: 1.25rem;
             box-shadow: 0 10px 35px rgba(0, 212, 255, 0.2);
@@ -88,17 +91,21 @@ HTML_TEMPLATE = '''
             height: auto;
             display: block;
         }
-        /* Mobile-specific tweaks */
+        /* Mobile optimizations */
         @media (max-width: 640px) {
             body {
-                background-attachment: scroll; /* avoids iOS fixed bg glitches */
+                background-attachment: scroll;
                 background-position: center top;
             }
             main {
-                padding-top: 120px; /* extra space under fixed header on phones */
+                padding-top: 120px;
             }
             .header {
-                padding: 1rem; /* tighter on mobile */
+                padding: 1rem;
+            }
+            .btn-buy {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
             }
         }
     </style>
