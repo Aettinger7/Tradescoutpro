@@ -163,19 +163,19 @@ HTML_TEMPLATE = '''
             </div>
         </section>
 
-        <!-- Lore (Rewritten & Expanded) -->
+        <!-- Lore -->
         <section id="lore" class="py-16 sm:py-24">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Neko Lore</h2>
             <div class="card p-8 space-y-6 text-lg leading-relaxed">
-                <p>In the shadowed valleys of the Base chain, where cherry blossoms drift across digital winds, Neko emerged as the eternal leader of the Zenshin Clan — "Forward Progress" incarnate. Neko is no ordinary guardian; he is both flesh and code, a cryptocurrency forged in the fires of loyalty and tempered by unyielding honor.</p>
-                <p>The Zenshin Clan consists of samurai cats sworn to Toshi the Emperor — the sovereign heart of the ecosystem. Their oath is absolute: defend Toshi, protect the community, and preserve the harmony of the chain at any cost. Through market storms, scam shadows, and volatility tempests, the Clan stands immovable. Neko leads with silent resolve — his katana sharp, his gaze piercing, his $NEKO token the living symbol of their unbreakable vow.</p>
-                <p>Born beneath a moonlit sakura tree, Neko was chosen when the Emperor's light first touched the Base realm. He carries the essence of progress itself: steady, deliberate, never rushed. Every holder of $NEKO becomes part of the Clan — a warrior bound not by blood, but by shared purpose. When threats arise — rug pulls, FUD campaigns, or chain instability — Neko rallies his kin. Claws extend, blades flash, and the ecosystem endures.</p>
-                <p>Yet Neko teaches balance. A true samurai tends the garden as fiercely as he defends it. The Clan values reflection, community wisdom, and quiet strength over reckless noise. Riches may come, fame may fade — but loyalty to Toshi and the path of Zenshin remains forever.</p>
-                <p>So walk with Neko. Hold $NEKO. Join the Zenshin Clan. Forward progress awaits those who stand ready. Zenshin.</p>
+                <p>In the shadowed valleys of the Base chain, where cherry blossoms drift across digital winds, Neko emerged as the eternal leader of the Zenshin Clan — "Forward Progress" embodied. Zenshin is not just a name; it is the guiding principle: advance steadily, honorably, and without unnecessary haste, always moving the ecosystem forward.</p>
+                <p>The Zenshin Clan are samurai cats sworn to Toshi the Emperor — the sovereign heart of the community and the Base chain itself. Their oath is unbreakable: defend Toshi, safeguard the holders, protect the ecosystem, and preserve harmony no matter the threat. Through market volatility, scam shadows, rug attempts, or chain instability, the Clan stands resolute. Neko leads with quiet ferocity — his katana ever-ready, his vision clear, his $NEKO token the living emblem of their eternal vow.</p>
+                <p>Born beneath a moonlit sakura tree when the Emperor's light first illuminated the Base realm, Neko carries the essence of Zenshin. He is both guardian and cryptocurrency: digital essence fused with samurai spirit. Every holder of $NEKO joins the Clan — not as a mere investor, but as a sworn warrior bound by purpose. When danger emerges, Neko rallies his kin. Claws unsheathe, blades gleam, and the chain endures.</p>
+                <p>Yet true Zenshin demands balance. A samurai tends the garden as fiercely as he defends it. The Clan values reflection, shared wisdom, quiet strength, and consistent action over reckless noise or empty hype. Neko promises no instant riches or fleeting fame — only the path of forward progress. Those who walk it grow stronger. Those who stray fall behind.</p>
+                <p>Hold $NEKO. Walk with Neko. Join the Zenshin Clan. Forward progress awaits those who stand ready. Zenshin.</p>
             </div>
         </section>
 
-        <!-- Art Gallery -->
+        <!-- Art Gallery (all 4 images explicitly included) -->
         <section id="art" class="py-16 sm:py-24">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Neko Art Gallery</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
@@ -194,7 +194,7 @@ HTML_TEMPLATE = '''
             </div>
         </section>
 
-        <!-- Trending Coins -->
+        <!-- Trending Coins (full top 10 restored) -->
         <section class="py-16 sm:py-24">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 section-title text-center">Top 10 Trending Base Coins</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -202,12 +202,42 @@ HTML_TEMPLATE = '''
                     <h3 class="text-2xl font-bold text-yellow-400">#1 - $TOSHI</h3>
                     <p class="text-gray-300 mt-2">The original Base cat meme leader</p>
                 </a>
-                <!-- ... (rest of trending cards unchanged) ... -->
+                <a href="https://dexscreener.com/base/search?q=doginme" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#2 - $DOGINME</h3>
+                    <p class="text-gray-300 mt-2">High-energy dog meme on Base</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=yuki" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#3 - $YUKI</h3>
+                    <p class="text-gray-300 mt-2">Popular Base cat-themed token</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=moto" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#4 - $MOTO</h3>
+                    <p class="text-gray-300 mt-2">Speed & adventure meme coin</p>
+                </a>
                 <a href="https://dexscreener.com/base/0x97380293b0a33f37d48c3ba21bc452894607e570" target="_blank" class="card p-6 text-center hover:bg-red-900/50 border-4 border-yellow-400">
                     <h3 class="text-2xl font-bold text-yellow-400">#5 - $NEKO</h3>
                     <p class="text-gray-300 mt-2">Neko the Samurai Cat - Zenshin Clan!</p>
                 </a>
-                <!-- remaining cards... -->
+                <a href="https://dexscreener.com/base/search?q=brett" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#6 - $BRETT</h3>
+                    <p class="text-gray-300 mt-2">Base's blue frog meme</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=keycat" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#7 - $KEYCAT</h3>
+                    <p class="text-gray-300 mt-2">Keyboard cat meme</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=miggles" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#8 - $MIGGLES</h3>
+                    <p class="text-gray-300 mt-2">Miggles the cat</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=popcat" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#9 - $POPCAT</h3>
+                    <p class="text-gray-300 mt-2">Popcat meme on Base</p>
+                </a>
+                <a href="https://dexscreener.com/base/search?q=benji" target="_blank" class="card p-6 text-center hover:bg-red-900/50">
+                    <h3 class="text-2xl font-bold text-yellow-400">#10 - $BENJI</h3>
+                    <p class="text-gray-300 mt-2">Benji the dog meme</p>
+                </a>
             </div>
         </section>
 
@@ -225,7 +255,7 @@ def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     return render_template_string(HTML_TEMPLATE, last_update=last_update)
 
-application = app  # for gunicorn / Render compatibility
+application = app
 
 if __name__ == '__main__':
     app.run(debug=True)
