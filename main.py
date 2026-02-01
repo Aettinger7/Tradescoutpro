@@ -16,18 +16,14 @@ HTML_TEMPLATE = '''
         body {
             margin: 0;
             background: 
-                linear-gradient(rgba(0, 0, 0, 0.85), rgba(10, 15, 30, 0.9)),
-                url('https://i.ibb.co/d8cGt8y/your-image.jpg') no-repeat center center fixed;
+                linear-gradient(rgba(0, 0, 0, 0.82), rgba(10, 15, 30, 0.88)),
+                url('https://i.postimg.cc/1zn9gsLR/image(24).jpg') no-repeat center center fixed;
             background-size: cover;
             color: #d0d0d8;
             font-family: Arial, sans-serif;
             scroll-behavior: smooth;
             overflow-x: hidden;
             min-height: 100vh;
-        }
-        .header, main, footer, .card {
-            background: rgba(15, 20, 40, 0.88);
-            backdrop-filter: blur(4px); /* subtle blur to smooth any bg artifacts */
         }
         .header {
             background: rgba(10, 15, 30, 0.95);
@@ -65,6 +61,7 @@ HTML_TEMPLATE = '''
             text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
         }
         .card {
+            background: rgba(15, 20, 40, 0.88);
             border: 2px solid #bdc3c7;
             border-radius: 1.25rem;
             box-shadow: 0 10px 35px rgba(0, 212, 255, 0.2);
