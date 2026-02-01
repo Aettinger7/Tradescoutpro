@@ -16,8 +16,8 @@ HTML_TEMPLATE = '''
         body {
             margin: 0;
             background: 
-                linear-gradient(rgba(0, 0, 0, 0.78), rgba(10, 15, 30, 0.85)),
-                url('https://i.ibb.co/dwX85LhB/your-background-image.jpg') no-repeat center center fixed;
+                linear-gradient(rgba(0, 0, 0, 0.82), rgba(10, 15, 30, 0.88)),
+                url('https://i.ibb.co/d8cGt8y/your-image.jpg') no-repeat center center fixed;
             background-size: cover;
             color: #d0d0d8;
             font-family: Arial, sans-serif;
@@ -88,14 +88,17 @@ HTML_TEMPLATE = '''
             height: auto;
             display: block;
         }
-        /* Extra mobile safety */
+        /* Mobile-specific tweaks */
         @media (max-width: 640px) {
             body {
-                background-attachment: scroll; /* fixed can glitch on some mobile browsers */
+                background-attachment: scroll; /* avoids iOS fixed bg glitches */
                 background-position: center top;
             }
             main {
-                padding-top: 120px; /* more space under fixed header */
+                padding-top: 120px; /* extra space under fixed header on phones */
+            }
+            .header {
+                padding: 1rem; /* tighter on mobile */
             }
         }
     </style>
