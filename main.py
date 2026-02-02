@@ -186,7 +186,7 @@ HTML_TEMPLATE = '''
                 </div>
                 <div class="card p-6 text-center">
                     <h3 class="text-xl sm:text-2xl font-bold mb-3 text-[#00d4ff]">Discord</h3>
-                    <a href="https://discord.com/invite/toshibase" target="_blank" class="text-[#00d4ff] hover:underline text-base sm:text-lg">Toshi Base</a>
+                    <a href="https://discord.gg/yKreTaD6Ua" target="_blank" class="text-[#00d4ff] hover:underline text-base sm:text-lg">Toshi Base</a>
                 </div>
                 <div class="card p-6 text-center">
                     <h3 class="text-xl sm:text-2xl font-bold mb-3 text-[#00d4ff]">Warpcast</h3>
