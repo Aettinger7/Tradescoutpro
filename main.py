@@ -10,6 +10,16 @@ HTML_TEMPLATE = '''
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neko the Samurai Cat - $NEKO on Base</title>
+
+    <!-- Google tag (gtag.js) - placed early for best tracking -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-34WMSCBW1R"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-34WMSCBW1R');
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
