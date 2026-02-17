@@ -14,22 +14,22 @@ HTML_TEMPLATE = '''
     <!-- Basic SEO meta description -->
     <meta name="description" content="Neko the Samurai Cat ($NEKO) – Zenshin Clan meme token on Base. Forward progress with honor. Trade on Uniswap. Join the clan!">
 
-    <!-- Open Graph / Social Sharing Meta Tags (Facebook, Discord, LinkedIn, X fallback) -->
+    <!-- Open Graph / Social Sharing Meta Tags -->
     <meta property="og:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO on Base">
     <meta property="og:description" content="Zenshin Clan – 'Forward Progress'. Warrior in a garden, claws sharpened on Base. Join the samurai cat revolution. CA: 0x28973c4ef9ae754b076a024996350d3b16a38453">
-    <meta property="og:image" content="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png">
+    <meta property="og:image" content="https://i.ibb.co/yF2jZv93/G-7-CQ5kb-EAARf-Wz-cropped-processed-by-imagy.jpg">
     <meta property="og:url" content="https://www.nekothesamurai.com">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Neko the Samurai">
 
-    <!-- Twitter / X Card Tags (recommended for best X preview) -->
+    <!-- Twitter / X Card Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO">
     <meta name="twitter:description" content='"Forward Progress" – Join the Zenshin Clan on Base. Samurai cat meme token. Buy on Uniswap / Toshimart.'>
-    <meta name="twitter:image" content="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png">
+    <meta name="twitter:image" content="https://i.ibb.co/yF2jZv93/G-7-CQ5kb-EAARf-Wz-cropped-processed-by-imagy.jpg">
     <meta name="twitter:site" content="@NekoTheSamurai">
 
-    <!-- Google tag (gtag.js) - placed early for best tracking -->
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-34WMSCBW1R"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -41,6 +41,7 @@ HTML_TEMPLATE = '''
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
+        /* Your existing styles remain unchanged – keeping it clean */
         body {
             margin: 0;
             background: 
@@ -116,7 +117,6 @@ HTML_TEMPLATE = '''
             height: auto;
             display: block;
         }
-        /* Toast */
         .toast {
             animation: popIn 0.4s ease forwards;
         }
@@ -124,7 +124,6 @@ HTML_TEMPLATE = '''
             from { transform: translate(-50%, 30px); opacity: 0; }
             to { transform: translate(-50%, 0); opacity: 1; }
         }
-        /* Mobile optimizations */
         @media (max-width: 640px) {
             body {
                 background-attachment: scroll;
@@ -144,6 +143,7 @@ HTML_TEMPLATE = '''
     </style>
 </head>
 <body>
+    <!-- Your full body content remains exactly the same as before -->
     <header class="header py-4 px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
         <a href="#" class="flex items-center gap-4">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
@@ -168,7 +168,6 @@ HTML_TEMPLATE = '''
             <h1 class="text-4xl sm:text-6xl md:text-8xl font-extrabold section-title mb-4">Zenshin Clan</h1>
             <p class="text-lg sm:text-2xl md:text-3xl mb-6 text-[#bdc3c7]">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
             
-            <!-- CA with Copy Button -->
             <div class="bg-black/70 inline-flex items-center px-6 py-4 rounded-2xl font-mono text-sm sm:text-lg mb-6 shadow-lg border border-[#bdc3c7] max-w-full overflow-hidden">
                 <span class="mr-4">CA: 0x28973c4ef9ae754b076a024996350d3b16a38453</span>
                 <button onclick="copyCA()" 
