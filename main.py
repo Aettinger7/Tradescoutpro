@@ -17,7 +17,7 @@ HTML_TEMPLATE = '''
     <!-- Open Graph / Social Sharing Meta Tags -->
     <meta property="og:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO on Base">
     <meta property="og:description" content="Zenshin Clan – 'Forward Progress'. Warrior in a garden, claws sharpened on Base. Join the samurai cat revolution. CA: 0x28973c4ef9ae754b076a024996350d3b16a38453">
-    <meta property="og:image" content="https://i.ibb.co/ZRK4mMTZ/Gemini-Generated-Image-j368ewj368ewj368-1.png">
+    <meta property="og:image" content="https://i.ibb.co/6cpdFyYv/image-24.jpg">
     <meta property="og:url" content="https://www.nekothesamurai.com">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Neko the Samurai">
@@ -26,7 +26,7 @@ HTML_TEMPLATE = '''
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO">
     <meta name="twitter:description" content='"Forward Progress" – Join the Zenshin Clan on Base. Samurai cat meme token. Buy on Uniswap / Toshimart.'>
-    <meta name="twitter:image" content="https://i.ibb.co/ZRK4mMTZ/Gemini-Generated-Image-j368ewj368ewj368-1.png">
+    <meta name="twitter:image" content="https://i.ibb.co/6cpdFyYv/image-24.jpg">
     <meta name="twitter:site" content="@NekoTheSamurai">
 
     <!-- Google tag (gtag.js) -->
