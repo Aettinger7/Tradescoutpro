@@ -11,6 +11,24 @@ HTML_TEMPLATE = '''
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neko the Samurai Cat - $NEKO on Base</title>
 
+    <!-- Basic SEO meta description -->
+    <meta name="description" content="Neko the Samurai Cat ($NEKO) – Zenshin Clan meme token on Base. Forward progress with honor. Trade on Uniswap. Join the clan!">
+
+    <!-- Open Graph / Social Sharing Meta Tags (Facebook, Discord, LinkedIn, X fallback) -->
+    <meta property="og:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO on Base">
+    <meta property="og:description" content="Zenshin Clan – 'Forward Progress'. Warrior in a garden, claws sharpened on Base. Join the samurai cat revolution. CA: 0x28973c4ef9ae754b076a024996350d3b16a38453">
+    <meta property="og:image" content="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png">
+    <meta property="og:url" content="https://www.nekothesamurai.com">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Neko the Samurai">
+
+    <!-- Twitter / X Card Tags (recommended for best X preview) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO">
+    <meta name="twitter:description" content='"Forward Progress" – Join the Zenshin Clan on Base. Samurai cat meme token. Buy on Uniswap / Toshimart.'>
+    <meta name="twitter:image" content="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png">
+    <meta name="twitter:site" content="@NekoTheSamurai">
+
     <!-- Google tag (gtag.js) - placed early for best tracking -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-34WMSCBW1R"></script>
     <script>
@@ -98,6 +116,14 @@ HTML_TEMPLATE = '''
             height: auto;
             display: block;
         }
+        /* Toast */
+        .toast {
+            animation: popIn 0.4s ease forwards;
+        }
+        @keyframes popIn {
+            from { transform: translate(-50%, 30px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
         /* Mobile optimizations */
         @media (max-width: 640px) {
             body {
@@ -141,9 +167,16 @@ HTML_TEMPLATE = '''
                  class="mx-auto mb-6 rounded-full border-8 border-[#00d4ff] w-40 sm:w-64 md:w-80 h-40 sm:h-64 md:h-80 animate-spin-slow glow-blue max-w-full">
             <h1 class="text-4xl sm:text-6xl md:text-8xl font-extrabold section-title mb-4">Zenshin Clan</h1>
             <p class="text-lg sm:text-2xl md:text-3xl mb-6 text-[#bdc3c7]">"Forward Progress" – Warrior in a garden, claws sharpened on Base.</p>
-            <div class="bg-black/70 inline-block px-6 py-4 rounded-2xl font-mono text-sm sm:text-lg mb-6 shadow-lg border border-[#bdc3c7] max-w-full overflow-hidden">
-                CA: 0x28973c4ef9ae754b076a024996350d3b16a38453
+            
+            <!-- CA with Copy Button -->
+            <div class="bg-black/70 inline-flex items-center px-6 py-4 rounded-2xl font-mono text-sm sm:text-lg mb-6 shadow-lg border border-[#bdc3c7] max-w-full overflow-hidden">
+                <span class="mr-4">CA: 0x28973c4ef9ae754b076a024996350d3b16a38453</span>
+                <button onclick="copyCA()" 
+                        class="bg-[#ffd700] hover:bg-white text-black px-5 py-2 rounded-xl font-bold flex items-center gap-2 transition-all hover:scale-110">
+                    📋 Copy
+                </button>
             </div>
+
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-base sm:text-lg">Buy on Uniswap</a>
                 <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-buy text-base sm:text-lg">Buy on Toshimart</a>
@@ -288,6 +321,30 @@ HTML_TEMPLATE = '''
             <p class="mt-3 sm:mt-4 text-sm">Last Update: {{ last_update }}</p>
         </footer>
     </main>
+
+    <!-- Copy CA Script -->
+    <script>
+        function copyCA() {
+            const ca = "0x28973c4ef9ae754b076a024996350d3b16a38453";
+            navigator.clipboard.writeText(ca).then(() => {
+                showToast("CA Copied! ⚔️🐱 Ready to join the Zenshin Clan!");
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "toast fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3 text-base font-semibold z-[9999] border border-emerald-400";
+            toast.innerHTML = `✅ ${message}`;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transition = "all 0.4s ease";
+                toast.style.opacity = "0";
+                toast.style.transform = "translate(-50%, 30px)";
+                setTimeout(() => toast.remove(), 500);
+            }, 2800);
+        }
+    </script>
 </body>
 </html>
 '''
