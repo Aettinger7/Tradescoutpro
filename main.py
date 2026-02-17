@@ -17,7 +17,7 @@ HTML_TEMPLATE = '''
     <!-- Open Graph / Social Sharing Meta Tags -->
     <meta property="og:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO on Base">
     <meta property="og:description" content="Zenshin Clan – 'Forward Progress'. Warrior in a garden, claws sharpened on Base. Join the samurai cat revolution. CA: 0x28973c4ef9ae754b076a024996350d3b16a38453">
-    <meta property="og:image" content="https://i.ibb.co/yF2jZv93/G-7-CQ5kb-EAARf-Wz-cropped-processed-by-imagy.jpg">
+    <meta property="og:image" content="https://i.ibb.co/ZRK4mMTZ/Gemini-Generated-Image-j368ewj368ewj368-1.png">
     <meta property="og:url" content="https://www.nekothesamurai.com">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Neko the Samurai">
@@ -26,7 +26,7 @@ HTML_TEMPLATE = '''
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO">
     <meta name="twitter:description" content='"Forward Progress" – Join the Zenshin Clan on Base. Samurai cat meme token. Buy on Uniswap / Toshimart.'>
-    <meta name="twitter:image" content="https://i.ibb.co/yF2jZv93/G-7-CQ5kb-EAARf-Wz-cropped-processed-by-imagy.jpg">
+    <meta name="twitter:image" content="https://i.ibb.co/ZRK4mMTZ/Gemini-Generated-Image-j368ewj368ewj368-1.png">
     <meta name="twitter:site" content="@NekoTheSamurai">
 
     <!-- Google tag (gtag.js) -->
@@ -41,7 +41,6 @@ HTML_TEMPLATE = '''
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* Your existing styles remain unchanged – keeping it clean */
         body {
             margin: 0;
             background: 
@@ -143,7 +142,6 @@ HTML_TEMPLATE = '''
     </style>
 </head>
 <body>
-    <!-- Your full body content remains exactly the same as before -->
     <header class="header py-4 px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
         <a href="#" class="flex items-center gap-4">
             <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" 
