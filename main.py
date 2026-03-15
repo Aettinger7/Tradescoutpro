@@ -150,6 +150,26 @@ HTML_TEMPLATE = '''
                 gap: 2.5rem;
             }
         }
+        /* Emergency visibility fixes */
+main, section {
+    min-height: 200px;          /* prevent collapse */
+    opacity: 1 !important;
+}
+
+p, h1, h2, h3, .text-gray-300, .text-gray-400, .text-[#e0d4b5] {
+    color: #ffebcc !important;  /* brighter gold-offwhite for testing */
+    font-weight: 500;
+}
+
+body {
+    background-color: #0a0a0a !important;  /* fallback solid dark if image fails */
+}
+
+/* Ensure cards and text don't hide */
+.card, .btn-buy {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
     </style>
 </head>
 <body>
