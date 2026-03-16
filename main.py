@@ -102,10 +102,12 @@ HTML_TEMPLATE = '''
       text-decoration: none;
     }
     .nav-logo img {
-      width: 34px; height: 34px; border-radius: 50%;
-      border: 1px solid var(--gold-dim);
+      height: 42px; width: auto;
+      border-radius: 4px;
+      border: 1px solid rgba(200,155,60,.3);
       object-fit: cover;
     }
+    .nav-logo-name { display: none; }
     .nav-logo-name {
       font-family: 'Shippori Mincho B1', serif;
       font-size: .95rem; font-weight: 700;
@@ -639,7 +641,7 @@ HTML_TEMPLATE = '''
 <!-- ── NAV ── -->
 <nav>
   <a href="#" class="nav-logo">
-    <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko" />
+    <img src="https://i.ibb.co/JFgs2L2c/1500x500.jpg" alt="Neko the Samurai Cat" />
     <span class="nav-logo-name">Neko ⚔</span>
   </a>
   <ul class="nav-links">
@@ -926,6 +928,7 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
