@@ -871,18 +871,20 @@ HTML_TEMPLATE = '''
 </html>
 '''
 
-@app.route('/')
-def index():
-    last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-    return render_template_string(HTML_TEMPLATE, last_update=last_update)
-
 @app.route('/video')
 def video():
-    from flask import send_from_directory
     import os
+    from flask import Response
     directory = os.path.dirname(os.path.abspath(__file__))
-    files = os.listdir(directory)
-    return str(files)
+    path = os.path.join(directory, 'NekoSamurai.mp4')
+    def generate():
+        with open(path, 'rb') as f:
+            data = f.read(1024 * 1024)
+            while data:
+                yield data
+                data = f.read(1024 * 1024)
+    return Response(generate(), mimetype='video/mp4')
+  
 if __name__ == '__main__':
     app.run(debug=True)
 
