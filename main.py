@@ -698,7 +698,7 @@ HTML_TEMPLATE = '''
   <div class="video-wrap reveal d2">
     <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
       <iframe
-        src="https://www.youtube.com/embed/C4dzt2hh-sI?autoplay=1&mute=0&loop=1&playlist=C4dzt2hh-sI&controls=1&modestbranding=1&rel=0"
+        src="https://www.youtube.com/embed/I4_fKxAayRM?autoplay=1&mute=0&loop=1&playlist=I4_fKxAayRM&controls=1&modestbranding=1&rel=0"
         title="Neko the Samurai Cat"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
@@ -827,10 +827,10 @@ HTML_TEMPLATE = '''
       <span class="clan-name">Follow on X</span>
       <span class="clan-handle">@NekoTheSamurai</span>
     </a>
-    <a href="https://t.me/Nekothesamurai" target="_blank" class="clan-card reveal d2">
+    <a href="https://t.me/toshimart" target="_blank" class="clan-card reveal d2">
       <div class="clan-icon">✈️</div>
       <span class="clan-name">Telegram</span>
-      <span class="clan-handle">Neko's Dojo</span>
+      <span class="clan-handle">Toshimart TG</span>
     </a>
     <a href="https://discord.gg/yKreTaD6Ua" target="_blank" class="clan-card reveal d3">
       <div class="clan-icon">🎮</div>
@@ -926,6 +926,7 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
