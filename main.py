@@ -827,7 +827,7 @@ HTML_TEMPLATE = '''
       <span class="clan-name">Follow on X</span>
       <span class="clan-handle">@NekoTheSamurai</span>
     </a>
-    <a href="https://t.me/toshimart" target="_blank" class="clan-card reveal d2">
+    <a href="https://t.me/Nekothesamurai" target="_blank" class="clan-card reveal d2">
       <div class="clan-icon">✈️</div>
       <span class="clan-name">Telegram</span>
       <span class="clan-handle">Toshimart TG</span>
