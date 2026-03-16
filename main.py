@@ -629,17 +629,36 @@ HTML_TEMPLATE = '''
     <p class="sec-label reveal">⚔ &nbsp; The Clan in Motion</p>
     <h2 class="sec-title reveal d1">Watch <em>Neko</em></h2>
   </div>
-  <div class="video-wrap reveal d2">
+  <div class="video-wrap reveal d2" style="position:relative;">
     <video
-      autoplay
-      muted
+      id="neko-video"
       loop
       playsinline
       preload="auto"
+      style="width:100%;display:block;background:var(--ink);"
     >
       <source src="/video" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
+    <!-- Play button overlay -->
+    <div id="play-overlay" onclick="playVideo()" style="
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      background:rgba(7,5,10,.55);
+      cursor:none;
+      transition:background .3s;
+    ">
+      <div style="
+        width:72px; height:72px; border-radius:50%;
+        border:2px solid rgba(200,155,60,.6);
+        display:flex; align-items:center; justify-content:center;
+        font-size:1.8rem;
+        box-shadow:0 0 40px rgba(122,0,18,.4);
+        transition:transform .2s, border-color .2s, box-shadow .2s;
+        background:rgba(122,0,18,.3);
+      " id="play-btn-circle">▶</div>
+      <p style="margin-top:1rem;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(200,155,60,.7);">Click to Watch</p>
+    </div>
   </div>
 </section>
 
@@ -829,6 +848,16 @@ HTML_TEMPLATE = '''
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
+  /* ── PLAY VIDEO ── */
+  function playVideo() {
+    const video = document.getElementById('neko-video');
+    const overlay = document.getElementById('play-overlay');
+    video.play();
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+    overlay.style.transition = 'opacity .4s';
+  }
+
   /* ── COPY CA ── */
   function copyCA() {
     navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453').then(() => {
@@ -854,6 +883,7 @@ def video():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
