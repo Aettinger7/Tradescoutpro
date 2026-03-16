@@ -90,9 +90,12 @@ HTML_TEMPLATE = '''
     /* ── NAV ── */
     nav {
       position: fixed; inset: 0 0 auto; z-index: 200;
-      padding: 1.6rem 4rem;
+      padding: 1.2rem 4rem;
       display: flex; align-items: center; justify-content: space-between;
-      background: linear-gradient(to bottom, rgba(7,5,10,.92) 0%, transparent 100%);
+      background: rgba(7,5,10,.97);
+      border-bottom: 1px solid rgba(200,155,60,.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     .nav-logo {
       display: flex; align-items: center; gap: .8rem;
@@ -289,27 +292,31 @@ HTML_TEMPLATE = '''
     .btn-fill {
       background:linear-gradient(130deg, var(--crimson), var(--red));
       color:var(--cream); text-decoration:none;
-      padding:.9rem 2.4rem; border-radius:2px;
-      font-size:.74rem; letter-spacing:.22em; text-transform:uppercase;
-      box-shadow: 0 4px 32px rgba(176,16,32,.38);
+      padding:1rem 2.8rem; border-radius:2px;
+      font-family:'Shippori Mincho B1',serif;
+      font-size:.88rem; letter-spacing:.25em; text-transform:uppercase; font-weight:800;
+      box-shadow: 0 4px 32px rgba(176,16,32,.5), inset 0 1px 0 rgba(255,255,255,.1);
       position:relative; overflow:hidden;
+      border: 1px solid rgba(212,24,46,.6);
       transition:box-shadow .3s, transform .2s;
     }
     .btn-fill::before {
       content:''; position:absolute; inset:0;
-      background:linear-gradient(130deg,rgba(255,255,255,.08),transparent);
+      background:linear-gradient(130deg,rgba(255,255,255,.1),transparent);
       opacity:0; transition:opacity .25s;
     }
-    .btn-fill:hover { box-shadow:0 6px 48px rgba(176,16,32,.6); transform:translateY(-2px); }
+    .btn-fill:hover { box-shadow:0 8px 48px rgba(176,16,32,.7), inset 0 1px 0 rgba(255,255,255,.1); transform:translateY(-3px); }
     .btn-fill:hover::before { opacity:1; }
     .btn-ghost {
-      background:transparent; color:var(--gold-lt); text-decoration:none;
-      padding:.9rem 2.4rem; border-radius:2px;
-      border:1px solid var(--gold-dim);
-      font-size:.74rem; letter-spacing:.22em; text-transform:uppercase;
-      transition:background .25s, border-color .25s, transform .2s;
+      background: rgba(200,155,60,.08); color:var(--gold-lt); text-decoration:none;
+      padding:1rem 2.8rem; border-radius:2px;
+      font-family:'Shippori Mincho B1',serif;
+      border: 1px solid var(--gold);
+      font-size:.88rem; letter-spacing:.25em; text-transform:uppercase; font-weight:800;
+      box-shadow: 0 0 20px rgba(200,155,60,.15);
+      transition:background .25s, box-shadow .25s, transform .2s;
     }
-    .btn-ghost:hover { background:rgba(200,155,60,.08); border-color:var(--gold); transform:translateY(-2px); }
+    .btn-ghost:hover { background:rgba(200,155,60,.18); box-shadow:0 0 40px rgba(200,155,60,.3); transform:translateY(-3px); }
 
     /* scroll cue */
     .scroll-cue {
@@ -393,15 +400,22 @@ HTML_TEMPLATE = '''
       background:var(--panel); padding:2.8rem 2.2rem;
       text-decoration:none; display:block;
       position:relative; overflow:hidden;
-      transition:background .3s;
+      transition:background .3s, box-shadow .3s;
+      border-bottom: 2px solid transparent;
     }
     .tc::before {
-      content:''; position:absolute; top:0; left:0; right:0; height:2px;
-      background:linear-gradient(to right,transparent,var(--crimson),transparent);
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+      background:linear-gradient(to right, var(--crimson), var(--gold));
       opacity:0; transition:opacity .3s;
     }
-    .tc:hover { background:rgba(122,0,18,.12); }
+    .tc::after {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(122,0,18,.12) 0%, transparent 70%);
+      opacity:0; transition:opacity .4s;
+    }
+    .tc:hover { background:rgba(122,0,18,.15); box-shadow: inset 0 0 60px rgba(122,0,18,.15); }
     .tc:hover::before { opacity:1; }
+    .tc:hover::after { opacity:1; }
     .tc-num {
       font-family:'Shippori Mincho B1',serif;
       font-size:3rem; font-weight:800;
@@ -489,23 +503,24 @@ HTML_TEMPLATE = '''
       background:var(--ink); padding:2.8rem 1.5rem;
       text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:1.1rem;
       position:relative; overflow:hidden;
-      transition:background .3s;
+      transition:background .3s, box-shadow .3s;
+      border: 1px solid rgba(200,155,60,.1);
     }
     .clan-card::after {
-      content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
-      background:linear-gradient(to right,transparent,var(--gold),transparent);
+      content:''; position:absolute; bottom:0; left:0; right:0; height:3px;
+      background:linear-gradient(to right, var(--crimson), var(--gold));
       transform:scaleX(0); transition:transform .35s;
     }
-    .clan-card:hover { background:rgba(200,155,60,.04); }
+    .clan-card:hover { background:rgba(200,155,60,.06); box-shadow:0 0 40px rgba(200,155,60,.1); }
     .clan-card:hover::after { transform:scaleX(1); }
     .clan-icon {
-      width:54px; height:54px; border-radius:50%;
-      border:1px solid rgba(200,155,60,.18);
+      width:60px; height:60px; border-radius:50%;
+      border:1px solid rgba(200,155,60,.3);
       display:flex; align-items:center; justify-content:center;
-      font-size:1.5rem;
-      transition:border-color .3s, box-shadow .3s;
+      font-size:1.6rem; background:rgba(200,155,60,.05);
+      transition:border-color .3s, box-shadow .3s, transform .3s;
     }
-    .clan-card:hover .clan-icon { border-color:var(--gold); box-shadow:0 0 22px rgba(200,155,60,.22); }
+    .clan-card:hover .clan-icon { border-color:var(--gold); box-shadow:0 0 30px rgba(200,155,60,.3); transform:scale(1.1); }
     .clan-name { font-family:'Shippori Mincho B1',serif; font-size:1.1rem; font-weight:800; color:var(--cream); }
     .clan-handle { font-family:'Shippori Mincho B1',serif; font-size:.78rem; color:var(--gold); font-weight:700; letter-spacing:.08em; }
 
@@ -864,6 +879,7 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
