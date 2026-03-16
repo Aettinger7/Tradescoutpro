@@ -850,9 +850,10 @@ def index():
 @app.route('/video')
 def video():
     from flask import send_file
-    return send_file('NekoSamurai.MOV', mimetype='video/mp4')
+    return send_file('NekoSamurai(2).mp4', mimetype='video/mp4')
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
