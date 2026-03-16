@@ -695,14 +695,16 @@ HTML_TEMPLATE = '''
     <p class="sec-label reveal">⚔ &nbsp; The Clan in Motion</p>
     <h2 class="sec-title reveal d1">Watch <em>Neko</em></h2>
   </div>
-  <div class="video-wrap reveal d2" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
-    <iframe
-      src="https://www.youtube.com/embed/C4dzt2hh-sI?autoplay=1&mute=0&loop=1&playlist=C4dzt2hh-sI&controls=1&modestbranding=1&rel=0"
-      title="Neko the Samurai Cat"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen
-      style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
-    ></iframe>
+  <div class="video-wrap reveal d2">
+    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+      <iframe
+        src="https://www.youtube.com/embed/C4dzt2hh-sI?autoplay=1&mute=0&loop=1&playlist=C4dzt2hh-sI&controls=1&modestbranding=1&rel=0"
+        title="Neko the Samurai Cat"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        style="position:absolute;top:-60px;left:0;width:100%;height:calc(100% + 120px);border:0;"
+      ></iframe>
+    </div>
   </div>
 </section>
 
