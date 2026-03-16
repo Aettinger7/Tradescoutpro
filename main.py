@@ -172,20 +172,20 @@ HTML_TEMPLATE = '''
     }
 
     /* sakura petals */
-    .sakura { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+    .sakura { position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
     .petal {
-      position:absolute; top:-20px;
-      width:5px; height:8px;
-      background: radial-gradient(ellipse, rgba(176,16,32,.55), transparent);
+      position:absolute; top:-30px;
+      background: radial-gradient(ellipse, rgba(220,40,60,.9), rgba(176,16,32,.4));
       border-radius: 60% 0 60% 0;
       animation: drift linear infinite;
       opacity:0;
+      box-shadow: 0 0 6px rgba(220,40,60,.4);
     }
     @keyframes drift {
       0%   { transform:translateY(0) rotate(0deg)   translateX(0);   opacity:0; }
-      8%   { opacity:.65; }
-      92%  { opacity:.3; }
-      100% { transform:translateY(105vh) rotate(600deg) translateX(50px); opacity:0; }
+      8%   { opacity:1; }
+      92%  { opacity:.7; }
+      100% { transform:translateY(105vh) rotate(720deg) translateX(80px); opacity:0; }
     }
 
     /* large orbit ring */
@@ -534,18 +534,16 @@ HTML_TEMPLATE = '''
     }
     .gallery {
       display:grid;
-      grid-template-columns:2fr 1fr 1fr;
+      grid-template-columns:1fr 1fr;
       grid-template-rows:auto auto;
-      gap:4px; max-width:1120px; margin:0 auto;
+      gap:6px; max-width:1120px; margin:0 auto;
     }
-    .gi { overflow:hidden; position:relative; background:var(--panel); }
-    .gi:first-child { grid-row:1/3; }
+    .gi { overflow:hidden; position:relative; background:var(--panel); aspect-ratio:4/3; }
     .gi img {
-      width:100%; height:100%; object-fit:cover; display:block; min-height:220px;
+      width:100%; height:100%; object-fit:cover; display:block;
       filter:saturate(.7) contrast(1.05);
       transition:transform .7s ease, filter .4s;
     }
-    .gi:first-child img { min-height:500px; }
     .gi:hover img { transform:scale(1.06); filter:saturate(1) contrast(1.05); }
     .gi-veil {
       position:absolute; inset:0;
@@ -566,24 +564,70 @@ HTML_TEMPLATE = '''
 
     /* ── RESPONSIVE ── */
     @media(max-width:960px){
-      nav { padding:1.2rem 1.8rem; }
-      #trade,#lore,#join,#art,#video-section { padding:5.5rem 1.8rem; }
+      nav { padding:1rem 1.5rem; }
+      #trade,#lore,#join,#art,#video-section { padding:5rem 1.5rem; }
       .trade-cards { grid-template-columns:1fr; }
       .lore-inner { grid-template-columns:1fr; gap:3rem; }
       .lore-img { max-width:380px; margin:0 auto; }
       .clan-grid { grid-template-columns:1fr 1fr; }
       .gallery { grid-template-columns:1fr 1fr; }
-      .gi:first-child { grid-row:auto; grid-column:1/3; }
       footer { flex-direction:column; text-align:center; }
+      .ft-disclaimer { max-width:100%; }
     }
     @media(max-width:600px){
-      nav { padding:1rem 1.2rem; }
-      .nav-links { gap:1rem; }
-      h1.h-title { font-size:3rem; }
-      .clan-grid { grid-template-columns:1fr 1fr; }
-      .gallery { grid-template-columns:1fr; }
-      .gi:first-child { grid-column:auto; }
-      #trade,#lore,#join,#art,#video-section { padding:4rem 1.2rem; }
+      /* prevent ALL horizontal scroll */
+      html, body { overflow-x:hidden; max-width:100vw; }
+      * { max-width:100%; }
+
+      nav {
+        padding:.9rem 1rem;
+        flex-wrap:nowrap;
+      }
+      .nav-links {
+        gap:.6rem;
+      }
+      .nav-links a {
+        font-size:.65rem; letter-spacing:.1em;
+      }
+      .nav-buy {
+        font-size:.65rem !important;
+        padding:.4rem .8rem;
+        letter-spacing:.08em !important;
+      }
+      .nav-logo-name { font-size:.8rem; }
+      .nav-logo img { width:28px; height:28px; }
+
+      h1.h-title { font-size:2.8rem; }
+      .h-portrait { width:150px; height:150px; }
+      .h-btns { flex-direction:column; align-items:center; }
+      .btn-fill, .btn-ghost { width:100%; max-width:280px; text-align:center; }
+
+      #trade,#lore,#join,#art,#video-section { padding:4rem 1rem; }
+
+      .trade-cards { gap:1px; }
+      .tc { padding:2rem 1.5rem; }
+
+      .lore-inner { gap:2rem; }
+      .lore-kanji { font-size:3.5rem; }
+
+      .clan-grid { grid-template-columns:1fr 1fr; gap:1px; }
+      .clan-card { padding:2rem 1rem; }
+      .clan-icon { width:48px; height:48px; font-size:1.3rem; }
+
+      .gallery { grid-template-columns:1fr 1fr; gap:4px; }
+
+      .chart-box { overflow:hidden; }
+      #dexscreener-embed { padding-bottom:70%; }
+
+      footer { padding:2rem 1rem; }
+      .ca-pill { max-width:90vw; }
+      .ca-mono { font-size:.55rem; }
+    }
+
+    /* extra small phones */
+    @media(max-width:380px){
+      .nav-links { display:none; }
+      h1.h-title { font-size:2.4rem; }
     }
   </style>
 </head>
@@ -829,15 +873,16 @@ HTML_TEMPLATE = '''
 
   /* ── SAKURA PETALS ── */
   const container = document.getElementById('sakura');
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 35; i++) {
     const p = document.createElement('div');
     p.className = 'petal';
+    const size = 6 + Math.random() * 10;
     p.style.cssText = `
       left:${Math.random()*100}%;
-      width:${4+Math.random()*5}px;
-      height:${6+Math.random()*7}px;
-      animation-duration:${8+Math.random()*12}s;
-      animation-delay:${Math.random()*14}s;
+      width:${size}px;
+      height:${size * 1.4}px;
+      animation-duration:${7+Math.random()*10}s;
+      animation-delay:${Math.random()*15}s;
       opacity:0;
     `;
     container.appendChild(p);
@@ -879,6 +924,7 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
