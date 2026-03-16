@@ -629,36 +629,14 @@ HTML_TEMPLATE = '''
     <p class="sec-label reveal">⚔ &nbsp; The Clan in Motion</p>
     <h2 class="sec-title reveal d1">Watch <em>Neko</em></h2>
   </div>
-  <div class="video-wrap reveal d2" style="position:relative;">
-    <video
-      id="neko-video"
-      loop
-      playsinline
-      preload="auto"
-      style="width:100%;display:block;background:var(--ink);"
-    >
-      <source src="/video" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
-    <!-- Play button overlay -->
-    <div id="play-overlay" onclick="playVideo()" style="
-      position:absolute; inset:0;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      background:rgba(7,5,10,.55);
-      cursor:none;
-      transition:background .3s;
-    ">
-      <div style="
-        width:72px; height:72px; border-radius:50%;
-        border:2px solid rgba(200,155,60,.6);
-        display:flex; align-items:center; justify-content:center;
-        font-size:1.8rem;
-        box-shadow:0 0 40px rgba(122,0,18,.4);
-        transition:transform .2s, border-color .2s, box-shadow .2s;
-        background:rgba(122,0,18,.3);
-      " id="play-btn-circle">▶</div>
-      <p style="margin-top:1rem;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(200,155,60,.7);">Click to Watch</p>
-    </div>
+  <div class="video-wrap reveal d2" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+    <iframe
+      src="https://www.youtube.com/embed/C4dzt2hh-sI?autoplay=1&mute=0&loop=1&playlist=C4dzt2hh-sI&controls=1&modestbranding=1&rel=0"
+      title="Neko the Samurai Cat"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+    ></iframe>
   </div>
 </section>
 
@@ -876,22 +854,9 @@ def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     return render_template_string(HTML_TEMPLATE, last_update=last_update)
 
-@app.route('/video')
-def video():
-    import os
-    from flask import Response
-    directory = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(directory, 'NekoSamurai.mp4')
-    def generate():
-        with open(path, 'rb') as f:
-            data = f.read(1024 * 1024)
-            while data:
-                yield data
-                data = f.read(1024 * 1024)
-    return Response(generate(), mimetype='video/mp4')
-
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
