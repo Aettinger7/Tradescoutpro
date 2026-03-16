@@ -830,7 +830,7 @@ HTML_TEMPLATE = '''
     <a href="https://t.me/Nekothesamurai" target="_blank" class="clan-card reveal d2">
       <div class="clan-icon">✈️</div>
       <span class="clan-name">Telegram</span>
-      <span class="clan-handle">Toshimart TG</span>
+      <span class="clan-handle">Neko's Dojo</span>
     </a>
     <a href="https://discord.gg/yKreTaD6Ua" target="_blank" class="clan-card reveal d3">
       <div class="clan-icon">🎮</div>
