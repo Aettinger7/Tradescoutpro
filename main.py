@@ -871,6 +871,11 @@ HTML_TEMPLATE = '''
 </html>
 '''
 
+@app.route('/')
+def index():
+    last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    return render_template_string(HTML_TEMPLATE, last_update=last_update)
+
 @app.route('/video')
 def video():
     import os
@@ -884,9 +889,10 @@ def video():
                 yield data
                 data = f.read(1024 * 1024)
     return Response(generate(), mimetype='video/mp4')
-  
+
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
