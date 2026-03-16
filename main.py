@@ -1,8 +1,8 @@
 from flask import Flask, render_template_string
 import datetime
- 
+
 app = Flask(__name__)
- 
+
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +10,7 @@ HTML_TEMPLATE = '''
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neko the Samurai Cat ⚔️ $NEKO on Base</title>
- 
+
   <meta name="description" content="Neko the Samurai Cat ($NEKO) – Zenshin Clan meme token on Base. Forward progress with honor. Trade on Uniswap. Join the clan!">
   <meta property="og:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO on Base">
   <meta property="og:description" content="Zenshin Clan – Forward Progress. Warrior in a garden, claws sharpened on Base.">
@@ -22,7 +22,7 @@ HTML_TEMPLATE = '''
   <meta name="twitter:description" content="Forward Progress – Join the Zenshin Clan on Base.">
   <meta name="twitter:image" content="https://i.ibb.co/6cpdFyYv/image-24.jpg">
   <meta name="twitter:site" content="@NekoTheSamurai">
- 
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-34WMSCBW1R"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -30,16 +30,16 @@ HTML_TEMPLATE = '''
     gtag('js', new Date());
     gtag('config', 'G-34WMSCBW1R');
   </script>
- 
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Noto+Serif+JP:wght@200;400&display=swap" rel="stylesheet" />
- 
+
   <style>
     /* ── RESET & BASE ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
- 
+
     :root {
       --ink:        #07050a;
       --deep:       #0f0b14;
@@ -54,7 +54,7 @@ HTML_TEMPLATE = '''
       --muted:      #7a6e60;
       --fog:        rgba(237,228,204,0.55);
     }
- 
+
     body {
       background: var(--ink);
       color: var(--cream);
@@ -62,7 +62,7 @@ HTML_TEMPLATE = '''
       font-weight: 300;
       overflow-x: hidden;
     }
- 
+
     /* ── CUSTOM CURSOR ── */
     *, a, button { cursor: none !important; }
     #cur {
@@ -79,14 +79,14 @@ HTML_TEMPLATE = '''
       background: rgba(200,155,60,.12);
       border-color: var(--gold-lt);
     }
- 
+
     /* ── NOISE GRAIN ── */
     body::after {
       content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
       opacity:.55;
     }
- 
+
     /* ── NAV ── */
     nav {
       position: fixed; inset: 0 0 auto; z-index: 200;
@@ -134,7 +134,7 @@ HTML_TEMPLATE = '''
     }
     .nav-buy:hover { background: rgba(200,155,60,.1) !important; border-color: var(--gold) !important; }
     .nav-buy::after { display: none !important; }
- 
+
     /* ── HERO ── */
     #hero {
       min-height: 100vh;
@@ -144,7 +144,7 @@ HTML_TEMPLATE = '''
       padding: 7rem 2rem 5rem;
       position: relative; overflow: hidden;
     }
- 
+
     /* layered radial glow background */
     .hero-glow {
       position: absolute; inset: 0; pointer-events: none;
@@ -163,7 +163,7 @@ HTML_TEMPLATE = '''
       0%,100% { opacity:.4; transform:scale(1);   }
       50%      { opacity:1;  transform:scale(1.08); }
     }
- 
+
     /* sakura petals */
     .sakura { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
     .petal {
@@ -180,7 +180,7 @@ HTML_TEMPLATE = '''
       92%  { opacity:.3; }
       100% { transform:translateY(105vh) rotate(600deg) translateX(50px); opacity:0; }
     }
- 
+
     /* large orbit ring */
     .orbit {
       position: absolute; top:50%; left:50%;
@@ -196,7 +196,7 @@ HTML_TEMPLATE = '''
       border-radius:50%; border:1px solid rgba(200,155,60,.03);
     }
     @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
- 
+
     /* hero content stagger */
     .hero-content { position:relative; z-index:2; }
     .h-tag {
@@ -225,7 +225,7 @@ HTML_TEMPLATE = '''
       border:2px solid rgba(200,155,60,.45);
       box-shadow: 0 0 70px rgba(176,16,32,.35), 0 0 140px rgba(122,0,18,.2);
     }
- 
+
     h1.h-title {
       font-family:'Shippori Mincho B1', serif;
       font-size: clamp(3.5rem,9vw,8rem);
@@ -239,7 +239,7 @@ HTML_TEMPLATE = '''
       -webkit-background-clip:text; -webkit-text-fill-color:transparent;
       background-clip:text;
     }
- 
+
     .h-sub {
       font-family:'Noto Serif JP', serif; font-weight:200;
       font-size:clamp(.7rem,1.4vw,.88rem);
@@ -252,7 +252,7 @@ HTML_TEMPLATE = '''
       color:rgba(237,228,204,.5); margin-bottom:2.8rem;
       opacity:0; animation:rise .9s .82s forwards;
     }
- 
+
     /* CA pill */
     .ca-pill {
       display:inline-flex; align-items:center; gap:.7rem;
@@ -274,7 +274,7 @@ HTML_TEMPLATE = '''
     .ca-btn:hover { color:var(--gold); }
     .ca-confirm { font-size:.62rem; color:var(--gold); opacity:0; transition:opacity .3s; }
     .ca-confirm.on { opacity:1; }
- 
+
     /* CTA buttons */
     .h-btns {
       display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;
@@ -304,7 +304,7 @@ HTML_TEMPLATE = '''
       transition:background .25s, border-color .25s, transform .2s;
     }
     .btn-ghost:hover { background:rgba(200,155,60,.08); border-color:var(--gold); transform:translateY(-2px); }
- 
+
     /* scroll cue */
     .scroll-cue {
       position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
@@ -314,16 +314,16 @@ HTML_TEMPLATE = '''
     .scroll-cue span { font-size:.58rem; letter-spacing:.35em; text-transform:uppercase; color:var(--gold-dim); }
     .scroll-line { width:1px; height:38px; background:linear-gradient(to bottom,var(--gold-dim),transparent); animation:pulse-line 2.2s ease-in-out infinite; }
     @keyframes pulse-line { 0%,100%{opacity:.3} 50%{opacity:1} }
- 
+
     @keyframes rise {
       from { opacity:0; transform:translateY(24px); }
       to   { opacity:1; transform:translateY(0); }
     }
- 
+
     /* ── SHARED SECTION STYLES ── */
     section { position:relative; }
     .sec-rule { width:100%; height:1px; background:linear-gradient(to right,transparent,rgba(200,155,60,.25),transparent); }
- 
+
     .sec-label {
       font-size:.6rem; letter-spacing:.4em; text-transform:uppercase;
       color:var(--gold-dim); margin-bottom:1rem;
@@ -335,12 +335,12 @@ HTML_TEMPLATE = '''
       margin-bottom:.5rem;
     }
     h2.sec-title em { font-style:normal; color:var(--gold); }
- 
+
     /* reveal on scroll */
     .reveal { opacity:0; transform:translateY(28px); transition:opacity .85s ease, transform .85s ease; }
     .reveal.in { opacity:1; transform:translateY(0); }
     .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s}
- 
+
     /* ── VIDEO ── */
     #video-section { padding:7rem 4rem; text-align:center; background:var(--deep); position:relative; }
     #video-section::before {
@@ -366,7 +366,7 @@ HTML_TEMPLATE = '''
       width:100%; display:block;
       background:var(--ink);
     }
- 
+
     /* ── TRADE ── */
     #trade { padding:8rem 4rem; }
     #trade::after {
@@ -406,7 +406,7 @@ HTML_TEMPLATE = '''
     .tc-arrow { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); }
     .tc-arrow::after { content:' →'; transition:margin .2s; display:inline-block; }
     .tc:hover .tc-arrow::after { margin-left:5px; }
- 
+
     /* chart */
     .chart-box {
       max-width:1000px; margin:2.5rem auto 0;
@@ -423,7 +423,7 @@ HTML_TEMPLATE = '''
     .chart-bar a:hover { color:var(--gold-lt); }
     #dexscreener-embed { position:relative; padding-bottom:56.25%; }
     #dexscreener-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
- 
+
     /* ── LORE ── */
     #lore { padding:8rem 4rem; background:var(--deep); }
     #lore::before {
@@ -470,7 +470,7 @@ HTML_TEMPLATE = '''
     }
     .lore-p:first-of-type { color:rgba(237,228,204,.75); }
     .lore-p:last-of-type  { color:rgba(237,228,204,.6); }
- 
+
     /* ── COMMUNITY ── */
     #join { padding:8rem 4rem; text-align:center; }
     .clan-grid {
@@ -501,7 +501,7 @@ HTML_TEMPLATE = '''
     .clan-card:hover .clan-icon { border-color:var(--gold); box-shadow:0 0 22px rgba(200,155,60,.22); }
     .clan-name { font-family:'Shippori Mincho B1',serif; font-size:1rem; font-weight:700; color:var(--cream); }
     .clan-handle { font-size:.7rem; color:var(--muted); }
- 
+
     /* ── GALLERY ── */
     #art { padding:8rem 4rem; background:var(--deep); }
     #art::after {
@@ -531,7 +531,7 @@ HTML_TEMPLATE = '''
       opacity:0; transition:opacity .4s;
     }
     .gi:hover .gi-veil { opacity:1; }
- 
+
     /* ── FOOTER ── */
     footer {
       padding:3rem 4rem;
@@ -541,7 +541,7 @@ HTML_TEMPLATE = '''
     .ft-brand { font-family:'Shippori Mincho B1',serif; font-size:1.1rem; font-weight:700; color:var(--gold); }
     .ft-meta { font-size:.7rem; color:var(--muted); line-height:1.8; }
     .ft-disclaimer { font-size:.62rem; color:rgba(122,110,96,.45); max-width:360px; line-height:1.6; }
- 
+
     /* ── RESPONSIVE ── */
     @media(max-width:960px){
       nav { padding:1.2rem 1.8rem; }
@@ -566,10 +566,10 @@ HTML_TEMPLATE = '''
   </style>
 </head>
 <body>
- 
+
 <!-- CURSOR -->
 <div id="cur"></div>
- 
+
 <!-- ── NAV ── -->
 <nav>
   <a href="#" class="nav-logo">
@@ -584,45 +584,45 @@ HTML_TEMPLATE = '''
     <li><a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="nav-buy">Buy $NEKO</a></li>
   </ul>
 </nav>
- 
+
 <!-- ── HERO ── -->
 <section id="hero">
   <div class="hero-glow"></div>
   <div class="sakura" id="sakura"></div>
   <div class="orbit"></div>
- 
+
   <div class="hero-content">
     <p class="h-tag">⚔ &nbsp; Zenshin Clan &nbsp;·&nbsp; $NEKO on Base &nbsp; ⚔</p>
- 
+
     <div class="h-portrait">
       <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko the Samurai Cat" />
     </div>
- 
+
     <h1 class="h-title">Neko the<br /><em>Samurai</em></h1>
     <p class="h-sub">前進 &nbsp;·&nbsp; Zenshin &nbsp;·&nbsp; Forward Progress</p>
     <p class="h-quote">"Warrior in a garden, claws sharpened on Base."</p>
- 
+
     <div class="ca-pill" onclick="copyCA()" title="Copy contract address">
       <span>CA</span>
       <span class="ca-mono">0x2897...8453</span>
       <button class="ca-btn" aria-label="Copy">📋</button>
       <span class="ca-confirm" id="ca-ok">Copied ✓</span>
     </div>
- 
+
     <div class="h-btns">
       <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-fill">Buy on Uniswap</a>
       <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" class="btn-ghost">View Chart</a>
     </div>
   </div>
- 
+
   <div class="scroll-cue">
     <span>Scroll</span>
     <div class="scroll-line"></div>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- ── VIDEO ── -->
 <section id="video-section">
   <div style="position:relative;z-index:1;">
@@ -637,14 +637,14 @@ HTML_TEMPLATE = '''
       playsinline
       preload="auto"
     >
-      <source src="/static/NekoSamurai.mp4" type="video/mp4" />
+      <source src="/video" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- ── TRADE ── -->
 <section id="trade">
   <div class="trade-header">
@@ -652,7 +652,7 @@ HTML_TEMPLATE = '''
     <h2 class="sec-title reveal d1">Acquire Your <em>Blade</em></h2>
     <p class="reveal d2" style="color:var(--muted);font-size:.9rem;font-style:italic;">Three paths into the Zenshin Clan</p>
   </div>
- 
+
   <div class="trade-cards">
     <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="tc reveal d1">
       <div class="tc-num">01</div>
@@ -676,7 +676,7 @@ HTML_TEMPLATE = '''
       <span class="tc-arrow">View Token</span>
     </a>
   </div>
- 
+
   <div class="chart-box reveal">
     <div class="chart-bar">
       <span>$NEKO Live Chart &nbsp;·&nbsp; Base Chain</span>
@@ -687,9 +687,9 @@ HTML_TEMPLATE = '''
     </div>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- ── LORE ── -->
 <section id="lore">
   <div class="lore-inner">
@@ -700,33 +700,33 @@ HTML_TEMPLATE = '''
       </div>
       <div class="lore-shadow"></div>
     </div>
- 
+
     <div class="lore-text reveal d2">
       <span class="lore-kanji">前進</span>
       <p class="sec-label">⚔ &nbsp; The Legend</p>
       <h2 class="sec-title">Neko <em>Lore</em></h2>
       <div class="lore-hr"></div>
- 
+
       <p class="lore-p">In the shadowed valleys of the Base chain, where cherry blossoms drift across digital winds, Neko emerged as the eternal leader of the Zenshin Clan — "Forward Progress" embodied. Zenshin is not just a name; it is the guiding principle: advance steadily, honorably, and without unnecessary haste.</p>
- 
+
       <p class="lore-p">The Zenshin Clan are samurai cats sworn to Toshi the Emperor. Their oath is unbreakable: defend Toshi, safeguard the holders, protect the ecosystem, and preserve harmony no matter the threat. Neko leads with quiet ferocity — his katana ever-ready, his vision clear.</p>
- 
+
       <p class="lore-p">Hold $NEKO. Walk with Neko. Join the Zenshin Clan. Forward progress awaits those who stand ready. <em style="color:var(--gold-dim)">Zenshin.</em></p>
- 
+
       <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-fill" style="display:inline-block;margin-top:2rem;">Join the Clan</a>
     </div>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- ── COMMUNITY ── -->
 <section id="join">
   <div style="text-align:center;margin-bottom:4rem;">
     <p class="sec-label reveal">⚔ &nbsp; The Community</p>
     <h2 class="sec-title reveal d1">Join the <em>Clan</em></h2>
   </div>
- 
+
   <div class="clan-grid">
     <a href="https://x.com/NekoTheSamurai" target="_blank" class="clan-card reveal d1">
       <div class="clan-icon">𝕏</div>
@@ -750,16 +750,16 @@ HTML_TEMPLATE = '''
     </a>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- ── GALLERY ── -->
 <section id="art">
   <div style="text-align:center;margin-bottom:4rem;">
     <p class="sec-label reveal">⚔ &nbsp; Clan Artwork</p>
     <h2 class="sec-title reveal d1">The <em>Gallery</em></h2>
   </div>
- 
+
   <div class="gallery">
     <div class="gi reveal">
       <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" />
@@ -779,7 +779,7 @@ HTML_TEMPLATE = '''
     </div>
   </div>
 </section>
- 
+
 <!-- ── FOOTER ── -->
 <footer>
   <span class="ft-brand">Neko ⚔ $NEKO</span>
@@ -794,7 +794,7 @@ HTML_TEMPLATE = '''
   </div>
   <p class="ft-disclaimer">DYOR – Not financial advice. $NEKO is a meme token on Base. Trade responsibly.</p>
 </footer>
- 
+
 <script>
   /* ── CURSOR ── */
   const cur = document.getElementById('cur');
@@ -806,7 +806,7 @@ HTML_TEMPLATE = '''
     el.addEventListener('mouseenter', () => cur.classList.add('big'));
     el.addEventListener('mouseleave', () => cur.classList.remove('big'));
   });
- 
+
   /* ── SAKURA PETALS ── */
   const container = document.getElementById('sakura');
   for (let i = 0; i < 18; i++) {
@@ -822,13 +822,13 @@ HTML_TEMPLATE = '''
     `;
     container.appendChild(p);
   }
- 
+
   /* ── SCROLL REVEAL ── */
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
- 
+
   /* ── COPY CA ── */
   function copyCA() {
     navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453').then(() => {
@@ -841,12 +841,18 @@ HTML_TEMPLATE = '''
 </body>
 </html>
 '''
- 
+
 @app.route('/')
 def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     return render_template_string(HTML_TEMPLATE, last_update=last_update)
- 
+
+@app.route('/video')
+def video():
+    from flask import send_file
+    return send_file('NekoSamurai.MOV', mimetype='video/mp4')
+
 if __name__ == '__main__':
     app.run(debug=True)
+
 
