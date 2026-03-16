@@ -435,6 +435,10 @@ HTML_TEMPLATE = '''
     .ft-meta a:hover { color:var(--gold-lt); }
     .ft-disclaimer { font-size:.72rem; color:rgba(200,155,60,.5); max-width:480px; line-height:1.7; font-family:'Zen Kaku Gothic New',sans-serif; }
  
+    /* ── GLOBAL OVERFLOW FIX ── */
+    html, body { overflow-x: hidden !important; }
+    section, nav, footer { max-width: 100vw; overflow-x: hidden; }
+ 
     /* ── RESPONSIVE ── */
     @media(max-width:960px){
       nav { padding:1rem 1.5rem; }
@@ -442,13 +446,16 @@ HTML_TEMPLATE = '''
       .trade-cards { grid-template-columns:1fr; }
       .lore-inner { grid-template-columns:1fr; gap:3rem; }
       .lore-img { max-width:380px; margin:0 auto; }
+      .lore-shadow { display:none; }
       .clan-grid { grid-template-columns:1fr 1fr; }
       .gallery { grid-template-columns:1fr 1fr; }
       footer { flex-direction:column; text-align:center; }
       .ft-disclaimer { max-width:100%; }
+      #trade::after, #art::after { display:none; }
     }
     @media(max-width:600px){
-      html, body { overflow-x:hidden; }
+      html, body { overflow-x:hidden !important; }
+      * { max-width: 100%; }
       nav { padding:.9rem 1rem; flex-wrap:nowrap; }
       .nav-links { gap:.6rem; }
       .nav-links a { font-size:.65rem; letter-spacing:.1em; }
@@ -461,15 +468,18 @@ HTML_TEMPLATE = '''
       .tc { padding:2rem 1.5rem; }
       .lore-inner { gap:2rem; }
       .lore-kanji { font-size:3.5rem; }
-      .clan-grid { grid-template-columns:1fr 1fr; gap:1px; }
+      .lore-shadow { display:none; }
+      .clan-grid { grid-template-columns:1fr 1fr; gap:1px; width:100%; }
       .clan-card { padding:2rem 1rem; }
       .clan-icon { width:48px; height:48px; font-size:1.3rem; }
-      .gallery { grid-template-columns:1fr 1fr; gap:4px; }
+      .gallery { grid-template-columns:1fr 1fr; gap:4px; width:100%; }
       .gi { height:200px; }
-      #dexscreener-embed { padding-bottom:70%; }
+      #dexscreener-embed { padding-bottom:75%; }
+      .trade-cards, .chart-box { width:100%; }
       footer { padding:2rem 1rem; }
-      .ca-pill { max-width:90vw; }
+      .ca-pill { max-width:90vw; overflow:hidden; }
       .ca-mono { font-size:.55rem; }
+      #trade::after, #art::after { display:none; }
     }
     @media(max-width:380px){
       .nav-links { display:none; }
