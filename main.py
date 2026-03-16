@@ -356,17 +356,17 @@ HTML_TEMPLATE = '''
     .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s}
 
     /* ── VIDEO ── */
-    #video-section { padding:7rem 4rem; text-align:center; background:var(--deep); position:relative; }
+    #video-section { padding:4rem 4rem; text-align:center; background:var(--deep); position:relative; }
     #video-section::before {
       content:''; position:absolute; inset:0;
       background:radial-gradient(ellipse 60% 70% at 50% 50%, rgba(122,0,18,.13) 0%,transparent 70%);
       pointer-events:none;
     }
     .video-wrap {
-      max-width:900px; margin:3rem auto 0;
+      max-width:680px; margin:2rem auto 0;
       position:relative;
       border:1px solid rgba(200,155,60,.18);
-      box-shadow: 0 0 80px rgba(122,0,18,.25), 0 0 160px rgba(122,0,18,.1);
+      box-shadow: 0 0 60px rgba(122,0,18,.2), 0 0 120px rgba(122,0,18,.08);
     }
     .video-wrap::before {
       content:''; position:absolute; top:-1px; left:0; right:0; height:2px;
@@ -535,10 +535,9 @@ HTML_TEMPLATE = '''
     .gallery {
       display:grid;
       grid-template-columns:1fr 1fr;
-      grid-template-rows:auto auto;
       gap:6px; max-width:1120px; margin:0 auto;
     }
-    .gi { overflow:hidden; position:relative; background:var(--panel); aspect-ratio:4/3; }
+    .gi { overflow:hidden; position:relative; background:var(--panel); height:380px; }
     .gi img {
       width:100%; height:100%; object-fit:cover; display:block;
       filter:saturate(.7) contrast(1.05);
@@ -615,6 +614,7 @@ HTML_TEMPLATE = '''
       .clan-icon { width:48px; height:48px; font-size:1.3rem; }
 
       .gallery { grid-template-columns:1fr 1fr; gap:4px; }
+      .gi { height:200px; }
 
       .chart-box { overflow:hidden; }
       #dexscreener-embed { padding-bottom:70%; }
@@ -924,6 +924,7 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
