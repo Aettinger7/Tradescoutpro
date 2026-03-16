@@ -91,12 +91,11 @@ HTML_TEMPLATE = '''
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
-    .nav-logo { display: flex; align-items: center; gap: .8rem; text-decoration: none; }
-    .nav-logo img {
-      height: 42px; width: auto;
-      border-radius: 4px;
-      border: 1px solid rgba(200,155,60,.3);
-      object-fit: cover;
+    .nav-logo {
+      display: flex; align-items: center; gap: .8rem; text-decoration: none;
+      font-family: 'Shippori Mincho B1', serif;
+      font-size: 1rem; font-weight: 800;
+      color: var(--gold); letter-spacing: .15em;
     }
     .nav-links { display: flex; align-items: center; gap: 2.2rem; list-style: none; }
     .nav-links a {
@@ -180,21 +179,39 @@ HTML_TEMPLATE = '''
       color:var(--gold); margin-bottom:2rem; font-weight:700;
       opacity:0; animation:rise .8s .15s forwards;
     }
-    .h-portrait {
-      width:190px; height:190px; margin:0 auto 2.8rem; position:relative;
-      opacity:0; animation:rise .9s .35s forwards;
+ 
+    /* ── HERO BANNER IMAGE ── */
+    .h-banner {
+      width: min(480px, 88vw);
+      margin: 0 auto 2.8rem;
+      position: relative;
+      opacity: 0;
+      animation: rise .9s .35s forwards;
     }
-    .h-portrait::before, .h-portrait::after {
-      content:''; position:absolute; border-radius:50%;
-      border:1px solid rgba(200,155,60,.25); inset:-14px;
-      animation:breathe 3.5s ease-in-out infinite;
+    .h-banner::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border: 1px solid rgba(200,155,60,.35);
+      pointer-events: none;
+      z-index: 1;
     }
-    .h-portrait::after { inset:-28px; border-color:rgba(200,155,60,.1); animation-delay:.5s; }
-    .h-portrait img {
-      width:100%; height:100%; border-radius:50%; object-fit:cover;
-      border:2px solid rgba(200,155,60,.45);
-      box-shadow:0 0 70px rgba(176,16,32,.35), 0 0 140px rgba(122,0,18,.2);
+    .h-banner::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border: 1px solid rgba(200,155,60,.12);
+      pointer-events: none;
     }
+    .h-banner img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      filter: saturate(.9) contrast(1.05);
+      box-shadow: 0 0 80px rgba(176,16,32,.4), 0 0 160px rgba(122,0,18,.2);
+    }
+ 
     h1.h-title {
       font-family:'Shippori Mincho B1',serif;
       font-size:clamp(3.5rem,9vw,8rem);
@@ -436,9 +453,8 @@ HTML_TEMPLATE = '''
       .nav-links { gap:.6rem; }
       .nav-links a { font-size:.65rem; letter-spacing:.1em; }
       .nav-buy { font-size:.65rem !important; padding:.4rem .8rem; letter-spacing:.08em !important; }
-      .nav-logo img { height:32px; }
       h1.h-title { font-size:2.8rem; }
-      .h-portrait { width:150px; height:150px; }
+      .h-banner { width: min(320px, 92vw); }
       .h-btns { flex-direction:column; align-items:center; }
       .btn-fill, .btn-ghost { width:100%; max-width:280px; text-align:center; }
       #trade,#lore,#join,#art,#video-section { padding:4rem 1rem; }
@@ -467,9 +483,7 @@ HTML_TEMPLATE = '''
  
 <!-- ── NAV ── -->
 <nav>
-  <a href="#" class="nav-logo">
-    <img src="https://i.ibb.co/JFgs2L2c/1500x500.jpg" alt="Neko the Samurai Cat" />
-  </a>
+  <a href="#" class="nav-logo">NEKO ⚔</a>
   <ul class="nav-links">
     <li><a href="#trade">Trade</a></li>
     <li><a href="#lore">Lore</a></li>
@@ -486,8 +500,8 @@ HTML_TEMPLATE = '''
   <div class="orbit"></div>
   <div class="hero-content">
     <p class="h-tag">⚔ &nbsp; Zenshin Clan &nbsp;·&nbsp; $NEKO on Base &nbsp; ⚔</p>
-    <div class="h-portrait">
-      <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko the Samurai Cat" />
+    <div class="h-banner">
+      <img src="https://i.ibb.co/BKFCjDjf/1500x500.jpg" alt="Neko the Samurai Cat" />
     </div>
     <h1 class="h-title">Neko the<br /><em>Samurai</em></h1>
     <p class="h-sub">前進 &nbsp;·&nbsp; Zenshin &nbsp;·&nbsp; Forward Progress</p>
