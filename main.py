@@ -112,8 +112,9 @@ HTML_TEMPLATE = '''
       display: flex; align-items: center; gap: 2.6rem; list-style: none;
     }
     .nav-links a {
-      font-size: .7rem; letter-spacing: .22em; text-transform: uppercase;
-      color: var(--muted); text-decoration: none;
+      font-family:'Shippori Mincho B1',serif;
+      font-size: .85rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--cream); text-decoration: none; font-weight:700;
       transition: color .25s;
       position: relative;
     }
@@ -125,14 +126,17 @@ HTML_TEMPLATE = '''
     .nav-links a:hover { color: var(--gold-lt); }
     .nav-links a:hover::after { width: 100%; }
     .nav-buy {
-      font-size: .7rem !important; letter-spacing: .18em !important;
-      padding: .45rem 1.3rem;
-      border: 1px solid var(--gold-dim);
+      font-family:'Shippori Mincho B1',serif !important;
+      font-size: .82rem !important; letter-spacing: .15em !important;
+      font-weight:700 !important;
+      padding: .5rem 1.4rem;
+      border: 1px solid var(--gold);
       border-radius: 2px;
       color: var(--gold-lt) !important;
+      background: rgba(200,155,60,.08);
       transition: background .25s, border-color .25s !important;
     }
-    .nav-buy:hover { background: rgba(200,155,60,.1) !important; border-color: var(--gold) !important; }
+    .nav-buy:hover { background: rgba(200,155,60,.2) !important; border-color: var(--gold-lt) !important; }
     .nav-buy::after { display: none !important; }
 
     /* ── HERO ── */
@@ -200,8 +204,9 @@ HTML_TEMPLATE = '''
     /* hero content stagger */
     .hero-content { position:relative; z-index:2; }
     .h-tag {
-      font-size:.65rem; letter-spacing:.4em; text-transform:uppercase;
-      color:var(--gold-dim); margin-bottom:2rem;
+      font-family:'Shippori Mincho B1',serif;
+      font-size:.82rem; letter-spacing:.35em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:2rem; font-weight:700;
       opacity:0; animation: rise .8s .15s forwards;
     }
     .h-portrait {
@@ -241,15 +246,16 @@ HTML_TEMPLATE = '''
     }
 
     .h-sub {
-      font-family:'Noto Serif JP', serif; font-weight:200;
-      font-size:clamp(.7rem,1.4vw,.88rem);
-      letter-spacing:.5em; text-transform:uppercase;
-      color:var(--muted); margin-bottom:.9rem;
+      font-family:'Shippori Mincho B1', serif; font-weight:700;
+      font-size:clamp(.85rem,1.6vw,1.05rem);
+      letter-spacing:.4em; text-transform:uppercase;
+      color:var(--gold-lt); margin-bottom:.9rem;
       opacity:0; animation:rise .9s .7s forwards;
     }
     .h-quote {
-      font-size:clamp(.9rem,1.7vw,1.05rem); font-style:italic;
-      color:rgba(237,228,204,.5); margin-bottom:2.8rem;
+      font-family:'Noto Serif JP',serif;
+      font-size:clamp(1rem,1.9vw,1.2rem); font-style:italic;
+      color:rgba(237,228,204,.75); margin-bottom:2.8rem; font-weight:400;
       opacity:0; animation:rise .9s .82s forwards;
     }
 
@@ -325,13 +331,14 @@ HTML_TEMPLATE = '''
     .sec-rule { width:100%; height:1px; background:linear-gradient(to right,transparent,rgba(200,155,60,.25),transparent); }
 
     .sec-label {
-      font-size:.6rem; letter-spacing:.4em; text-transform:uppercase;
-      color:var(--gold-dim); margin-bottom:1rem;
+      font-family:'Shippori Mincho B1',serif;
+      font-size:.78rem; letter-spacing:.35em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:1rem; font-weight:700;
     }
     h2.sec-title {
       font-family:'Shippori Mincho B1',serif;
-      font-size:clamp(2.2rem,5vw,4rem);
-      font-weight:700; color:var(--cream); letter-spacing:-.01em;
+      font-size:clamp(2.6rem,5.5vw,4.5rem);
+      font-weight:800; color:var(--cream); letter-spacing:-.01em;
       margin-bottom:.5rem;
     }
     h2.sec-title em { font-style:normal; color:var(--gold); }
@@ -398,12 +405,12 @@ HTML_TEMPLATE = '''
     .tc-num {
       font-family:'Shippori Mincho B1',serif;
       font-size:3rem; font-weight:800;
-      color:rgba(200,155,60,.07); line-height:1; margin-bottom:.4rem;
+      color:rgba(200,155,60,.12); line-height:1; margin-bottom:.4rem;
     }
-    .tc-tag { font-size:.58rem; letter-spacing:.3em; text-transform:uppercase; color:var(--gold-dim); margin-bottom:.5rem; }
-    .tc h3 { font-family:'Shippori Mincho B1',serif; font-size:1.25rem; font-weight:700; color:var(--cream); margin-bottom:.5rem; }
-    .tc p  { font-size:.82rem; color:var(--muted); line-height:1.7; margin-bottom:1.6rem; }
-    .tc-arrow { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); }
+    .tc-tag { font-family:'Shippori Mincho B1',serif; font-size:.72rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); margin-bottom:.5rem; font-weight:700; }
+    .tc h3 { font-family:'Shippori Mincho B1',serif; font-size:1.45rem; font-weight:800; color:var(--cream); margin-bottom:.5rem; }
+    .tc p  { font-size:.88rem; color:rgba(237,228,204,.7); line-height:1.7; margin-bottom:1.6rem; font-weight:400; }
+    .tc-arrow { font-family:'Shippori Mincho B1',serif; font-size:.78rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); font-weight:700; }
     .tc-arrow::after { content:' →'; transition:margin .2s; display:inline-block; }
     .tc:hover .tc-arrow::after { margin-left:5px; }
 
@@ -466,10 +473,10 @@ HTML_TEMPLATE = '''
     }
     .lore-hr { width:56px; height:1px; background:linear-gradient(to right,var(--crimson),var(--gold-dim)); margin:1.5rem 0; }
     .lore-p {
-      font-size:.88rem; line-height:2; color:var(--muted); margin-bottom:1.2rem;
+      font-size:.95rem; line-height:2; color:rgba(237,228,204,.8); margin-bottom:1.2rem; font-weight:400;
     }
-    .lore-p:first-of-type { color:rgba(237,228,204,.75); }
-    .lore-p:last-of-type  { color:rgba(237,228,204,.6); }
+    .lore-p:first-of-type { color:var(--cream); font-size:1rem; }
+    .lore-p:last-of-type  { color:rgba(237,228,204,.75); }
 
     /* ── COMMUNITY ── */
     #join { padding:8rem 4rem; text-align:center; }
@@ -499,8 +506,8 @@ HTML_TEMPLATE = '''
       transition:border-color .3s, box-shadow .3s;
     }
     .clan-card:hover .clan-icon { border-color:var(--gold); box-shadow:0 0 22px rgba(200,155,60,.22); }
-    .clan-name { font-family:'Shippori Mincho B1',serif; font-size:1rem; font-weight:700; color:var(--cream); }
-    .clan-handle { font-size:.7rem; color:var(--muted); }
+    .clan-name { font-family:'Shippori Mincho B1',serif; font-size:1.1rem; font-weight:800; color:var(--cream); }
+    .clan-handle { font-family:'Shippori Mincho B1',serif; font-size:.78rem; color:var(--gold); font-weight:700; letter-spacing:.08em; }
 
     /* ── GALLERY ── */
     #art { padding:8rem 4rem; background:var(--deep); }
@@ -538,9 +545,9 @@ HTML_TEMPLATE = '''
       border-top:1px solid rgba(200,155,60,.1);
       display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1.5rem;
     }
-    .ft-brand { font-family:'Shippori Mincho B1',serif; font-size:1.1rem; font-weight:700; color:var(--gold); }
-    .ft-meta { font-size:.7rem; color:var(--muted); line-height:1.8; }
-    .ft-disclaimer { font-size:.62rem; color:rgba(122,110,96,.45); max-width:360px; line-height:1.6; }
+    .ft-brand { font-family:'Shippori Mincho B1',serif; font-size:1.2rem; font-weight:800; color:var(--gold); }
+    .ft-meta { font-family:'Shippori Mincho B1',serif; font-size:.8rem; color:var(--cream); line-height:1.8; font-weight:700; }
+    .ft-disclaimer { font-size:.72rem; color:rgba(200,155,60,.5); max-width:480px; line-height:1.7; font-family:'Zen Kaku Gothic New',sans-serif; }
 
     /* ── RESPONSIVE ── */
     @media(max-width:960px){
@@ -717,6 +724,35 @@ HTML_TEMPLATE = '''
 
 <div class="sec-rule"></div>
 
+<!-- ── GALLERY ── -->
+<section id="art">
+  <div style="text-align:center;margin-bottom:4rem;">
+    <p class="sec-label reveal">⚔ &nbsp; Clan Artwork</p>
+    <h2 class="sec-title reveal d1">The <em>Gallery</em></h2>
+  </div>
+
+  <div class="gallery">
+    <div class="gi reveal">
+      <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" />
+      <div class="gi-veil"></div>
+    </div>
+    <div class="gi reveal d1">
+      <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" />
+      <div class="gi-veil"></div>
+    </div>
+    <div class="gi reveal d2">
+      <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art" />
+      <div class="gi-veil"></div>
+    </div>
+    <div class="gi reveal d3">
+      <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Clan Art" />
+      <div class="gi-veil"></div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-rule"></div>
+
 <!-- ── COMMUNITY ── -->
 <section id="join">
   <div style="text-align:center;margin-bottom:4rem;">
@@ -748,35 +784,6 @@ HTML_TEMPLATE = '''
   </div>
 </section>
 
-<div class="sec-rule"></div>
-
-<!-- ── GALLERY ── -->
-<section id="art">
-  <div style="text-align:center;margin-bottom:4rem;">
-    <p class="sec-label reveal">⚔ &nbsp; Clan Artwork</p>
-    <h2 class="sec-title reveal d1">The <em>Gallery</em></h2>
-  </div>
-
-  <div class="gallery">
-    <div class="gi reveal">
-      <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" />
-      <div class="gi-veil"></div>
-    </div>
-    <div class="gi reveal d1">
-      <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" />
-      <div class="gi-veil"></div>
-    </div>
-    <div class="gi reveal d2">
-      <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art" />
-      <div class="gi-veil"></div>
-    </div>
-    <div class="gi reveal d3">
-      <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Clan Art" />
-      <div class="gi-veil"></div>
-    </div>
-  </div>
-</section>
-
 <!-- ── FOOTER ── -->
 <footer>
   <span class="ft-brand">Neko ⚔ $NEKO</span>
@@ -786,10 +793,11 @@ HTML_TEMPLATE = '''
     <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" style="color:var(--gold-dim);text-decoration:none;">Dexscreener</a>
     &nbsp;·&nbsp;
     <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" style="color:var(--gold-dim);text-decoration:none;">Toshimart</a>
-    <br />
-    © 2026 Neko on Base &nbsp;·&nbsp; Last Update: {{ last_update }}
+    <br />© 2026 Neko on Base &nbsp;·&nbsp; Last Update: {{ last_update }}
   </div>
-  <p class="ft-disclaimer">DYOR – Not financial advice. $NEKO is a meme token on Base. Trade responsibly.</p>
+  <p class="ft-disclaimer">
+    $NEKO is a meme coin created for entertainment purposes only. It has no intrinsic value, makes no promises of financial return, and should not be considered an investment. Cryptocurrency trading involves significant risk. Always do your own research (DYOR) before making any financial decisions. Not financial advice.
+  </p>
 </footer>
 
 <script>
@@ -856,6 +864,7 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
