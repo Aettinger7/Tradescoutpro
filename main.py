@@ -519,7 +519,7 @@ HTML_TEMPLATE = '''
     <li><a href="#lore">Lore</a></li>
     <li><a href="#art">Gallery</a></li>
     <li><a href="#join">Clan</a></li>
-    <li><a href="/litepaper" target="_blank" class="nav-whitepaper">Litepaper</a></li>
+        <li><a href="https://pdfhost.io/v/TuX9bvMpT5_neko_litepaper" target="_blank" class="nav-whitepaper">Litepaper</a></li>
     <li><a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="nav-buy">Buy $NEKO</a></li>
   </ul>
 </nav>
