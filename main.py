@@ -20,7 +20,7 @@ HTML_TEMPLATE = '''
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO">
   <meta name="twitter:description" content="Forward Progress – Join the Zenshin Clan on Base.">
-  <meta name="twitter:image" content="https://i.ibb.co/6cpdFyYv/image-24.jpg">
+  <meta name="twitter:image" content="https://i.ibb.co/QF6cS9ZV/Neko-The-Samurai.png">
   <meta name="twitter:site" content="@NekoTheSamurai">
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-34WMSCBW1R"></script>
