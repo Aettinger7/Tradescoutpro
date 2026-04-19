@@ -1,7 +1,7 @@
 from flask import Flask, render_template_string, send_from_directory
 import datetime
 
-app = Flask(__name__)   # ← This line is REQUIRED
+app = Flask(__name__)
 
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
@@ -36,20 +36,56 @@ HTML_TEMPLATE = '''
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Noto+Serif+JP:wght@200;400&display=swap" rel="stylesheet" />
 
   <style>
-    /* Your full CSS goes here. For now I'm leaving a placeholder - add all your original styles back */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #07050a; color: #ede4cc; font-family: 'Zen Kaku Gothic New', sans-serif; }
-    /* Add the rest of your CSS below this line... */
+    html { scroll-behavior: smooth; }
+    html, body { overflow-x: hidden; max-width: 100vw; }
+
+    :root {
+      --ink:      #07050a;
+      --deep:     #0f0b14;
+      --panel:    #13101a;
+      --crimson:  #7a0012;
+      --red:      #b01020;
+      --gold:     #c89b3c;
+      --gold-lt:  #e8c06a;
+      --gold-dim: #6e5220;
+      --cream:    #ede4cc;
+      --muted:    #7a6e60;
+    }
+
+    body {
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-weight: 300;
+    }
+
+    /* CURSOR */
+    *, a, button { cursor: none !important; }
+    #cur {
+      position: fixed; z-index: 9999; pointer-events: none;
+      width: 14px; height: 14px;
+      border: 1.5px solid var(--gold);
+      border-radius: 50%;
+      transform: translate(-50%,-50%);
+      transition: width .2s, height .2s, background .2s;
+      mix-blend-mode: exclusion;
+    }
+    #cur.big { width: 38px; height: 38px; background: rgba(200,155,60,.12); border-color: var(--gold-lt); }
+
+    /* All other CSS would go here - this is shortened for now */
   </style>
 </head>
 <body>
 
-  <!-- Your full website HTML (nav, hero, sections, footer) goes here -->
+<div id="cur"></div>
 
-  <!-- NEKO AI CHATBOT -->
-  <script>
-  (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="RkznU5gsjj1ggRKXeVnHD";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
-  </script>
+<!-- Your full website content should go here. Since it's missing, the site is blank. -->
+
+<!-- NEKO AI CHATBOT -->
+<script>
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="RkznU5gsjj1ggRKXeVnHD";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+</script>
 
 </body>
 </html>
