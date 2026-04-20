@@ -515,11 +515,12 @@ HTML_TEMPLATE = '''
 <nav>
   <a href="#" class="nav-logo">NEKO ⚔</a>
   <ul class="nav-links">
-    <li><a href="#trade">Trade</a></li>
-    <li><a href="#lore">Lore</a></li>
-    <li><a href="#art">Gallery</a></li>
-    <li><a href="#join">Clan</a></li>
-        <li><a href="https://pdfhost.io/v/TuX9bvMpT5_neko_litepaper" target="_blank" class="nav-whitepaper">Litepaper</a></li>
+    <li><a href="#trade">⚔ Trade</a></li>
+    <li><a href="#lore">📜 Lore</a></li>
+    <li><a href="#art">🖼 Gallery</a></li>
+    <li><a href="#join">🐱 Clan</a></li>
+    <li><a href="https://pdfhost.io/v/TuX9bvMpT5_neko_litepaper" target="_blank" class="nav-whitepaper">📄 Litepaper</a></li>
+    <li><a href="https://opensea.io/collection/neko-shogun" target="_blank" class="nav-buy" style="border-color:#2081e2;color:#2081e2;background:rgba(32,129,226,.08);">🌊 OpenSea</a></li>
     <li><a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="nav-buy">Buy $NEKO</a></li>
   </ul>
 </nav>
