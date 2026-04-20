@@ -662,11 +662,11 @@ HTML_TEMPLATE = '''
       <div class="gi-veil"></div>
     </div>
     <div class="gi reveal d2">
-      <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art" />
+      <img src="https://i.ibb.co/v42KRkv2/Neko-Art.jpg" alt="Clan Art" />
       <div class="gi-veil"></div>
     </div>
     <div class="gi reveal d3">
-      <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Clan Art" />
+      <img src="https://i.ibb.co/xKhjJkn4/Nekoprayer.jpg" alt="Clan Art" />
       <div class="gi-veil"></div>
     </div>
   </div>
