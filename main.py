@@ -143,6 +143,23 @@ HTML_TEMPLATE = '''
     }
     .nav-whitepaper::after { display: none !important; }
 
+    /* ── HAMBURGER ── */
+    .hamburger {
+      display: none;
+      background: none;
+      border: 1px solid rgba(200,155,60,.4);
+      color: var(--gold);
+      padding: .4rem .8rem;
+      font-size: 1.3rem;
+      border-radius: 2px;
+      cursor: none !important;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    .hamburger:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 16px rgba(200,155,60,.2);
+    }
+
     /* ── HERO ── */
     #hero {
       min-height: 100vh;
@@ -475,11 +492,38 @@ HTML_TEMPLATE = '''
     @media(max-width:600px){
       html, body { overflow-x:hidden !important; }
       * { max-width: 100%; }
-      nav { padding:.9rem 1rem; flex-wrap:nowrap; }
-      .nav-links { gap:.6rem; }
-      .nav-links a { font-size:.65rem; letter-spacing:.1em; }
-      .nav-buy { font-size:.65rem !important; padding:.4rem .8rem; letter-spacing:.08em !important; }
-      .nav-whitepaper { font-size:.65rem !important; padding:.4rem .8rem; letter-spacing:.08em !important; }
+      nav { padding:.9rem 1rem; }
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 60px; left: 0; right: 0;
+        background: rgba(7,5,10,.98);
+        padding: 1.5rem 2rem;
+        gap: 0;
+        z-index: 199;
+        border-bottom: 1px solid rgba(200,155,60,.2);
+        list-style: none;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li { width: 100%; }
+      .nav-links a {
+        display: block;
+        font-size: .9rem !important;
+        letter-spacing: .12em !important;
+        padding: .9rem 0 !important;
+        border-bottom: 1px solid rgba(200,155,60,.08) !important;
+        color: var(--cream) !important;
+        background: transparent !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+      .nav-links li:last-child a { border-bottom: none !important; }
+      .hamburger { display: flex !important; }
+      #cur { display: none; }
       h1.h-title { font-size:2.8rem; }
       .h-banner { width: min(320px, 92vw); }
       .h-btns { flex-direction:column; align-items:center; }
@@ -502,7 +546,6 @@ HTML_TEMPLATE = '''
       #trade::after, #art::after { display:none; }
     }
     @media(max-width:380px){
-      .nav-links { display:none; }
       h1.h-title { font-size:2.4rem; }
     }
   </style>
@@ -514,14 +557,15 @@ HTML_TEMPLATE = '''
 <!-- ── NAV ── -->
 <nav>
   <a href="#" class="nav-logo">NEKO ⚔</a>
-  <ul class="nav-links">
-    <li><a href="#trade">⚔ Trade</a></li>
-    <li><a href="#lore">📜 Lore</a></li>
-    <li><a href="#art">🖼 Gallery</a></li>
-    <li><a href="#join">🐱 Clan</a></li>
-    <li><a href="https://pdfhost.io/v/TuX9bvMpT5_neko_litepaper" target="_blank" class="nav-whitepaper">📄 Litepaper</a></li>
-    <li><a href="https://opensea.io/collection/neko-shogun" target="_blank" class="nav-buy" style="border-color:#2081e2;color:#2081e2;background:rgba(32,129,226,.08);">🌊 OpenSea</a></li>
-    <li><a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="nav-buy">Buy $NEKO</a></li>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">☰</button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#trade" onclick="closeMenu()">⚔ Trade</a></li>
+    <li><a href="#lore" onclick="closeMenu()">📜 Lore</a></li>
+    <li><a href="#art" onclick="closeMenu()">🖼 Gallery</a></li>
+    <li><a href="#join" onclick="closeMenu()">🐱 Clan</a></li>
+    <li><a href="/litepaper" target="_blank" class="nav-whitepaper" onclick="closeMenu()">📄 Litepaper</a></li>
+    <li><a href="https://opensea.io/collection/neko-shogun" target="_blank" class="nav-buy" style="border-color:#2081e2;color:#2081e2;background:rgba(32,129,226,.08);" onclick="closeMenu()">🌊 OpenSea</a></li>
+    <li><a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="nav-buy" onclick="closeMenu()">Buy $NEKO</a></li>
   </ul>
 </nav>
 
@@ -653,20 +697,20 @@ HTML_TEMPLATE = '''
     <h2 class="sec-title reveal d1">The <em>Gallery</em></h2>
   </div>
   <div class="gallery">
-    <div class="gi reveal">
-      <img src="https://i.ibb.co/ynVpMSDB/HAg-Z8-MMa-MAIn-A-H.jpg" alt="Neko Samurai Portrait" />
+    <div class="gi reveal" onclick="openLightbox(this.querySelector('img').src)">
+      <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" />
       <div class="gi-veil"></div>
     </div>
-    <div class="gi reveal d1">
+    <div class="gi reveal d1" onclick="openLightbox(this.querySelector('img').src)">
       <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" />
       <div class="gi-veil"></div>
     </div>
-    <div class="gi reveal d2">
-      <img src="https://i.ibb.co/v42KRkv2/Neko-Art.jpg" alt="Clan Art" />
+    <div class="gi reveal d2" onclick="openLightbox(this.querySelector('img').src)">
+      <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art" />
       <div class="gi-veil"></div>
     </div>
-    <div class="gi reveal d3">
-      <img src="https://i.ibb.co/xKhjJkn4/Nekoprayer.jpg" alt="Clan Art" />
+    <div class="gi reveal d3" onclick="openLightbox(this.querySelector('img').src)">
+      <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Clan Art" />
       <div class="gi-veil"></div>
     </div>
   </div>
@@ -686,10 +730,10 @@ HTML_TEMPLATE = '''
       <span class="clan-name">Follow on X</span>
       <span class="clan-handle">@NekoTheSamurai</span>
     </a>
-    <a href="https://t.me/Nekothesamurai" target="_blank" class="clan-card reveal d2">
+    <a href="https://t.me/toshimart" target="_blank" class="clan-card reveal d2">
       <div class="clan-icon">✈️</div>
       <span class="clan-name">Telegram</span>
-      <span class="clan-handle">Neko's Dojo</span>
+      <span class="clan-handle">Toshimart TG</span>
     </a>
     <a href="https://discord.gg/yKreTaD6Ua" target="_blank" class="clan-card reveal d3">
       <div class="clan-icon">🎮</div>
@@ -719,6 +763,15 @@ HTML_TEMPLATE = '''
   </div>
   <p class="ft-disclaimer">$NEKO is a meme coin created for entertainment purposes only. It has no intrinsic value, makes no promises of financial return, and should not be considered an investment. Cryptocurrency trading involves significant risk. Always do your own research (DYOR) before making any financial decisions. Not financial advice.</p>
 </footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(7,5,10,.95);align-items:center;justify-content:center;cursor:none;">
+  <div style="position:relative;max-width:90vw;max-height:90vh;">
+    <img id="lightbox-img" src="" style="max-width:90vw;max-height:85vh;object-fit:contain;border:1px solid rgba(200,155,60,.3);box-shadow:0 0 80px rgba(122,0,18,.4);" />
+    <a id="lightbox-save" download="neko-art.jpg" style="display:block;margin-top:1rem;text-align:center;font-family:'Shippori Mincho B1',serif;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;">⬇ Save Image</a>
+    <p style="text-align:center;font-size:.7rem;color:var(--muted);margin-top:.5rem;font-family:'Shippori Mincho B1',serif;letter-spacing:.15em;">Click anywhere to close</p>
+  </div>
+</div>
 
 <script>
   /* ── CURSOR ── */
@@ -755,7 +808,7 @@ HTML_TEMPLATE = '''
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-    /* ── COPY CA ── */
+  /* ── COPY CA ── */
   function copyCA() {
     navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453').then(() => {
       const ok = document.getElementById('ca-ok');
@@ -763,6 +816,30 @@ HTML_TEMPLATE = '''
       setTimeout(() => ok.classList.remove('on'), 2200);
     });
   }
+
+  /* ── HAMBURGER MENU ── */
+  function toggleMenu() {
+    document.getElementById('nav-links').classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('nav-links').classList.remove('open');
+  }
+
+  /* ── LIGHTBOX ── */
+  function openLightbox(src) {
+    const lb = document.getElementById('lightbox');
+    const img = document.getElementById('lightbox-img');
+    const save = document.getElementById('lightbox-save');
+    img.src = src;
+    save.href = src;
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
 </script>
 
 <!-- === NEKO AI CHATBOT === -->
