@@ -654,7 +654,7 @@ HTML_TEMPLATE = '''
   </div>
   <div class="gallery">
     <div class="gi reveal">
-      <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" />
+      <img src="https://i.ibb.co/ynVpMSDB/HAg-Z8-MMa-MAIn-A-H.jpg" alt="Neko Samurai Portrait" />
       <div class="gi-veil"></div>
     </div>
     <div class="gi reveal d1">
