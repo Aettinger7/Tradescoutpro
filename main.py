@@ -73,67 +73,92 @@ HTML_TEMPLATE = '''
     }
     #cur.big { width: 38px; height: 38px; background: rgba(200,155,60,.12); border-color: var(--gold-lt); }
 
-    /* SIMPLE NAV */
+    /* NAV - Desktop original */
     nav {
       position: fixed; inset: 0 0 auto; z-index: 200;
+      padding: 1rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(7,5,10,.97);
+      border-bottom: 1px solid rgba(200,155,60,.2);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: .8rem; text-decoration: none;
+      font-family: 'Shippori Mincho B1', serif;
+      font-size: 1rem; font-weight: 800;
+      color: var(--gold); letter-spacing: .15em;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Shippori Mincho B1', serif;
+      font-size: .82rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--cream); text-decoration: none; font-weight: 700;
+      transition: color .25s; position: relative;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:-3px; left:0;
+      width:0; height:1px; background:var(--gold); transition: width .3s;
+    }
+    .nav-links a:hover { color: var(--gold-lt); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-buy, .nav-whitepaper {
+      font-family: 'Shippori Mincho B1', serif !important;
+      font-size: .8rem !important; letter-spacing: .15em !important;
+      font-weight: 700 !important;
+      padding: .5rem 1.4rem;
+      border-radius: 2px;
+      transition: all .25s !important;
+    }
+    .nav-buy {
+      border: 1px solid var(--gold) !important;
+      color: var(--gold-lt) !important;
+      background: rgba(200,155,60,.08);
+    }
+    .nav-whitepaper {
+      border: 1px solid rgba(200,155,60,.4) !important;
+      color: var(--gold-dim) !important;
+    }
+
+    /* MOBILE SIMPLE BUTTONS */
+    .mobile-nav {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
       padding: 1rem;
       background: rgba(7,5,10,.97);
       border-bottom: 1px solid rgba(200,155,60,.3);
-      backdrop-filter: blur(12px);
     }
-    .nav-container {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .nav-logo {
+    .mobile-nav a {
       font-family: 'Shippori Mincho B1', serif;
-      font-size: 1.25rem; font-weight: 800;
-      color: var(--gold); letter-spacing: .15em;
-      text-decoration: none;
-    }
-    .nav-links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      list-style: none;
-    }
-    .nav-links a {
-      font-family: 'Shippori Mincho B1', serif;
-      font-size: 0.9rem;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      padding: 10px 18px;
+      font-size: 0.95rem;
+      padding: 12px 20px;
       color: var(--cream);
       text-decoration: none;
       border: 1px solid rgba(200,155,60,.4);
       border-radius: 4px;
-      white-space: nowrap;
-      transition: all .25s;
+      text-align: center;
+      min-width: 130px;
     }
-    .nav-links a:hover {
+    .mobile-nav a:hover {
       background: rgba(200,155,60,.15);
       border-color: var(--gold);
       color: var(--gold-lt);
     }
 
+    /* Hide hamburger on mobile, show simple buttons */
+    .hamburger { display: none; }
+
+    /* RESPONSIVE */
     @media(max-width: 600px) {
-      .nav-container { gap: 10px; }
-      .nav-links a {
-        font-size: 0.95rem;
-        padding: 12px 20px;
-        min-width: 130px;
-        text-align: center;
-      }
-      #hero { padding-top: 120px !important; }
+      nav { display: none; } /* Hide original nav on mobile */
+      .mobile-nav { display: flex; }
+      #hero { padding-top: 160px; }
+      .h-title { font-size:2.8rem; }
     }
 
-    /* Original styles from here down */
+    /* === ALL YOUR ORIGINAL STYLES === */
     #hero {
       min-height: 100vh;
       display: flex; flex-direction: column;
@@ -143,9 +168,10 @@ HTML_TEMPLATE = '''
     }
     .hero-glow {
       position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(ellipse 55% 65% at 50% 58%, rgba(122,0,18,.22) 0%, transparent 65%),
-                  radial-gradient(ellipse 90% 40% at 50% 100%, rgba(100,0,12,.15) 0%, transparent 60%),
-                  var(--ink);
+      background:
+        radial-gradient(ellipse 55% 65% at 50% 58%, rgba(122,0,18,.22) 0%, transparent 65%),
+        radial-gradient(ellipse 90% 40% at 50% 100%, rgba(100,0,12,.15) 0%, transparent 60%),
+        var(--ink);
     }
     .sakura { position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
     .petal {
@@ -156,14 +182,25 @@ HTML_TEMPLATE = '''
       box-shadow: 0 0 6px rgba(220,40,60,.4);
     }
     @keyframes drift {
-      0% { transform:translateY(0) rotate(0deg) translateX(0); opacity:0; }
-      8% { opacity:1; }
-      92% { opacity:.7; }
+      0%   { transform:translateY(0) rotate(0deg) translateX(0); opacity:0; }
+      8%   { opacity:1; }
+      92%  { opacity:.7; }
       100% { transform:translateY(105vh) rotate(720deg) translateX(80px); opacity:0; }
     }
 
-    .h-banner { width: min(480px, 88vw); margin: 0 auto 2.8rem; position: relative; }
-    .h-banner img { width: 100%; height: auto; display: block; filter: saturate(.9) contrast(1.05); }
+    .h-banner {
+      width: min(480px, 88vw);
+      margin: 0 auto 2.8rem;
+      position: relative;
+    }
+    .h-banner img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: saturate(.9) contrast(1.05);
+      box-shadow: 0 0 80px rgba(176,16,32,.4), 0 0 160px rgba(122,0,18,.2);
+    }
+
     h1.h-title {
       font-family:'Shippori Mincho B1',serif;
       font-size:clamp(3.5rem,9vw,8rem);
@@ -181,22 +218,28 @@ HTML_TEMPLATE = '''
       font-size:.88rem; letter-spacing:.25em; text-transform:uppercase; font-weight:800;
       transition: all .25s;
     }
-    .btn-fill { background:linear-gradient(130deg, var(--crimson), var(--red)); color:var(--cream); border:1px solid rgba(212,24,46,.6); }
+    .btn-fill { background:linear-gradient(130deg, var(--crimson), var(--red)); color:var(--cream); }
     .btn-ghost { background:rgba(200,155,60,.08); color:var(--gold-lt); border:1px solid var(--gold); }
 
-    /* All other original styles */
     .sec-rule { width:100%; height:1px; background:linear-gradient(to right,transparent,rgba(200,155,60,.25),transparent); }
-    .trade-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; }
-    .clan-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; }
-    .gallery { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    #video-section { padding:4rem 4rem; text-align:center; background:var(--deep); }
+    #trade { padding:8rem 4rem; position:relative; }
+    #lore { padding:8rem 4rem; background:var(--deep); }
+    #art { padding:8rem 4rem; background:var(--deep); }
+    #join { padding:8rem 4rem; text-align:center; }
+    footer { padding:3rem 4rem; border-top:1px solid rgba(200,155,60,.1); display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:1.5rem; }
 
     @media(max-width:960px){
+      nav { padding:1rem 1.5rem; }
+      #trade,#lore,#join,#art,#video-section { padding:5rem 1.5rem; }
       .trade-cards { grid-template-columns:1fr; }
+      .lore-inner { grid-template-columns:1fr; gap:3rem; }
       .clan-grid { grid-template-columns:1fr 1fr; }
       .gallery { grid-template-columns:1fr 1fr; }
+      footer { flex-direction:column; text-align:center; }
     }
     @media(max-width:600px){
-      .trade-cards, .clan-grid, .gallery { width:100%; }
+      #trade,#lore,#join,#art,#video-section { padding:4rem 1rem; }
       .gi { height:200px; }
     }
   </style>
@@ -205,20 +248,30 @@ HTML_TEMPLATE = '''
 
 <div id="cur"></div>
 
+<!-- DESKTOP NAV (original) -->
 <nav>
-  <div class="nav-container">
-    <a href="#" class="nav-logo">NEKO ⚔</a>
-    <ul class="nav-links">
-      <li><a href="#trade">⚔ Trade</a></li>
-      <li><a href="#lore">📜 Lore</a></li>
-      <li><a href="#art">🖼 Gallery</a></li>
-      <li><a href="#join">🐱 Clan</a></li>
-      <li><a href="/litepaper" target="_blank">📄 Litepaper</a></li>
-      <li><a href="https://opensea.io/collection/neko-shogun" target="_blank">🌊 OpenSea</a></li>
-      <li><a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">Buy $NEKO</a></li>
-    </ul>
-  </div>
+  <a href="#" class="nav-logo">NEKO ⚔</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#trade">⚔ Trade</a></li>
+    <li><a href="#lore">📜 Lore</a></li>
+    <li><a href="#art">🖼 Gallery</a></li>
+    <li><a href="#join">🐱 Clan</a></li>
+    <li><a href="/litepaper" target="_blank" class="nav-whitepaper">📄 Litepaper</a></li>
+    <li><a href="https://opensea.io/collection/neko-shogun" target="_blank" class="nav-buy" style="border-color:#2081e2;color:#2081e2">🌊 OpenSea</a></li>
+    <li><a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="nav-buy">Buy $NEKO</a></li>
+  </ul>
 </nav>
+
+<!-- MOBILE SIMPLE STACKED BUTTONS -->
+<div class="mobile-nav">
+  <a href="#trade">⚔ Trade</a>
+  <a href="#lore">📜 Lore</a>
+  <a href="#art">🖼 Gallery</a>
+  <a href="#join">🐱 Clan</a>
+  <a href="/litepaper" target="_blank">📄 Litepaper</a>
+  <a href="https://opensea.io/collection/neko-shogun" target="_blank">🌊 OpenSea</a>
+  <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">Buy $NEKO</a>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -297,7 +350,6 @@ HTML_TEMPLATE = '''
       <span class="tc-arrow">View Token</span>
     </a>
   </div>
-  <!-- Chart embed -->
   <div class="chart-box reveal">
     <div class="chart-bar">
       <span>$NEKO Live Chart &nbsp;·&nbsp; Base Chain</span>
@@ -309,19 +361,129 @@ HTML_TEMPLATE = '''
   </div>
 </section>
 
-<!-- LORE, GALLERY, JOIN, FOOTER, LIGHTBOX, and all scripts are included below in full in your original file. -->
+<div class="sec-rule"></div>
 
-<!-- (To keep this message from being too huge, the remaining identical sections are the same as your first message. Paste your original lore, art, join, footer, lightbox if any part is missing after testing.) -->
+<!-- LORE -->
+<section id="lore">
+  <div class="lore-inner">
+    <div class="lore-img reveal">
+      <div class="lore-frame">
+        <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" />
+        <div class="lore-accent"></div>
+      </div>
+      <div class="lore-shadow"></div>
+    </div>
+    <div class="reveal d2">
+      <span class="lore-kanji">前進</span>
+      <p class="sec-label">⚔ &nbsp; The Legend</p>
+      <h2 class="sec-title">Neko <em>Lore</em></h2>
+      <div class="lore-hr"></div>
+      <p class="lore-p">In the shadowed valleys of the Base chain, where cherry blossoms drift across digital winds, Neko emerged as the eternal leader of the Zenshin Clan — "Forward Progress" embodied. Zenshin is not just a name; it is the guiding principle: advance steadily, honorably, and without unnecessary haste.</p>
+      <p class="lore-p">The Zenshin Clan are samurai cats sworn to Toshi the Emperor. Their oath is unbreakable: defend Toshi, safeguard the holders, protect the ecosystem, and preserve harmony no matter the threat. Neko leads with quiet ferocity — his katana ever-ready, his vision clear.</p>
+      <p class="lore-p">Hold $NEKO. Walk with Neko. Join the Zenshin Clan. Forward progress awaits those who stand ready. <em style="color:var(--gold-dim)">Zenshin.</em></p>
+      <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-fill" style="display:inline-block;margin-top:2rem;">Join the Clan</a>
+    </div>
+  </div>
+</section>
+
+<div class="sec-rule"></div>
+
+<!-- GALLERY -->
+<section id="art">
+  <div style="text-align:center;margin-bottom:4rem;">
+    <p class="sec-label reveal">⚔ &nbsp; Clan Artwork</p>
+    <h2 class="sec-title reveal d1">The <em>Gallery</em></h2>
+  </div>
+  <div class="gallery">
+    <div class="gi reveal" onclick="openLightbox(this.querySelector('img').src)">
+      <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" />
+      <div class="gi-veil"></div>
+    </div>
+    <div class="gi reveal d1" onclick="openLightbox(this.querySelector('img').src)">
+      <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" />
+      <div class="gi-veil"></div>
+    </div>
+    <div class="gi reveal d2" onclick="openLightbox(this.querySelector('img').src)">
+      <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art" />
+      <div class="gi-veil"></div>
+    </div>
+    <div class="gi reveal d3" onclick="openLightbox(this.querySelector('img').src)">
+      <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Clan Art" />
+      <div class="gi-veil"></div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-rule"></div>
+
+<!-- JOIN -->
+<section id="join">
+  <div style="text-align:center;margin-bottom:4rem;">
+    <p class="sec-label reveal">⚔ &nbsp; The Community</p>
+    <h2 class="sec-title reveal d1">Join the <em>Clan</em></h2>
+  </div>
+  <div class="clan-grid">
+    <a href="https://x.com/NekoTheSamurai" target="_blank" class="clan-card reveal d1">
+      <div class="clan-icon">𝕏</div>
+      <span class="clan-name">Follow on X</span>
+      <span class="clan-handle">@NekoTheSamurai</span>
+    </a>
+    <a href="https://t.me/toshimart" target="_blank" class="clan-card reveal d2">
+      <div class="clan-icon">✈️</div>
+      <span class="clan-name">Telegram</span>
+      <span class="clan-handle">Toshimart TG</span>
+    </a>
+    <a href="https://discord.gg/yKreTaD6Ua" target="_blank" class="clan-card reveal d3">
+      <div class="clan-icon">🎮</div>
+      <span class="clan-name">Discord</span>
+      <span class="clan-handle">Neko Talk</span>
+    </a>
+    <a href="https://warpcast.com/toshibase" target="_blank" class="clan-card reveal d4">
+      <div class="clan-icon">🟣</div>
+      <span class="clan-name">Warpcast</span>
+      <span class="clan-handle">Toshi Base</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="ft-brand">Neko ⚔ $NEKO</span>
+  <div class="ft-meta">
+    <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">Uniswap</a>
+    &nbsp;·&nbsp;
+    <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" style="color:var(--gold-dim);">Dexscreener</a>
+    &nbsp;·&nbsp;
+    <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" style="color:var(--gold-dim);">Toshimart</a>
+    &nbsp;·&nbsp;
+    <a href="/litepaper" target="_blank" style="color:var(--gold-dim);">Litepaper</a>
+    <br />© 2026 Neko on Base &nbsp;·&nbsp; Last Update: {{ last_update }}
+  </div>
+  <p class="ft-disclaimer">$NEKO is a meme coin created for entertainment purposes only. It has no intrinsic value, makes no promises of financial return, and should not be considered an investment. Cryptocurrency trading involves significant risk. Always do your own research (DYOR) before making any financial decisions. Not financial advice.</p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(7,5,10,.95);align-items:center;justify-content:center;cursor:none;">
+  <div style="position:relative;max-width:90vw;max-height:90vh;">
+    <img id="lightbox-img" src="" style="max-width:90vw;max-height:85vh;object-fit:contain;border:1px solid rgba(200,155,60,.3);box-shadow:0 0 80px rgba(122,0,18,.4);" />
+    <a id="lightbox-save" download="neko-art.jpg" style="display:block;margin-top:1rem;text-align:center;font-family:'Shippori Mincho B1',serif;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;">⬇ Save Image</a>
+    <p style="text-align:center;font-size:.7rem;color:var(--muted);margin-top:.5rem;font-family:'Shippori Mincho B1',serif;letter-spacing:.15em;">Click anywhere to close</p>
+  </div>
+</div>
 
 <script>
-  /* Cursor */
+  /* CURSOR */
   const cur = document.getElementById('cur');
   document.addEventListener('mousemove', e => {
     cur.style.left = e.clientX + 'px';
     cur.style.top  = e.clientY + 'px';
   });
+  document.querySelectorAll('a,button,.ca-pill,.tc,.clan-card,.gi').forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('big'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+  });
 
-  /* Sakura */
+  /* SAKURA */
   const container = document.getElementById('sakura');
   for (let i = 0; i < 35; i++) {
     const p = document.createElement('div');
@@ -331,6 +493,7 @@ HTML_TEMPLATE = '''
     container.appendChild(p);
   }
 
+  /* COPY CA */
   function copyCA() {
     navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453').then(() => {
       const ok = document.getElementById('ca-ok');
@@ -338,9 +501,24 @@ HTML_TEMPLATE = '''
       setTimeout(() => ok.classList.remove('on'), 2200);
     });
   }
+
+  /* LIGHTBOX */
+  function openLightbox(src) {
+    const lb = document.getElementById('lightbox');
+    const img = document.getElementById('lightbox-img');
+    const save = document.getElementById('lightbox-save');
+    img.src = src;
+    save.href = src;
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+  }
 </script>
 
-<!-- Chatbot -->
+<!-- CHATBOT -->
 <script>
 (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="RkznU5gsjj1ggRKXeVnHD";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
 </script>
