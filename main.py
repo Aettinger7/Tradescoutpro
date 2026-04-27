@@ -141,9 +141,7 @@ HTML_TEMPLATE = '''
       box-shadow: 0 0 16px rgba(200,155,60,.15) !important;
     }
     .nav-whitepaper::after { display: none !important; }
-    <a href="/warroom.html" class="hover:text-orange-400 transition font-medium">
-  War Room
-</a>
+    
     /* ── HAMBURGER ── */
     .hamburger {
       display: none;
