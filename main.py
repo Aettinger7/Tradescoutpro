@@ -136,7 +136,6 @@ HTML_TEMPLATE = '''
       box-shadow: 0 0 16px rgba(200,155,60,.15) !important;
     }
     .nav-whitepaper::after { display: none !important; }
-
     /* ── HAMBURGER ── */
     .hamburger {
       display: none;
