@@ -40,6 +40,15 @@ HTML_TEMPLATE = '''
     html { scroll-behavior: smooth; }
     html, body { overflow-x: hidden; max-width: 100vw; }
 
+    /* ── ADDED FOR FIXED BACKGROUND ── */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
     :root {
       --ink:      #07050a;
       --deep:     #0f0b14;
