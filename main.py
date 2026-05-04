@@ -65,9 +65,10 @@ HTML_TEMPLATE = '''
       position: fixed;
       inset: 0;
       background-image: url('/neko-bg.jpg');
-      background-size: cover;
-      background-position: center top;
-      opacity: 0.13;
+      background-size: 75%;
+      background-repeat: no-repeat;
+      background-position: center center;
+      opacity: 0.28;
       mix-blend-mode: luminosity;
       pointer-events: none;
       z-index: 0;
