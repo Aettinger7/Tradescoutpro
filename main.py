@@ -1,6 +1,3 @@
-
-Copy
-
 from flask import Flask, render_template_string, send_from_directory
 import datetime
  
