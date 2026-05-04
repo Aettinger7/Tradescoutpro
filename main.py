@@ -379,9 +379,15 @@ HTML_TEMPLATE = '''
       font-weight:800; color:var(--cream); letter-spacing:-.01em; margin-bottom:.5rem;
     }
     h2.sec-title em { font-style:normal; color:var(--gold); }
-    .reveal { opacity:0; transform:translateY(28px); transition:opacity .85s ease, transform .85s ease; }
+    .reveal { opacity:0; transform:translateY(40px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
     .reveal.in { opacity:1; transform:translateY(0); }
-    .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s}
+    .reveal-left { opacity:0; transform:translateX(-60px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+    .reveal-left.in { opacity:1; transform:translateX(0); }
+    .reveal-right { opacity:0; transform:translateX(60px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+    .reveal-right.in { opacity:1; transform:translateX(0); }
+    .reveal-scale { opacity:0; transform:scale(.88); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+    .reveal-scale.in { opacity:1; transform:scale(1); }
+    .d1{transition-delay:.08s} .d2{transition-delay:.18s} .d3{transition-delay:.28s} .d4{transition-delay:.38s} .d5{transition-delay:.48s}
 
     /* ── VIDEO ── */
     #video-section { padding:4rem 4rem; text-align:center; background:var(--deep); position:relative; }
@@ -670,7 +676,7 @@ HTML_TEMPLATE = '''
     <p class="reveal d2" style="color:var(--muted);font-size:.9rem;font-style:italic;">Three paths into the Zenshin Clan</p>
   </div>
   <div class="trade-cards">
-    <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="tc reveal d1">
+    <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="tc reveal-left d1">
       <div class="tc-num">01</div>
       <div class="tc-tag">Primary Exchange</div>
       <h3>Uniswap V3</h3>
@@ -684,7 +690,7 @@ HTML_TEMPLATE = '''
       <p>Live price, volume, and liquidity. Watch the Clan's strength grow.</p>
       <span class="tc-arrow">View Chart</span>
     </a>
-    <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="tc reveal d3">
+    <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="tc reveal-right d3">
       <div class="tc-num">03</div>
       <div class="tc-tag">Legacy Platform</div>
       <h3>Toshimart</h3>
@@ -708,14 +714,14 @@ HTML_TEMPLATE = '''
 <!-- LORE -->
 <section id="lore">
   <div class="lore-inner">
-    <div class="lore-img reveal">
+    <div class="lore-img reveal-left">
       <div class="lore-frame">
         <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" />
         <div class="lore-accent"></div>
       </div>
       <div class="lore-shadow"></div>
     </div>
-    <div class="reveal d2">
+    <div class="reveal-right d2">
       <span class="lore-kanji">前進</span>
       <p class="sec-label">⚔ &nbsp; The Legend</p>
       <h2 class="sec-title">Neko <em>Lore</em></h2>
@@ -737,20 +743,20 @@ HTML_TEMPLATE = '''
     <h2 class="sec-title reveal d1">The <em>Gallery</em></h2>
   </div>
   <div class="gallery">
-    <div class="gi reveal" onclick="openLightbox(this.querySelector('img').src)">
+    <div class="gi reveal-scale" onclick="openLightbox(this.querySelector('img').src)">
       <img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait" />
       <div class="gi-veil"></div>
     </div>
-    <div class="gi reveal d1" onclick="openLightbox(this.querySelector('img').src)">
+    <div class="gi reveal-scale d1" onclick="openLightbox(this.querySelector('img').src)">
       <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms" />
       <div class="gi-veil"></div>
     </div>
-    <div class="gi reveal d2" onclick="openLightbox(this.querySelector('img').src)">
-      <img src="https://pbs.twimg.com/media/G_IEacWXUAAZVuE.jpg" alt="Clan Art" />
+    <div class="gi reveal-scale d2" onclick="openLightbox(this.querySelector('img').src)">
+      <img src="https://i.ibb.co/6cpdFyYv/image-24.jpg" alt="Clan Art" />
       <div class="gi-veil"></div>
     </div>
-    <div class="gi reveal d3" onclick="openLightbox(this.querySelector('img').src)">
-      <img src="https://pbs.twimg.com/media/G_H77YTXcAAv5dE.jpg" alt="Clan Art" />
+    <div class="gi reveal-scale d3" onclick="openLightbox(this.querySelector('img').src)">
+      <img src="https://i.ibb.co/QF6cS9ZV/Neko-The-Samurai.png" alt="Clan Art" />
       <div class="gi-veil"></div>
     </div>
   </div>
@@ -765,22 +771,22 @@ HTML_TEMPLATE = '''
     <h2 class="sec-title reveal d1">Join the <em>Clan</em></h2>
   </div>
   <div class="clan-grid">
-    <a href="https://x.com/NekoTheSamurai" target="_blank" class="clan-card reveal d1">
+    <a href="https://x.com/NekoTheSamurai" target="_blank" class="clan-card reveal-scale d1">
       <div class="clan-icon">𝕏</div>
       <span class="clan-name">Follow on X</span>
       <span class="clan-handle">@NekoTheSamurai</span>
     </a>
-    <a href="https://t.me/toshimart" target="_blank" class="clan-card reveal d2">
+    <a href="https://t.me/toshimart" target="_blank" class="clan-card reveal-scale d2">
       <div class="clan-icon">✈️</div>
       <span class="clan-name">Telegram</span>
       <span class="clan-handle">Toshimart TG</span>
     </a>
-    <a href="https://discord.gg/yKreTaD6Ua" target="_blank" class="clan-card reveal d3">
+    <a href="https://discord.gg/yKreTaD6Ua" target="_blank" class="clan-card reveal-scale d3">
       <div class="clan-icon">🎮</div>
       <span class="clan-name">Discord</span>
       <span class="clan-handle">Neko Talk</span>
     </a>
-    <a href="https://warpcast.com/toshibase" target="_blank" class="clan-card reveal d4">
+    <a href="https://warpcast.com/toshibase" target="_blank" class="clan-card reveal-scale d4">
       <div class="clan-icon">🟣</div>
       <span class="clan-name">Warpcast</span>
       <span class="clan-handle">Toshi Base</span>
@@ -843,10 +849,18 @@ HTML_TEMPLATE = '''
   }
 
   /* SCROLL REVEAL */
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => obs.observe(el));
+
+  /* PARALLAX */
+  const bgImg = document.getElementById('bg-img');
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    bgImg.style.transform = `translateY(${scrollY * 0.25}px)`;
+  }, { passive: true });
 
   /* COPY CA */
   function copyCA() {
