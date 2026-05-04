@@ -1,8 +1,8 @@
 from flask import Flask, render_template_string, send_from_directory
 import datetime
- 
+
 app = Flask(__name__)
- 
+
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +10,7 @@ HTML_TEMPLATE = '''
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neko the Samurai Cat ⚔️ $NEKO on Base</title>
- 
+
   <meta name="description" content="Neko the Samurai Cat ($NEKO) – Zenshin Clan meme token on Base. Forward progress with honor. Trade on Uniswap. Join the clan!">
   <meta property="og:title" content="Neko the Samurai Cat ⚔️🐱 $NEKO on Base">
   <meta property="og:description" content="Zenshin Clan – Forward Progress. Warrior in a garden, claws sharpened on Base.">
@@ -22,7 +22,7 @@ HTML_TEMPLATE = '''
   <meta name="twitter:description" content="Forward Progress – Join the Zenshin Clan on Base.">
   <meta name="twitter:image" content="https://i.ibb.co/QF6cS9ZV/Neko-The-Samurai.png">
   <meta name="twitter:site" content="@NekoTheSamurai">
- 
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-34WMSCBW1R"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -30,16 +30,16 @@ HTML_TEMPLATE = '''
     gtag('js', new Date());
     gtag('config', 'G-34WMSCBW1R');
   </script>
- 
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Noto+Serif+JP:wght@200;400&display=swap" rel="stylesheet" />
- 
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     html, body { overflow-x: hidden; max-width: 100vw; }
- 
+
     :root {
       --ink:      #07050a;
       --deep:     #0f0b14;
@@ -52,19 +52,19 @@ HTML_TEMPLATE = '''
       --cream:    #ede4cc;
       --muted:    #7a6e60;
     }
- 
+
     body {
       background: var(--ink);
       color: var(--cream);
       font-family: 'Zen Kaku Gothic New', sans-serif;
       font-weight: 300;
     }
- 
+
     /* ── BACKGROUND IMAGE ── */
     #bg-img {
       position: fixed;
       inset: 0;
-      background-image: url('/static/neko-bg.jpg');
+      background-image: url('/neko-bg.jpg');
       background-size: cover;
       background-position: center top;
       opacity: 0.13;
@@ -79,7 +79,7 @@ HTML_TEMPLATE = '''
       pointer-events: none;
       z-index: 0;
     }
- 
+
     /* ── CURSOR ── */
     *, a, button { cursor: none !important; }
     #cur {
@@ -92,14 +92,14 @@ HTML_TEMPLATE = '''
       mix-blend-mode: exclusion;
     }
     #cur.big { width: 38px; height: 38px; background: rgba(200,155,60,.12); border-color: var(--gold-lt); }
- 
+
     /* ── GRAIN ── */
     body::after {
       content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
       opacity:.55;
     }
- 
+
     /* ── NAV ── */
     nav {
       position: fixed; inset: 0 0 auto; z-index: 200;
@@ -142,7 +142,7 @@ HTML_TEMPLATE = '''
     }
     .nav-buy:hover { background: rgba(200,155,60,.2) !important; box-shadow: 0 0 20px rgba(200,155,60,.25) !important; }
     .nav-buy::after { display: none !important; }
- 
+
     .nav-whitepaper {
       font-family: 'Shippori Mincho B1', serif !important;
       font-size: .8rem !important; letter-spacing: .15em !important;
@@ -191,7 +191,7 @@ HTML_TEMPLATE = '''
     .hamburger .ham-line:nth-child(1) { top: 30%; }
     .hamburger .ham-line:nth-child(2) { top: 50%; }
     .hamburger .ham-line:nth-child(3) { top: 70%; }
- 
+
     .hamburger.open .ham-line:nth-child(1) {
       top: 50%;
       transform: rotate(45deg);
@@ -203,7 +203,7 @@ HTML_TEMPLATE = '''
       top: 50%;
       transform: rotate(-45deg);
     }
- 
+
     /* ── HERO ── */
     #hero {
       min-height: 100vh;
@@ -225,7 +225,7 @@ HTML_TEMPLATE = '''
       animation: breathe 5s ease-in-out infinite;
     }
     @keyframes breathe { 0%,100%{opacity:.4;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
- 
+
     .sakura { position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
     .petal {
       position:absolute; top:-30px;
@@ -240,7 +240,7 @@ HTML_TEMPLATE = '''
       92%  { opacity:.7; }
       100% { transform:translateY(105vh) rotate(720deg) translateX(80px); opacity:0; }
     }
- 
+
     .orbit {
       position:absolute; top:50%; left:50%;
       transform:translate(-50%,-50%);
@@ -250,7 +250,7 @@ HTML_TEMPLATE = '''
     }
     .orbit::before { content:''; position:absolute; inset:28px; border-radius:50%; border:1px solid rgba(200,155,60,.03); }
     @keyframes spin { to { transform:translate(-50%,-50%) rotate(360deg); } }
- 
+
     .hero-content { position:relative; z-index:2; }
     .h-tag {
       font-family:'Shippori Mincho B1',serif;
@@ -258,7 +258,7 @@ HTML_TEMPLATE = '''
       color:var(--gold); margin-bottom:2rem; font-weight:700;
       opacity:0; animation:rise .8s .15s forwards;
     }
- 
+
     .h-banner {
       width: min(480px, 88vw);
       margin: 0 auto 2.8rem;
@@ -289,7 +289,7 @@ HTML_TEMPLATE = '''
       filter: saturate(.9) contrast(1.05);
       box-shadow: 0 0 80px rgba(176,16,32,.4), 0 0 160px rgba(122,0,18,.2);
     }
- 
+
     h1.h-title {
       font-family:'Shippori Mincho B1',serif;
       font-size:clamp(3.5rem,9vw,8rem);
@@ -354,7 +354,7 @@ HTML_TEMPLATE = '''
       transition:background .25s, box-shadow .25s, transform .2s;
     }
     .btn-ghost:hover { background:rgba(200,155,60,.18); box-shadow:0 0 40px rgba(200,155,60,.3); transform:translateY(-3px); }
- 
+
     .scroll-cue {
       position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
       display:flex; flex-direction:column; align-items:center; gap:.5rem;
@@ -364,7 +364,7 @@ HTML_TEMPLATE = '''
     .scroll-line { width:1px; height:38px; background:linear-gradient(to bottom,var(--gold-dim),transparent); animation:pulse-line 2.2s ease-in-out infinite; }
     @keyframes pulse-line { 0%,100%{opacity:.3} 50%{opacity:1} }
     @keyframes rise { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
- 
+
     /* ── SHARED ── */
     .sec-rule { width:100%; height:1px; background:linear-gradient(to right,transparent,rgba(200,155,60,.25),transparent); }
     .sec-label {
@@ -381,7 +381,7 @@ HTML_TEMPLATE = '''
     .reveal { opacity:0; transform:translateY(28px); transition:opacity .85s ease, transform .85s ease; }
     .reveal.in { opacity:1; transform:translateY(0); }
     .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s}
- 
+
     /* ── VIDEO ── */
     #video-section { padding:4rem 4rem; text-align:center; background:var(--deep); position:relative; }
     #video-section::before {
@@ -402,7 +402,7 @@ HTML_TEMPLATE = '''
       content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px;
       background:linear-gradient(to right, transparent, var(--crimson), transparent);
     }
- 
+
     /* ── TRADE ── */
     #trade { padding:8rem 4rem; position:relative; }
     #trade::after {
@@ -451,7 +451,7 @@ HTML_TEMPLATE = '''
     .chart-bar a:hover { color:var(--gold-lt); }
     #dexscreener-embed { position:relative; padding-bottom:56.25%; }
     #dexscreener-embed iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
- 
+
     /* ── LORE ── */
     #lore { padding:8rem 4rem; background:var(--deep); }
     #lore::before {
@@ -471,7 +471,7 @@ HTML_TEMPLATE = '''
     .lore-hr { width:56px; height:1px; background:linear-gradient(to right,var(--crimson),var(--gold-dim)); margin:1.5rem 0; }
     .lore-p { font-size:.95rem; line-height:2; color:rgba(237,228,204,.8); margin-bottom:1.2rem; }
     .lore-p:first-of-type { color:var(--cream); font-size:1rem; }
- 
+
     /* ── GALLERY ── */
     #art { padding:8rem 4rem; background:var(--deep); }
     #art::after {
@@ -486,7 +486,7 @@ HTML_TEMPLATE = '''
     .gi:hover img { transform:scale(1.06); filter:saturate(1) contrast(1.05); }
     .gi-veil { position:absolute; inset:0; background:linear-gradient(to top,rgba(7,5,10,.65) 0%,transparent 55%); opacity:0; transition:opacity .4s; }
     .gi:hover .gi-veil { opacity:1; }
- 
+
     /* ── COMMUNITY ── */
     #join { padding:8rem 4rem; text-align:center; }
     .clan-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(200,155,60,.09); max-width:920px; margin:0 auto; }
@@ -504,7 +504,7 @@ HTML_TEMPLATE = '''
     .clan-card:hover .clan-icon { border-color:var(--gold); box-shadow:0 0 30px rgba(200,155,60,.3); transform:scale(1.1); }
     .clan-name { font-family:'Shippori Mincho B1',serif; font-size:1.1rem; font-weight:800; color:var(--cream); }
     .clan-handle { font-family:'Shippori Mincho B1',serif; font-size:.78rem; color:var(--gold); font-weight:700; letter-spacing:.08em; }
- 
+
     /* ── FOOTER ── */
     footer { padding:3rem 4rem; border-top:1px solid rgba(200,155,60,.1); display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:1.5rem; }
     .ft-brand { font-family:'Shippori Mincho B1',serif; font-size:1.2rem; font-weight:800; color:var(--gold); }
@@ -512,7 +512,7 @@ HTML_TEMPLATE = '''
     .ft-meta a { color:var(--gold); text-decoration:none; }
     .ft-meta a:hover { color:var(--gold-lt); }
     .ft-disclaimer { font-size:.72rem; color:rgba(200,155,60,.5); max-width:480px; line-height:1.7; font-family:'Zen Kaku Gothic New',sans-serif; }
- 
+
     /* RESPONSIVE */
     @media(max-width:960px){
       nav { padding:1rem 1.5rem; }
@@ -583,12 +583,12 @@ HTML_TEMPLATE = '''
   </style>
 </head>
 <body>
- 
+
 <div id="bg-img"></div>
 <div id="bg-overlay"></div>
- 
+
 <div id="cur"></div>
- 
+
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">NEKO ⚔</a>
@@ -607,7 +607,7 @@ HTML_TEMPLATE = '''
     <li><a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="nav-buy" onclick="closeMenu()">Buy $NEKO</a></li>
   </ul>
 </nav>
- 
+
 <!-- HERO -->
 <section id="hero">
   <div class="hero-glow"></div>
@@ -637,9 +637,9 @@ HTML_TEMPLATE = '''
     <div class="scroll-line"></div>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- VIDEO -->
 <section id="video-section">
   <div style="position:relative;z-index:1;">
@@ -658,9 +658,9 @@ HTML_TEMPLATE = '''
     </div>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- TRADE -->
 <section id="trade">
   <div class="trade-header">
@@ -701,9 +701,9 @@ HTML_TEMPLATE = '''
     </div>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- LORE -->
 <section id="lore">
   <div class="lore-inner">
@@ -726,9 +726,9 @@ HTML_TEMPLATE = '''
     </div>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- GALLERY -->
 <section id="art">
   <div style="text-align:center;margin-bottom:4rem;">
@@ -754,9 +754,9 @@ HTML_TEMPLATE = '''
     </div>
   </div>
 </section>
- 
+
 <div class="sec-rule"></div>
- 
+
 <!-- COMMUNITY -->
 <section id="join">
   <div style="text-align:center;margin-bottom:4rem;">
@@ -786,7 +786,7 @@ HTML_TEMPLATE = '''
     </a>
   </div>
 </section>
- 
+
 <!-- FOOTER -->
 <footer>
   <span class="ft-brand">Neko ⚔ $NEKO</span>
@@ -802,7 +802,7 @@ HTML_TEMPLATE = '''
   </div>
   <p class="ft-disclaimer">$NEKO is a meme coin created for entertainment purposes only. It has no intrinsic value, makes no promises of financial return, and should not be considered an investment. Cryptocurrency trading involves significant risk. Always do your own research (DYOR) before making any financial decisions. Not financial advice.</p>
 </footer>
- 
+
 <!-- LIGHTBOX -->
 <div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(7,5,10,.95);align-items:center;justify-content:center;cursor:none;">
   <div style="position:relative;max-width:90vw;max-height:90vh;">
@@ -811,7 +811,7 @@ HTML_TEMPLATE = '''
     <p style="text-align:center;font-size:.7rem;color:var(--muted);margin-top:.5rem;font-family:'Shippori Mincho B1',serif;letter-spacing:.15em;">Click anywhere to close</p>
   </div>
 </div>
- 
+
 <script>
   /* CURSOR */
   const cur = document.getElementById('cur');
@@ -823,7 +823,7 @@ HTML_TEMPLATE = '''
     el.addEventListener('mouseenter', () => cur.classList.add('big'));
     el.addEventListener('mouseleave', () => cur.classList.remove('big'));
   });
- 
+
   /* SAKURA */
   const container = document.getElementById('sakura');
   for (let i = 0; i < 35; i++) {
@@ -840,13 +840,13 @@ HTML_TEMPLATE = '''
     `;
     container.appendChild(p);
   }
- 
+
   /* SCROLL REVEAL */
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
- 
+
   /* COPY CA */
   function copyCA() {
     navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453').then(() => {
@@ -855,7 +855,7 @@ HTML_TEMPLATE = '''
       setTimeout(() => ok.classList.remove('on'), 2200);
     });
   }
- 
+
   /* HAMBURGER MENU - FIXED */
   function toggleMenu() {
     const menu = document.getElementById('nav-links');
@@ -863,14 +863,14 @@ HTML_TEMPLATE = '''
     const isOpen = menu.classList.toggle('open');
     ham.classList.toggle('open', isOpen);
   }
- 
+
   function closeMenu() {
     const menu = document.getElementById('nav-links');
     const ham = document.getElementById('hamburger-btn');
     menu.classList.remove('open');
     ham.classList.remove('open');
   }
- 
+
   /* LIGHTBOX */
   function openLightbox(src) {
     const lb = document.getElementById('lightbox');
@@ -887,25 +887,29 @@ HTML_TEMPLATE = '''
   }
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
 </script>
- 
+
 <!-- CHATBOT -->
 <script>
 (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="RkznU5gsjj1ggRKXeVnHD";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
 </script>
- 
+
 </body>
 </html>
 '''
- 
+
 @app.route('/')
 def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     return render_template_string(HTML_TEMPLATE, last_update=last_update)
- 
+
 @app.route('/litepaper')
 def litepaper():
     return send_from_directory('static', 'neko_litepaper.pdf', mimetype='application/pdf')
- 
+
+@app.route('/neko-bg.jpg')
+def bg_image():
+    return send_from_directory('.', 'neko-bg.jpg')
+
 if __name__ == '__main__':
     app.run(debug=True)
 
