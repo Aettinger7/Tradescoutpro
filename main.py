@@ -726,10 +726,18 @@ HTML_TEMPLATE = '''
       <p class="sec-label">⚔ &nbsp; The Legend</p>
       <h2 class="sec-title">Neko <em>Lore</em></h2>
       <div class="lore-hr"></div>
-      <p class="lore-p">In the shadowed valleys of the Base chain, where cherry blossoms drift across digital winds, Neko emerged as the eternal leader of the Zenshin Clan — "Forward Progress" embodied. Zenshin is not just a name; it is the guiding principle: advance steadily, honorably, and without unnecessary haste.</p>
-      <p class="lore-p">The Zenshin Clan are samurai cats sworn to Toshi the Emperor. Their oath is unbreakable: defend Toshi, safeguard the holders, protect the ecosystem, and preserve harmony no matter the threat. Neko leads with quiet ferocity — his katana ever-ready, his vision clear.</p>
-      <p class="lore-p">Hold $NEKO. Walk with Neko. Join the Zenshin Clan. Forward progress awaits those who stand ready. <em style="color:var(--gold-dim)">Zenshin.</em></p>
-      <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-fill" style="display:inline-block;margin-top:2rem;">Join the Clan</a>
+      <p class="lore-p">In the shadowed valleys of the Base chain, where cherry blossoms drift across digital winds and the blockchain rivers flow with ancient power, a legend was forged.</p>
+<p class="lore-p">From the mists of code and courage rose <strong>Neko the Samurai Cat</strong> — eternal leader of the Zenshin Clan. Zenshin is not just a name. It is the sacred principle: <strong>"Forward Progress"</strong> — advance steadily, honorably, and without unnecessary haste. With katana ever-ready and vision sharp as a blade’s edge, Neko moves like the wind: quiet, fierce, and unstoppable.</p>
+<p class="lore-p">The Zenshin Clan are samurai cats sworn to <strong>Toshi the Emperor</strong>. Their oath is unbreakable:</p>
+<ul class="lore-list">
+  <li>Defend Toshi</li>
+  <li>Safeguard the holders</li>
+  <li>Protect the Base ecosystem</li>
+  <li>Preserve harmony no matter the threat</li>
+</ul>
+<p class="lore-p"><strong>$NEKO</strong> is the living spirit of this legend. Born on the Base chain as a pure community memecoin, $NEKO is more than a token — it is the blade you wield to join the clan. Every holder becomes part of the saga. Every trade echoes the call of Zenshin. Every diamond hand strengthens the oath.</p>
+<p class="lore-p">Hold $NEKO. Walk with Neko. Join the Zenshin Clan. Forward progress awaits those who stand ready. <em style="color:var(--gold-dim)">Zenshin.</em></p>
+<a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="btn-fill" style="display:inline-block;margin-top:2rem;">Join the Clan</a>
     </div>
   </div>
 </section>
