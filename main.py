@@ -61,25 +61,23 @@ HTML_TEMPLATE = '''
     }
 
     /* ── BACKGROUND IMAGE ── */
-    #bg-img {
-      position: fixed;
-      inset: 0;
-      background-image: url('/neko-bg.jpg');
-      background-size: 75%;
-      background-repeat: no-repeat;
-      background-position: center center;
-      opacity: 0.35;
-      mix-blend-mode: luminosity;
-      pointer-events: none;
-      z-index: 0;
-    }
-    #bg-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(7, 5, 10, 0.68);
-      pointer-events: none;
-      z-index: 0;
-    }
+#bg-img {
+  position: fixed;           /* This should stay */
+  inset: 0;                  /* Covers full viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;             /* Important */
+  background-image: url('/neko-bg.jpg');
+  background-size: 75%;      /* You can change to 'cover' if you want it bigger */
+  background-repeat: no-repeat;
+  background-position: center center;
+  opacity: 0.35;
+  mix-blend-mode: luminosity;
+  pointer-events: none;
+  z-index: -1;               /* Better to use -1 so it's behind everything */
+  overflow: hidden;
+}
 
     /* ── CURSOR ── */
     *, a, button { cursor: none !important; }
