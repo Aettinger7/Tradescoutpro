@@ -68,7 +68,7 @@ HTML_TEMPLATE = '''
       background-size: 75%;
       background-repeat: no-repeat;
       background-position: center center;
-      opacity: 0.28;
+      opacity: 0.35;
       mix-blend-mode: luminosity;
       pointer-events: none;
       z-index: 0;
