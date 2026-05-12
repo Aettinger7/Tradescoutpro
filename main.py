@@ -630,7 +630,7 @@ HTML_TEMPLATE = '''
   <div class="hero-content">
     <p class="h-tag">⚔ &nbsp; Zenshin Clan &nbsp;·&nbsp; $NEKO on Base &nbsp; ⚔</p>
     <div class="h-banner">
-      <img src="https://i.ibb.co/BKFCjDjf/1500x500.jpg" alt="Neko the Samurai Cat" />
+      <img src="https://i.ibb.co/wrgX2S3W/Gemini-Generated-Image-9hscr99hscr99hsc.png" alt="Neko the Samurai Cat" />
     </div>
     <h1 class="h-title">Neko the<br /><em>Samurai</em></h1>
     <p class="h-sub">前進 &nbsp;·&nbsp; Zenshin &nbsp;·&nbsp; Forward Progress</p>
