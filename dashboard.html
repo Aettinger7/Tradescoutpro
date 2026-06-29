@@ -1,121 +1,218 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEKO SAMURAI DASHBOARD • Acquire Your Blade</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <title>Clan Treasury — Neko the Samurai</title>
   <style>
-    body { background: linear-gradient(135deg, #1a0f0a, #2c1a14); font-family: 'serif'; }
-    .samurai-red { color: #c8102e; }
-    .katana-gold { color: #d4af37; }
-    .card { background: rgba(20, 10, 5, 0.95); border: 2px solid #d4af37; box-shadow: 0 0 20px rgba(200, 16, 46, 0.3); }
+    :root {
+      --crimson: #8b1a2b;
+      --crimson-bright: #c4263b;
+      --gold: #d4af37;
+      --gold-soft: #f0d878;
+      --black: #0e0b0c;
+      --black-soft: #1a1517;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--black);
+      color: #f3e9d2;
+      font-family: 'Georgia', 'Noto Serif', serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(139,26,43,0.15), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212,175,55,0.08), transparent 50%);
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 20px;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      color: var(--gold-soft);
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px rgba(212,175,55,0.3);
+    }
+    header p { color: #c9b89a; margin-top: 8px; font-style: italic; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .card {
+      background: linear-gradient(160deg, var(--black-soft), #120f10);
+      border: 1px solid rgba(212,175,55,0.25);
+      border-radius: 10px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--crimson-bright), var(--gold));
+    }
+    .card .label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #b89968;
+      margin-bottom: 8px;
+    }
+    .card .value {
+      font-size: 1.8rem;
+      color: var(--gold-soft);
+      font-weight: bold;
+    }
+    .card .sub { font-size: 0.85rem; color: #998a72; margin-top: 4px; }
+    .positive { color: #6fd17f; }
+    .negative { color: var(--crimson-bright); }
+    section.txs {
+      background: var(--black-soft);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 10px;
+      padding: 24px;
+    }
+    section.txs h2 {
+      color: var(--gold-soft);
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(212,175,55,0.2);
+      padding-bottom: 10px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 10px 8px; font-size: 0.9rem; }
+    th { color: #b89968; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 1px; }
+    tr:not(:last-child) td { border-bottom: 1px solid rgba(212,175,55,0.08); }
+    a { color: var(--gold-soft); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .footer-note {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: #6b5d4d;
+    }
+    .error-box {
+      background: rgba(139,26,43,0.15);
+      border: 1px solid var(--crimson-bright);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      color: #f3e9d2;
+    }
+    .refresh-btn {
+      display: block;
+      margin: 0 auto 30px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold-soft);
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+    }
+    .refresh-btn:hover { background: rgba(212,175,55,0.1); }
   </style>
 </head>
-<body class="text-amber-100 min-h-screen">
-  <div class="max-w-6xl mx-auto p-6">
-    <!-- Header -->
-    <header class="flex justify-between items-center mb-10 border-b border-amber-700 pb-6">
-      <div class="flex items-center gap-4">
-        <span class="text-5xl">⚔️</span>
-        <div>
-          <h1 class="text-4xl font-bold tracking-wider samurai-red">NEKO SAMURAI</h1>
-          <p class="text-sm opacity-75">0x28973c4ef9ae754b076a024996350d3b16a38453 • BASE</p>
-        </div>
-      </div>
-      <button onclick="connectWallet()" 
-              class="px-8 py-4 bg-red-800 hover:bg-red-700 border-2 border-amber-400 rounded-none font-bold text-lg transition-all flex items-center gap-3">
-        <i class="fas fa-sword"></i> CONNECT WALLET
-      </button>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚔️ Clan Treasury ⚔️</h1>
+      <p>The Zenshin Clan's holdings — Forward Progress, on-chain</p>
     </header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Swap Panel -->
-      <div class="lg:col-span-2 card rounded-xl p-8">
-        <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
-          <i class="fas fa-exchange-alt katana-gold"></i> ACQUIRE YOUR BLADE
-        </h2>
-        
-        <!-- Uniswap Widget Placeholder / Embed -->
-        <div id="swap-widget" class="bg-black/80 p-6 rounded-xl border border-amber-600 min-h-[420px]">
-          <p class="text-center py-12 text-amber-400">
-            <strong>Uniswap Swap Widget will appear here</strong><br>
-            (Pre-filled: Buy NEKO with ETH/USDC on Base)
-          </p>
-          <!-- Real embed example below (commented) -->
-          <!-- <iframe src="https://app.uniswap.org/swap?chain=base&outputCurrency=0x28973c4ef9ae754b076a024996350d3b16a38453" class="w-full h-[420px]" frameborder="0"></iframe> -->
-        </div>
+    <button class="refresh-btn" onclick="refreshData()">↻ Refresh Live Data</button>
 
-        <div class="flex gap-4 mt-6">
-          <a href="https://app.uniswap.org/swap?chain=base&outputCurrency=0x28973c4ef9ae754b076a024996350d3b16a38453" 
-             target="_blank"
-             class="flex-1 text-center py-4 bg-amber-600 hover:bg-amber-500 text-black font-bold text-lg transition">
-            OPEN UNISWAP
-          </a>
-          <a href="https://toshimart.com" target="_blank"
-             class="flex-1 text-center py-4 border-2 border-amber-400 hover:bg-amber-900/50 font-bold text-lg transition">
-            GO TO TOSHIMART
-          </a>
+    {% if error %}
+      <div class="error-box">
+        <p>The treasury scroll could not be read: {{ error }}</p>
+      </div>
+    {% else %}
+    <div class="grid" id="stats-grid">
+      <div class="card">
+        <div class="label">Total Treasury Value</div>
+        <div class="value">${{ "%.2f"|format(data.total_value_usd) }}</div>
+      </div>
+      <div class="card">
+        <div class="label">ETH Holdings</div>
+        <div class="value">{{ data.eth_balance }}</div>
+        <div class="sub">≈ ${{ "%.2f"|format(data.eth_value_usd) }}</div>
+      </div>
+      <div class="card">
+        <div class="label">$NEKO Holdings</div>
+        <div class="value">{{ "{:,.0f}".format(data.neko_balance) }}</div>
+        <div class="sub">≈ ${{ "%.2f"|format(data.neko_value_usd) }}</div>
+      </div>
+      <div class="card">
+        <div class="label">$NEKO Price</div>
+        <div class="value">${{ "%.8f"|format(data.market.price_usd or 0) }}</div>
+        <div class="sub {{ 'positive' if (data.market.price_change_24h or 0) >= 0 else 'negative' }}">
+          {{ "%.2f"|format(data.market.price_change_24h or 0) }}% (24h)
         </div>
       </div>
-
-      <!-- Side Panel: Portfolio & Info -->
-      <div class="space-y-8">
-        <!-- Portfolio -->
-        <div class="card p-8 rounded-xl">
-          <h3 class="text-xl font-bold mb-4 katana-gold">YOUR CLAN HOLDINGS</h3>
-          <div id="portfolio" class="text-center py-12">
-            <p class="text-6xl font-bold text-amber-300">0.00 NEKO</p>
-            <p class="text-sm opacity-60 mt-2">$0.00 USD</p>
-            <button onclick="alert('Wallet not connected yet — demo mode')" 
-                    class="mt-6 w-full py-3 border border-red-600 text-red-400 hover:bg-red-950">
-              REFRESH BALANCE
-            </button>
-          </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="card p-8 rounded-xl">
-          <h3 class="text-xl font-bold mb-6">BATTLEFIELD STATS</h3>
-          <div class="space-y-4 text-sm">
-            <div class="flex justify-between"><span>Current Price</span><span class="katana-gold">$0.00XX</span></div>
-            <div class="flex justify-between"><span>24h Volume</span><span>$XXX,XXX</span></div>
-            <div class="flex justify-between"><span>Market Cap</span><span>$X.XM</span></div>
-            <div class="flex justify-between"><span>Your Rank</span><span class="text-emerald-400">Ronin → Samurai</span></div>
-          </div>
-        </div>
-
-        <!-- Guided Steps -->
-        <div class="card p-8 rounded-xl">
-          <h3 class="text-xl font-bold mb-6">PATH OF THE BLADE</h3>
-          <ol class="space-y-6 text-sm">
-            <li class="flex gap-4"><span class="font-mono text-red-500">01</span> Connect Base Wallet</li>
-            <li class="flex gap-4"><span class="font-mono text-red-500">02</span> Get ETH or USDC</li>
-            <li class="flex gap-4"><span class="font-mono text-red-500">03</span> Swap for NEKO</li>
-            <li class="flex gap-4"><span class="font-mono text-red-500">04</span> Join the Clan (Telegram/Discord)</li>
-          </ol>
-        </div>
+      <div class="card">
+        <div class="label">24h Volume</div>
+        <div class="value">${{ "{:,.0f}".format(data.market.volume_24h or 0) }}</div>
+      </div>
+      <div class="card">
+        <div class="label">Liquidity</div>
+        <div class="value">${{ "{:,.0f}".format(data.market.liquidity_usd or 0) }}</div>
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="text-center mt-16 opacity-60 text-xs">
-      ⚔️ Honor the Code • DYOR • Not Financial Advice • $NEKO on Base
-    </footer>
+    <section class="txs">
+      <h2>Recent Treasury Activity</h2>
+      <table>
+        <thead>
+          <tr><th>Tx</th><th>Type</th><th>ETH Value</th><th>Time</th></tr>
+        </thead>
+        <tbody id="tx-body">
+          {% for tx in data.recent_txs %}
+          <tr>
+            <td><a href="https://basescan.org/tx/{{ tx.hash }}" target="_blank">{{ tx.hash_short }}</a></td>
+            <td>{{ tx.method }}</td>
+            <td>{{ "%.6f"|format(tx.value_eth) }}</td>
+            <td>{{ tx.timestamp }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4">No transactions found yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <p class="footer-note">
+      Treasury address: <a href="https://basescan.org/address/{{ data.address }}" target="_blank">{{ data.address }}</a><br>
+      Last updated: <span id="updated-at">{{ data.updated_at }}</span> · Auto-managed in part by an AI agent, every action human-approved.
+    </p>
+    {% endif %}
   </div>
 
   <script>
-    function connectWallet() {
-      alert("In a real app: RainbowKit would open here.\n\nDemo: Wallet connected as 'samurai.neko.eth' on Base");
-      document.getElementById('portfolio').innerHTML = `
-        <p class="text-6xl font-bold text-amber-300">42,069 NEKO</p>
-        <p class="text-sm opacity-60 mt-2">~$420.69 USD</p>
-        <p class="text-emerald-400 mt-4">✅ Connected • Base Chain</p>
-      `;
+    async function refreshData() {
+      const btn = document.querySelector('.refresh-btn');
+      btn.textContent = 'Refreshing...';
+      try {
+        const res = await fetch('/api/treasury');
+        const json = await res.json();
+        if (json.ok) {
+          location.reload(); // simplest reliable refresh; swap for in-place DOM update later if desired
+        }
+      } catch (e) {
+        console.error('Refresh failed', e);
+      } finally {
+        btn.textContent = '↻ Refresh Live Data';
+      }
     }
-
-    // Tailwind script already included
   </script>
 </body>
 </html>
