@@ -3,524 +3,390 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Neko the Samurai Cat ⚔️🐱 $NEKO on Base</title>
-<meta name="description" content="Zenshin Clan – Forward Progress. $NEKO meme token on Base.">
+<title>Neko the Samurai — $NEKO on Base</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Shippori+Mincho+B1:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --indigo-deep:#0a0707;
-  --indigo-mid:#1c0c0d;
-  --indigo-soft:#3a1216;
-  --gold:#c79a3b;
-  --gold-bright:#f0cf76;
-  --crimson:#9e1b25;
-  --ivory:#ede6d3;
-  --ivory-dim:#b8a99c;
-  --font-display:'Shippori Mincho B1', serif;
-  --font-script:'Cormorant Garamond', serif;
-  --font-body:'Inter', sans-serif;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{
-  background:var(--indigo-deep);
-  color:var(--ivory);
-  font-family:var(--font-body);
-  overflow-x:hidden;
-  position:relative;
-}
-a{color:inherit;text-decoration:none;}
+  :root {
+    --ink: #16161A;
+    --dusk: #22243A;
+    --washi: #EDE6D6;
+    --washi-soft: #F6F1E6;
+    --indigo: #22364F;
+    --hanko: #B23A2E;
+    --hanko-dark: #8E2C22;
+    --gold: #C9A24B;
+    --sakura: #D98C99;
+    --sakura-deep: #B85C6E;
+    --bamboo: #4C6B4F;
+    --line: rgba(22,22,26,0.12);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--washi); color: var(--ink); font-family: 'Inter', sans-serif; overflow-x: hidden; position: relative; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  a { color: inherit; }
 
-/* ---------- background seigaiha wave layer (parallax) ---------- */
-.wave-bg{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  background-image:radial-gradient(circle at 0 0, transparent 38%, var(--indigo-mid) 39%, var(--indigo-mid) 40%, transparent 41%);
-  background-size:90px 90px;
-  opacity:.18;
-  pointer-events:none;
-  will-change:transform;
-}
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  @keyframes petal-fall {
+    0%   { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: .9; }
+    100% { transform: translateY(110vh) translateX(60px) rotate(320deg); opacity: 0; }
+  }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
 
-/* ---------- nav ---------- */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:50;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px 5vw;
-  background:linear-gradient(180deg, rgba(12,21,48,.92), rgba(12,21,48,0));
-  backdrop-filter:blur(6px);
-}
-.logo{font-family:var(--font-display);font-size:1.4rem;color:var(--gold-bright);letter-spacing:.05em;}
-.nav-links{display:flex;gap:26px;font-size:.85rem;letter-spacing:.03em;}
-.nav-links a{opacity:.85;transition:opacity .2s, color .2s;}
-.nav-links a:hover{opacity:1;color:var(--gold-bright);}
-.nav-cta{
-  background:linear-gradient(135deg,var(--gold),var(--gold-bright));
-  color:var(--indigo-deep);
-  padding:9px 20px;border-radius:2px;
-  font-weight:600;font-size:.85rem;
-  box-shadow:0 0 18px rgba(212,175,55,.35);
-}
-@media (max-width:820px){ .nav-links{display:none;} }
+  .petal-field { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+  .petal {
+    position: absolute; top: -5%; width: 16px; height: 16px;
+    background: radial-gradient(circle at 30% 30%, var(--sakura), var(--sakura-deep));
+    border-radius: 70% 30% 70% 30%; animation: petal-fall linear infinite; opacity: 0;
+  }
 
-/* ---------- hero ---------- */
-.hero{
-  position:relative;
-  min-height:100vh;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;
-  padding:120px 5vw 80px;
-  overflow:hidden;
-  z-index:1;
-}
-.hero-eyebrow{
-  font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-bright);
-  margin-bottom:22px;opacity:0;animation:fadeUp 1s ease forwards .1s;
-}
-.hero-portrait-wrap{
-  position:relative;width:min(360px,70vw);margin:0 auto 10px;
-  will-change:transform;
-}
-.hero-portrait{
-  width:100%;display:block;border-radius:4px;
-  filter:drop-shadow(0 30px 60px rgba(0,0,0,.55));
-  opacity:0;animation:fadeUp 1.1s ease forwards .2s;
-}
-.hero-ring{
-  position:absolute;inset:-26px;border:1px solid var(--gold);border-radius:50%;opacity:.35;
-  animation:spin 40s linear infinite;
-}
-.hero h1{
-  font-family:var(--font-display);
-  font-size:clamp(2.6rem,7vw,5.2rem);
-  font-weight:800;
-  line-height:1;
-  margin-top:28px;
-  color:var(--ivory);
-  opacity:0;animation:fadeUp 1s ease forwards .35s;
-}
-.hero h1 em{color:var(--gold-bright);font-style:normal;}
-.hero .kanji-line{
-  font-family:var(--font-script);
-  font-size:1.2rem;letter-spacing:.08em;color:var(--ivory-dim);
-  margin-top:14px;opacity:0;animation:fadeUp 1s ease forwards .5s;
-}
-.hero .tagline{
-  font-style:italic;font-family:var(--font-script);
-  font-size:1.25rem;color:var(--ivory-dim);margin-top:18px;max-width:520px;
-  opacity:0;animation:fadeUp 1s ease forwards .6s;
-}
-.ca-pill{
-  margin-top:30px;display:inline-flex;align-items:center;gap:10px;
-  border:1px solid var(--gold);padding:10px 18px;border-radius:30px;
-  font-size:.82rem;letter-spacing:.02em;cursor:pointer;
-  background:rgba(212,175,55,.06);
-  opacity:0;animation:fadeUp 1s ease forwards .7s;
-  transition:background .2s;
-}
-.ca-pill:hover{background:rgba(212,175,55,.14);}
-.hero-ctas{
-  margin-top:28px;display:flex;gap:18px;flex-wrap:wrap;justify-content:center;
-  opacity:0;animation:fadeUp 1s ease forwards .8s;
-}
-.btn{
-  padding:15px 32px;border-radius:2px;font-weight:600;font-size:.9rem;letter-spacing:.03em;
-  display:inline-flex;align-items:center;gap:8px;transition:transform .25s, box-shadow .25s;
-}
-.btn-primary{
-  background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:var(--indigo-deep);
-  box-shadow:0 8px 28px rgba(212,175,55,.3);
-}
-.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(212,175,55,.45);}
-.btn-ghost{
-  border:1px solid var(--ivory-dim);color:var(--ivory);
-}
-.btn-ghost:hover{border-color:var(--gold-bright);color:var(--gold-bright);transform:translateY(-3px);}
-.scroll-cue{
-  margin-top:60px;font-size:.75rem;letter-spacing:.2em;color:var(--ivory-dim);
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-}
-.scroll-cue .line{width:1px;height:38px;background:linear-gradient(var(--gold),transparent);animation:dropline 1.8s ease-in-out infinite;}
+  .nav { position: sticky; top: 0; z-index: 50; background: rgba(237,230,214,0.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: 'Shippori Mincho', serif; font-weight: 800; font-size: 22px; }
+  .logo .mark { width: 34px; height: 34px; background: var(--hanko); border-radius: 6px; display:flex; align-items:center; justify-content:center; color: var(--washi-soft); font-size: 16px; }
+  .nav-links { display: flex; gap: 30px; font-size: 14px; font-weight: 600; }
+  .nav-links a { text-decoration: none; opacity: .8; }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta { display: flex; gap: 12px; }
+  .btn-ghost, .btn-solid { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13.5px; padding: 11px 20px; border-radius: 999px; border: 1.5px solid var(--ink); cursor: pointer; background: none; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-solid { background: var(--hanko); color: var(--washi-soft); border-color: var(--hanko); }
+  @media (max-width: 880px) { .nav-links { display: none; } }
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
-@keyframes spin{from{transform:rotate(0);}to{transform:rotate(360deg);}}
-@keyframes dropline{0%{transform:scaleY(0);opacity:0;}50%{transform:scaleY(1);opacity:1;}100%{transform:scaleY(0);opacity:0;transform-origin:bottom;}}
+  .hero { position: relative; padding: 70px 0 40px; z-index: 2; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; }
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--hanko); display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+  .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--hanko); }
+  .hero-copy h1 { font-family: 'Shippori Mincho', serif; font-weight: 800; letter-spacing: -1px; font-size: clamp(52px, 7.2vw, 104px); line-height: 0.95; margin: 0 0 18px; }
+  .hero-copy .kanji-sub { font-family: 'Shippori Mincho', serif; font-size: 21px; color: var(--indigo); margin: 0 0 24px; }
+  .hero-copy p.desc { font-size: 18.5px; line-height: 1.65; max-width: 480px; color: #3a3a3e; margin: 0 0 34px; font-style: italic; }
+  .hero-ctas { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 30px;}
 
-/* ---------- petals (parallax, scroll + float) ---------- */
-.petal{
-  position:fixed;top:-40px;z-index:2;pointer-events:none;
-  width:18px;height:18px;
-  background:radial-gradient(circle at 30% 30%, var(--gold-bright), var(--crimson) 80%);
-  border-radius:60% 0% 60% 0%;
-  opacity:.55;
-  will-change:transform;
-}
+  .hanko-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; padding: 20px 40px; border-radius: 10px; background: var(--hanko); color: var(--washi-soft); font-family: 'Shippori Mincho', serif; font-weight: 700; font-size: 19px; letter-spacing: 1px; border: none; cursor: pointer; box-shadow: 0 6px 0 var(--hanko-dark), 0 14px 24px rgba(178,58,46,0.3); transition: transform .12s ease; text-decoration: none; }
+  .hanko-btn:hover { transform: translateY(-3px); }
+  .hanko-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--hanko-dark); }
+  .secondary-link { font-family: 'JetBrains Mono', monospace; font-size: 14px; border-bottom: 1.5px solid var(--ink); padding-bottom: 3px; text-decoration: none; font-weight: 600; }
 
-/* ---------- katana divider (signature element) ---------- */
-.katana-divider{
-  position:relative;height:140px;display:flex;align-items:center;justify-content:center;
-  overflow:hidden;z-index:1;
-}
-.katana-svg{
-  width:min(900px,90vw);
-  filter:drop-shadow(0 0 14px rgba(212,175,55,.35));
-  will-change:transform;
-}
+  .contract-chip { display: inline-flex; align-items: center; gap: 12px; background: var(--washi-soft); border: 1px solid var(--line); padding: 12px 18px; border-radius: 999px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; }
+  .contract-chip button { border: none; background: var(--indigo); color: var(--washi-soft); font-family:'Inter'; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
 
-/* ---------- section shell ---------- */
-section{position:relative;z-index:1;padding:120px 5vw;}
-.section-head{text-align:center;max-width:760px;margin:0 auto 60px;}
-.eyebrow{
-  font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:16px;
-}
-.section-head h2{font-family:var(--font-display);font-size:clamp(2rem,4.2vw,3.2rem);color:var(--ivory);font-weight:800;}
-.section-head h2 em{font-style:normal;color:var(--gold-bright);}
-.section-sub{color:var(--ivory-dim);margin-top:14px;font-size:1rem;}
+  .portrait-stage { position: relative; perspective: 800px; }
+  .portrait { aspect-ratio: 4/5; border-radius: 20px; background: linear-gradient(155deg, var(--dusk), var(--ink) 70%); display: flex; align-items: center; justify-content: center; color: rgba(237,230,214,0.5); font-family: 'JetBrains Mono', monospace; font-size: 13px; text-align: center; padding: 24px; box-shadow: 0 30px 60px rgba(22,22,26,0.3); position: relative; overflow: hidden; transition: transform .1s linear; transform-style: preserve-3d; }
+  .portrait::before { content:""; position:absolute; inset:0; background: radial-gradient(circle at 25% 15%, rgba(217,140,153,0.28), transparent 55%); }
+  .portrait::after { content: "武"; position: absolute; font-family: 'Shippori Mincho', serif; font-size: 340px; color: rgba(237,230,214,0.05); right: -40px; bottom: -60px; line-height: 1; }
 
-/* alternating section backgrounds */
-.bg-mid{background:linear-gradient(180deg,var(--indigo-deep),var(--indigo-mid));}
+  .float-badge { position: absolute; background: var(--washi-soft); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; box-shadow: 0 16px 30px rgba(22,22,26,0.16); font-family: 'JetBrains Mono', monospace; animation: floaty 5s ease-in-out infinite; z-index: 3; }
+  .float-badge .label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; color: #888; display:block; margin-bottom: 4px; }
+  .float-badge .value { font-size: 18px; font-weight: 700; color: var(--ink); }
+  .badge-price { top: -6%; left: -8%; animation-delay: 0s; }
+  .badge-holders { bottom: 8%; left: -12%; animation-delay: 1.2s; }
+  .badge-nft { top: 6%; right: -10%; animation-delay: 0.6s; }
+  .badge-clan { bottom: -6%; right: 4%; animation-delay: 1.8s; }
+  @media (max-width: 980px) { .float-badge { display: none; } }
 
-/* ---------- video ---------- */
-.video-wrap{
-  max-width:880px;margin:0 auto;border:1px solid rgba(212,175,55,.3);
-  border-radius:6px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.5);
-}
-.video-wrap iframe{display:block;width:100%;aspect-ratio:16/9;border:0;}
+  .marquee-strip { background: var(--ink); color: var(--washi-soft); overflow: hidden; padding: 16px 0; margin-top: 50px; position: relative; z-index: 2;}
+  .marquee-track { display: flex; width: max-content; animation: marquee 22s linear infinite; }
+  .marquee-track span { font-family: 'Shippori Mincho', serif; font-size: 22px; padding: 0 40px; white-space: nowrap; display: flex; align-items: center; gap: 16px; }
+  .marquee-track span::after { content: "刀"; color: var(--sakura); font-size: 16px; }
 
-/* ---------- trade ---------- */
-.trade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1100px;margin:0 auto;}
-@media (max-width:900px){.trade-grid{grid-template-columns:1fr;}}
-.trade-card{
-  background:linear-gradient(160deg, rgba(58,18,22,.5), rgba(12,21,48,.5));
-  border:1px solid rgba(212,175,55,.22);
-  border-radius:6px;padding:34px 28px;
-  transition:transform .35s, border-color .35s, box-shadow .35s;
-  display:flex;flex-direction:column;gap:14px;
-}
-.trade-card:hover{transform:translateY(-10px);border-color:var(--gold);box-shadow:0 24px 50px rgba(0,0,0,.4);}
-.trade-tag{font-size:.72rem;letter-spacing:.15em;color:var(--gold-bright);text-transform:uppercase;}
-.trade-card h3{font-family:var(--font-display);font-size:1.5rem;}
-.trade-card p{color:var(--ivory-dim);font-size:.92rem;line-height:1.5;flex:1;}
-.trade-card a{align-self:flex-start;color:var(--gold-bright);font-weight:600;font-size:.88rem;border-bottom:1px solid var(--gold-bright);padding-bottom:2px;}
+  .exchanges { padding: 60px 0; border-bottom: 1px solid var(--line); position: relative; z-index: 2; }
+  .exchanges .label-row { text-align:center; font-family:'JetBrains Mono', monospace; font-size: 12.5px; letter-spacing: 2px; text-transform: uppercase; color: #888; margin-bottom: 30px; }
+  .exchange-row { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; }
+  .exchange-pill { display: flex; align-items: center; gap: 10px; background: var(--washi-soft); border: 1px solid var(--line); padding: 14px 24px; border-radius: 999px; font-weight: 700; font-size: 14.5px; text-decoration: none; color: var(--ink); transition: transform .15s ease, box-shadow .15s ease; }
+  .exchange-pill:hover { transform: translateY(-4px); box-shadow: 0 14px 24px rgba(22,22,26,0.12); }
+  .exchange-pill .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--bamboo); }
 
-.chart-frame{
-  max-width:980px;margin:60px auto 0;border:1px solid rgba(212,175,55,.25);border-radius:6px;overflow:hidden;
-}
-.chart-frame-head{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid rgba(212,175,55,.2);font-size:.85rem;}
-.chart-frame iframe{width:100%;height:500px;border:0;display:block;}
+  .video-section { padding: 100px 0; border-bottom: 1px solid var(--line); background: var(--washi-soft); position: relative; z-index: 2; }
+  .video-frame { aspect-ratio: 16/9; border-radius: 18px; background: linear-gradient(150deg, var(--dusk), var(--ink)); display: flex; align-items: center; justify-content: center; color: rgba(237,230,214,0.5); font-family: 'JetBrains Mono', monospace; font-size: 13px; box-shadow: 0 30px 60px rgba(22,22,26,0.25); position: relative; overflow: hidden; }
+  .video-frame .play-badge { width: 74px; height: 74px; border-radius: 50%; background: var(--hanko); display: flex; align-items: center; justify-content: center; color: var(--washi-soft); font-size: 22px; box-shadow: 0 12px 26px rgba(178,58,46,0.4); animation: floaty 4s ease-in-out infinite; }
 
-/* ---------- lore ---------- */
-.lore-layout{display:grid;grid-template-columns:1fr 1.3fr;gap:60px;max-width:1100px;margin:0 auto;align-items:start;}
-@media (max-width:900px){.lore-layout{grid-template-columns:1fr;}}
-.lore-portrait{position:relative;will-change:transform;}
-.lore-portrait img{width:100%;border-radius:6px;box-shadow:0 30px 60px rgba(0,0,0,.5);}
-.lore-text p{color:var(--ivory-dim);line-height:1.85;margin-bottom:20px;font-size:1.02rem;}
-.lore-text strong{color:var(--gold-bright);font-weight:600;}
-.oath-list{list-style:none;margin:24px 0;padding:0;}
-.oath-list li{
-  padding:12px 0 12px 30px;border-bottom:1px solid rgba(212,175,55,.15);
-  position:relative;color:var(--ivory);font-size:.96rem;
-}
-.oath-list li::before{content:"⚔";position:absolute;left:0;color:var(--gold);}
-.lore-text .btn{margin-top:10px;}
+  .howto { padding: 100px 0; border-bottom: 1px solid var(--line); position: relative; z-index: 2; }
+  .section-head { margin-bottom: 54px; max-width: 640px; }
+  .section-head h2 { font-family: 'Shippori Mincho', serif; font-size: clamp(32px, 4.4vw, 48px); margin: 10px 0 0; font-weight: 700; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+  .step-card { background: var(--washi-soft); border: 1px solid var(--line); border-radius: 14px; padding: 34px 28px; position: relative; transition: transform .2s ease, box-shadow .2s ease; }
+  .step-card:hover { transform: translateY(-8px); box-shadow: 0 20px 36px rgba(22,22,26,0.14); }
+  .step-kanji { font-family: 'Shippori Mincho', serif; font-size: 48px; font-weight: 700; color: var(--hanko); line-height: 1; margin-bottom: 20px; display: block; }
+  .step-card h3 { font-family: 'Shippori Mincho', serif; font-size: 21px; margin: 0 0 12px; }
+  .step-card p { font-size: 15px; line-height: 1.6; color: #4a4a4e; margin: 0; }
 
-/* ---------- gallery ---------- */
-.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:1100px;margin:0 auto;}
-@media (max-width:900px){.gallery-grid{grid-template-columns:repeat(2,1fr);}}
-.gallery-item{
-  position:relative;overflow:hidden;border-radius:6px;aspect-ratio:1/1;
-  border:1px solid rgba(212,175,55,.2);
-}
-.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;}
-.gallery-item:hover img{transform:scale(1.08);}
-.gallery-item::after{
-  content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(12,21,48,.85));
-  opacity:0;transition:opacity .35s;
-}
-.gallery-item:hover::after{opacity:1;}
+  .trade-section { padding: 100px 0; border-bottom: 1px solid var(--line); position: relative; z-index: 2; }
+  .trade-note { font-size: 14px; color: #777; font-family: 'JetBrains Mono', monospace; margin: -30px 0 40px; }
+  .trade-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+  .trade-card { background: var(--ink); color: var(--washi-soft); border-radius: 16px; padding: 32px 28px; text-decoration: none; display: block; position: relative; overflow: hidden; transition: transform .2s ease, box-shadow .2s ease; }
+  .trade-card:hover { transform: translateY(-8px); box-shadow: 0 24px 44px rgba(22,22,26,0.28); }
+  .trade-card .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sakura); text-transform: uppercase; letter-spacing: 1px; }
+  .trade-card h3 { font-family: 'Shippori Mincho', serif; font-size: 22px; margin: 12px 0 10px; }
+  .trade-card p { font-size: 14px; line-height: 1.6; color: rgba(237,230,214,0.65); margin: 0 0 20px; }
+  .trade-card .go { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--gold); }
+  .trade-card::after { content: "刀"; position: absolute; right: -10px; bottom: -30px; font-family: 'Shippori Mincho', serif; font-size: 140px; color: rgba(237,230,214,0.04); }
 
-/* ---------- community ---------- */
-.community-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;max-width:1000px;margin:0 auto;}
-@media (max-width:820px){.community-grid{grid-template-columns:repeat(2,1fr);}}
-.community-card{
-  text-align:center;padding:32px 18px;border:1px solid rgba(212,175,55,.22);border-radius:6px;
-  background:rgba(58,18,22,.35);
-  transition:transform .3s, border-color .3s;
-}
-.community-card:hover{transform:translateY(-8px);border-color:var(--gold);}
-.community-card .icon{font-size:1.8rem;margin-bottom:10px;display:block;}
-.community-card .label{font-weight:600;font-size:.95rem;}
-.community-card .sub{font-size:.78rem;color:var(--ivory-dim);margin-top:4px;}
+  .lore { padding: 110px 0; border-bottom: 1px solid var(--line); background: var(--washi-soft); position: relative; z-index: 2; }
+  .lore-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .lore-art { position: relative; }
+  .scroll-frag { background: linear-gradient(150deg, var(--dusk), var(--ink)); border-radius: 16px; aspect-ratio: 4/3; position: relative; overflow: hidden; box-shadow: 0 26px 50px rgba(22,22,26,0.25); }
+  .scroll-frag::after { content: "禅"; position: absolute; font-family:'Shippori Mincho',serif; font-size: 220px; color: rgba(217,140,153,0.08); right: -20px; bottom: -40px; }
+  .quote-float { position: absolute; bottom: -30px; left: -30px; background: var(--washi); border: 1px solid var(--line); border-radius: 12px; padding: 20px 24px; max-width: 260px; box-shadow: 0 20px 36px rgba(22,22,26,0.16); font-family: 'Shippori Mincho', serif; font-size: 15px; line-height: 1.5; animation: floaty 6s ease-in-out infinite; }
+  .lore-copy h2 { font-family: 'Shippori Mincho', serif; font-size: clamp(30px,4vw,42px); margin: 10px 0 22px; }
+  .lore-copy p { font-size: 16.5px; line-height: 1.7; color: #3a3a3e; margin: 0 0 18px; }
+  .lore-copy ul { padding-left: 20px; margin: 0 0 22px; }
+  .lore-copy li { font-size: 15.5px; line-height: 1.8; color: #3a3a3e; }
 
-/* ---------- footer ---------- */
-footer{padding:60px 5vw 40px;text-align:center;border-top:1px solid rgba(212,175,55,.18);position:relative;z-index:1;}
-.footer-logo{font-family:var(--font-display);font-size:1.6rem;color:var(--gold-bright);margin-bottom:18px;}
-.footer-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;font-size:.85rem;color:var(--ivory-dim);margin-bottom:24px;}
-.footer-links a:hover{color:var(--gold-bright);}
-.footer-meta{font-size:.78rem;color:var(--ivory-dim);opacity:.7;margin-bottom:18px;}
-.disclaimer{max-width:680px;margin:0 auto;font-size:.74rem;line-height:1.6;color:var(--ivory-dim);opacity:.55;}
+  .gallery { padding: 100px 0; border-bottom: 1px solid var(--line); position: relative; z-index: 2; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 46px; }
+  .gallery-tile { aspect-ratio: 3/4; border-radius: 14px; position: relative; overflow: hidden; background: linear-gradient(160deg, var(--dusk), var(--ink)); display: flex; align-items: flex-end; padding: 16px; transition: transform .25s ease; }
+  .gallery-tile:hover { transform: translateY(-8px) scale(1.02); }
+  .gallery-tile span { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(237,230,214,0.6); }
+  .gallery-tile::before { content:""; position:absolute; inset:0; background: radial-gradient(circle at 70% 20%, rgba(217,140,153,0.18), transparent 55%); }
+  @media (max-width: 900px) { .gallery-grid { grid-template-columns: repeat(2,1fr); } }
 
-.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease, transform .8s ease;}
-.reveal.in{opacity:1;transform:translateY(0);}
+  .tokenomics { padding: 100px 0; border-bottom: 1px solid var(--line); background: var(--ink); color: var(--washi-soft); position: relative; z-index: 2; }
+  .tokenomics .section-head h2 { color: var(--washi-soft); }
+  .tokenomics .eyebrow { color: var(--gold); }
+  .tokenomics .eyebrow::before { background: var(--gold); }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-bottom: 46px; }
+  .stat-box { background: rgba(237,230,214,0.06); border: 1px solid rgba(237,230,214,0.14); border-radius: 14px; padding: 26px; transition: transform .2s ease; }
+  .stat-box:hover { transform: translateY(-6px); }
+  .stat-box .num { font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: var(--sakura); }
+  .stat-box .cap { font-size: 12.5px; text-transform: uppercase; letter-spacing: 1px; color: rgba(237,230,214,0.6); margin-top: 6px; }
 
-@media (prefers-reduced-motion: reduce){
-  *{animation-duration:.01ms !important;transition-duration:.01ms !important;}
-}
+  footer { padding: 60px 0 40px; position: relative; z-index: 2; }
+  .footer-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; margin-bottom: 34px; }
+  .socials { display: flex; gap: 14px; }
+  .socials a { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--ink); display: flex; align-items: center; justify-content: center; font-size: 13px; text-decoration: none; font-weight: 700; transition: transform .15s ease, background .15s ease; }
+  .socials a:hover { transform: translateY(-4px); background: var(--ink); color: var(--washi-soft); }
+  .footer-legal { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #888; line-height: 1.7; border-top: 1px solid var(--line); padding-top: 24px; }
+
+  @media (max-width: 980px) {
+    .hero-grid, .lore-grid, .trade-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: repeat(2,1fr); }
+    .gallery-grid { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .float-badge, .marquee-track, .quote-float, .petal, .video-frame .play-badge { animation: none; }
+  }
+  button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 </style>
 </head>
 <body>
 
-<div class="wave-bg" id="waveBg"></div>
-<div id="petals"></div>
+<div class="petal-field" id="petal-field"></div>
 
-<nav>
-  <div class="logo">NEKO ⚔</div>
-  <div class="nav-links">
-    <a href="#trade">⚔ Trade</a>
-    <a href="#lore">📜 Lore</a>
-    <a href="#art">🖼 Gallery</a>
-    <a href="#join">🐱 Clan</a>
-    <a href="/litepaper">📄 Litepaper</a>
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="logo"><span class="mark">刀</span> Neko the Samurai</div>
+    <div class="nav-links">
+      <a href="#trade">Trade</a>
+      <a href="#lore">Lore</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#join">Clan</a>
+      <a href="/litepaper">Litepaper</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn-ghost" href="https://opensea.io/collection/neko-shogun" target="_blank" rel="noopener">OpenSea</a>
+      <a class="btn-solid" href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" rel="noopener">Buy $NEKO</a>
+    </div>
   </div>
-  <a class="nav-cta" href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">Buy $NEKO</a>
 </nav>
 
 <section class="hero">
-  <div class="hero-eyebrow">⚔ Zenshin Clan · $NEKO on Base ⚔</div>
-  <div class="hero-portrait-wrap" id="heroPortrait">
-    <div class="hero-ring"></div>
-    <img class="hero-portrait" src="https://i.ibb.co/wrgX2S3W/Gemini-Generated-Image-9hscr99hscr99hsc.png" alt="Neko the Samurai Cat">
-  </div>
-  <h1>Neko the <em>Samurai</em></h1>
-  <div class="kanji-line">前進 · Zenshin · Forward Progress</div>
-  <p class="tagline">"Warrior in a garden, claws sharpened on Base."</p>
-  <div class="ca-pill" id="caPill">CA 0x2897...8453 📋 <span id="caCopiedTxt"></span></div>
-  <div class="hero-ctas">
-    <a class="btn btn-primary" href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">Buy on Uniswap</a>
-    <a class="btn btn-ghost" href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank">View Chart</a>
-  </div>
-  <div class="scroll-cue"><div class="line"></div>Scroll</div>
-</section>
-
-<div class="katana-divider"><svg class="katana-svg" id="katana1" viewBox="0 0 900 60" xmlns="http://www.w3.org/2000/svg">
-  <line x1="20" y1="40" x2="860" y2="20" stroke="#c79a3b" stroke-width="2" opacity="0.6"/>
-  <line x1="20" y1="40" x2="860" y2="20" stroke="#f0cf76" stroke-width="1" opacity="0.9"/>
-  <circle cx="20" cy="40" r="6" fill="#7c2630" stroke="#c79a3b" stroke-width="1.5"/>
-</svg></div>
-
-<section class="bg-mid">
-  <div class="section-head reveal">
-    <div class="eyebrow">⚔ The Clan in Motion</div>
-    <h2>Watch <em>Neko</em></h2>
-  </div>
-  <div class="video-wrap reveal">
-    <iframe src="https://www.youtube.com/embed/I4_fKxAayRM?autoplay=1&mute=1&loop=1&playlist=I4_fKxAayRM&controls=1&modestbranding=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  </div>
-</section>
-
-<section id="trade">
-  <div class="section-head reveal">
-    <div class="eyebrow">⚔ Trade $NEKO</div>
-    <h2>Acquire Your <em>Blade</em></h2>
-    <p class="section-sub">Three paths into the Zenshin Clan</p>
-  </div>
-  <div class="trade-grid">
-    <div class="trade-card reveal">
-      <span class="trade-tag">01 · Primary Exchange</span>
-      <h3>Uniswap V3</h3>
-      <p>Live V3 pool on Base chain. The primary arena for $NEKO warriors.</p>
-      <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">Swap Now →</a>
+  <div class="wrap hero-grid">
+    <div class="hero-copy reveal in">
+      <div class="eyebrow">Zenshin Clan · Live on Base</div>
+      <h1>Neko the<br><em style="font-style:normal; color: var(--hanko);">Samurai</em></h1>
+      <div class="kanji-sub">前進 · Zenshin · Forward Progress</div>
+      <p class="desc">"Warrior in a garden, claws sharpened on Base."</p>
+      <div class="hero-ctas">
+        <a class="hanko-btn" href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" rel="noopener">Buy on Uniswap</a>
+        <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" rel="noopener" class="secondary-link">View Chart →</a>
+      </div>
+      <div class="contract-chip">
+        <span>CA 0x2897...8453</span>
+        <button onclick="navigator.clipboard.writeText('0x28973c4ef9ae754b076a024996350d3b16a38453')">Copy</button>
+      </div>
     </div>
-    <div class="trade-card reveal">
-      <span class="trade-tag">02 · Real-Time Data</span>
-      <h3>Dexscreener</h3>
-      <p>Live price, volume, and liquidity. Watch the Clan's strength grow.</p>
-      <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank">View Chart →</a>
-    </div>
-    <div class="trade-card reveal">
-      <span class="trade-tag">03 · Legacy Platform</span>
-      <h3>Toshimart</h3>
-      <p>Original launch platform. Where the Zenshin Clan was forged.</p>
-      <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">View Token →</a>
+
+    <div class="portrait-stage">
+      <div class="portrait" id="parallax-portrait">Character art slot<br>(swap in large Neko portrait, 4:5)</div>
+      <div class="float-badge badge-price"><span class="label">Price</span><span class="value">$0.0000—</span></div>
+      <div class="float-badge badge-holders"><span class="label">Holders</span><span class="value">—</span></div>
+      <div class="float-badge badge-nft"><span class="label">NFTs</span><span class="value">333</span></div>
+      <div class="float-badge badge-clan"><span class="label">Clan</span><span class="value">Zenshin</span></div>
     </div>
   </div>
 
-  <div class="chart-frame reveal">
-    <div class="chart-frame-head">
-      <span>$NEKO Live Chart · Base Chain</span>
-      <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" style="color:var(--gold-bright);">Open Dexscreener →</a>
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <span>SAMURAI OF THE BASE CHAIN</span><span>前進 FORWARD PROGRESS</span><span>ZENSHIN CLAN</span><span>$NEKO</span>
+      <span>SAMURAI OF THE BASE CHAIN</span><span>前進 FORWARD PROGRESS</span><span>ZENSHIN CLAN</span><span>$NEKO</span>
     </div>
-    <iframe src="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e?embed=1&theme=dark&trades=0&info=0"></iframe>
   </div>
 </section>
 
-<div class="katana-divider"><svg class="katana-svg" id="katana2" viewBox="0 0 900 60" xmlns="http://www.w3.org/2000/svg">
-  <line x1="880" y1="20" x2="40" y2="42" stroke="#c79a3b" stroke-width="2" opacity="0.6"/>
-  <line x1="880" y1="20" x2="40" y2="42" stroke="#f0cf76" stroke-width="1" opacity="0.9"/>
-  <circle cx="880" cy="20" r="6" fill="#7c2630" stroke="#c79a3b" stroke-width="1.5"/>
-</svg></div>
-
-<section id="lore" class="bg-mid">
-  <div class="section-head reveal">
-    <div class="eyebrow">⚔ The Legend</div>
-    <h2>Neko <em>Lore</em></h2>
-  </div>
-  <div class="lore-layout">
-    <div class="lore-portrait reveal" id="lorePortrait">
-      <img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms">
+<section class="exchanges">
+  <div class="wrap">
+    <div class="label-row">Track & trade $NEKO</div>
+    <div class="exchange-row">
+      <a class="exchange-pill" href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" rel="noopener"><span class="dot"></span>Uniswap</a>
+      <a class="exchange-pill" href="https://basescan.org/token/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" rel="noopener"><span class="dot"></span>Basescan</a>
+      <a class="exchange-pill" href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" rel="noopener"><span class="dot"></span>Dexscreener</a>
+      <a class="exchange-pill" href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" rel="noopener"><span class="dot"></span>Toshimart</a>
+      <a class="exchange-pill" href="https://opensea.io/collection/neko-shogun" target="_blank" rel="noopener"><span class="dot"></span>OpenSea</a>
     </div>
-    <div class="lore-text reveal">
-      <p>In the shadowed valleys of the Base chain, where cherry blossoms drift across digital winds and the blockchain rivers flow with ancient power, a legend was forged.</p>
-      <p>From the mists of code and courage rose <strong>Neko the Samurai Cat</strong> — eternal leader of the Zenshin Clan. Zenshin is not just a name. It is the sacred principle: <strong>"Forward Progress"</strong> — advance steadily, honorably, and without unnecessary haste. With katana ever-ready and vision sharp as a blade's edge, Neko moves like the wind: quiet, fierce, and unstoppable.</p>
-      <p>The Zenshin Clan are samurai cats sworn to <strong>Toshi the Emperor</strong>. Their oath is unbreakable:</p>
-      <ul class="oath-list">
+  </div>
+</section>
+
+<section class="video-section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">The Clan in Motion</div>
+      <h2>Watch <em style="font-style:normal;color:var(--hanko);">Neko</em></h2>
+    </div>
+    <div class="video-frame reveal">
+      <div class="play-badge">▶</div>
+    </div>
+  </div>
+</section>
+
+<section class="howto" id="howto">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Three steps</div>
+      <h2>Acquire Your Blade</h2>
+    </div>
+    <div class="steps">
+      <div class="step-card reveal"><span class="step-kanji">一</span><h3>Draw your blade</h3><p>Install a wallet that supports Base — Coinbase Wallet or MetaMask both work.</p></div>
+      <div class="step-card reveal"><span class="step-kanji">二</span><h3>Fund your dojo</h3><p>Buy or bridge ETH onto Base. Coinbase users can send directly; everyone else bridges from mainnet.</p></div>
+      <div class="step-card reveal"><span class="step-kanji">三</span><h3>Seal the trade</h3><p>Head to Uniswap, paste the contract address, and confirm the swap directly in your own wallet.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="trade-section" id="trade">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Trade $NEKO</div>
+      <h2>Three paths into the clan</h2>
+    </div>
+    <p class="trade-note">Every link below opens the exchange's own site — your wallet stays there, never on nekothesamurai.com.</p>
+    <div class="trade-grid">
+      <a class="trade-card reveal" href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" rel="noopener">
+        <span class="tag">01 · Primary Exchange</span>
+        <h3>Uniswap V3</h3>
+        <p>Live V3 pool on Base chain. The primary arena for $NEKO warriors.</p>
+        <span class="go">Swap Now →</span>
+      </a>
+      <a class="trade-card reveal" href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank" rel="noopener">
+        <span class="tag">02 · Real-Time Data</span>
+        <h3>Dexscreener</h3>
+        <p>Live price, volume, and liquidity. Watch the clan's strength grow.</p>
+        <span class="go">View Chart →</span>
+      </a>
+      <a class="trade-card reveal" href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" rel="noopener">
+        <span class="tag">03 · Legacy Platform</span>
+        <h3>Toshimart</h3>
+        <p>Original launch platform. Where the Zenshin Clan was forged.</p>
+        <span class="go">View Token →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="lore" id="lore">
+  <div class="wrap lore-grid">
+    <div class="lore-art reveal">
+      <div class="scroll-frag"></div>
+      <div class="quote-float">"Forward progress — advance steadily, honorably, without unnecessary haste."</div>
+    </div>
+    <div class="lore-copy reveal">
+      <div class="eyebrow">The Legend</div>
+      <h2>Neko Lore</h2>
+      <p>In the shadowed valleys of the Base chain, where cherry blossoms drift across digital winds, a legend was forged: Neko the Samurai Cat, eternal leader of the Zenshin Clan.</p>
+      <p>Zenshin is not just a name — it's the sacred principle of forward progress. The clan's oath is unbreakable:</p>
+      <ul>
         <li>Defend Toshi</li>
         <li>Safeguard the holders</li>
         <li>Protect the Base ecosystem</li>
         <li>Preserve harmony no matter the threat</li>
       </ul>
-      <p><strong>$NEKO</strong> is the living spirit of this legend. Born on the Base chain as a pure community memecoin, $NEKO is more than a token — it is the blade you wield to join the clan. Every holder becomes part of the saga. Every trade echoes the call of Zenshin. Every diamond hand strengthens the oath.</p>
-      <p>Hold $NEKO. Walk with Neko. Join the Zenshin Clan. Forward progress awaits those who stand ready. <em>Zenshin.</em></p>
-      <a class="btn btn-primary" href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">Join the Clan</a>
+      <a href="/litepaper" class="secondary-link">Read the litepaper →</a>
     </div>
   </div>
 </section>
 
-<section id="art">
-  <div class="section-head reveal">
-    <div class="eyebrow">⚔ Clan Artwork</div>
-    <h2>The <em>Gallery</em></h2>
-  </div>
-  <div class="gallery-grid">
-    <div class="gallery-item reveal"><img src="https://i.ibb.co/Q3tk60kz/Gemini-Generated-Image-zx03uzx03uzx03uz.png" alt="Neko Samurai Portrait"></div>
-    <div class="gallery-item reveal"><img src="https://i.ibb.co/nsRn37By/Gemini-Generated-Image-mdrxlumdrxlumdrx.png" alt="Neko in Cherry Blossoms"></div>
-    <div class="gallery-item reveal"><img src="https://i.ibb.co/6cpdFyYv/image-24.jpg" alt="Clan Art"></div>
-    <div class="gallery-item reveal"><img src="https://i.ibb.co/QF6cS9ZV/Neko-The-Samurai.png" alt="Clan Art"></div>
-  </div>
-</section>
-
-<div class="katana-divider"><svg class="katana-svg" id="katana3" viewBox="0 0 900 60" xmlns="http://www.w3.org/2000/svg">
-  <line x1="20" y1="40" x2="860" y2="20" stroke="#c79a3b" stroke-width="2" opacity="0.6"/>
-  <line x1="20" y1="40" x2="860" y2="20" stroke="#f0cf76" stroke-width="1" opacity="0.9"/>
-  <circle cx="20" cy="40" r="6" fill="#7c2630" stroke="#c79a3b" stroke-width="1.5"/>
-</svg></div>
-
-<section id="join" class="bg-mid">
-  <div class="section-head reveal">
-    <div class="eyebrow">⚔ The Community</div>
-    <h2>Join the <em>Clan</em></h2>
-  </div>
-  <div class="community-grid">
-    <a class="community-card reveal" href="https://x.com/NekoTheSamurai" target="_blank">
-      <span class="icon">𝕏</span><span class="label">Follow on X</span><span class="sub">@NekoTheSamurai</span>
-    </a>
-    <a class="community-card reveal" href="https://t.me/toshimart" target="_blank">
-      <span class="icon">✈️</span><span class="label">Telegram</span><span class="sub">Toshimart TG</span>
-    </a>
-    <a class="community-card reveal" href="https://discord.gg/yKreTaD6Ua" target="_blank">
-      <span class="icon">🎮</span><span class="label">Discord</span><span class="sub">Neko Talk</span>
-    </a>
-    <a class="community-card reveal" href="https://warpcast.com/toshibase" target="_blank">
-      <span class="icon">🟣</span><span class="label">Warpcast</span><span class="sub">Toshi Base</span>
-    </a>
+<section class="gallery" id="gallery">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Clan Artwork</div><h2>The Gallery</h2></div>
+    <div class="gallery-grid">
+      <div class="gallery-tile reveal"><span>Neko Samurai Portrait</span></div>
+      <div class="gallery-tile reveal"><span>Neko in Cherry Blossoms</span></div>
+      <div class="gallery-tile reveal"><span>Clan Art 01</span></div>
+      <div class="gallery-tile reveal"><span>Clan Art 02</span></div>
+    </div>
   </div>
 </section>
 
-<footer>
-  <div class="footer-logo">Neko ⚔ $NEKO</div>
-  <div class="footer-links">
-    <a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">Uniswap</a> ·
-    <a href="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e" target="_blank">Dexscreener</a> ·
-    <a href="https://toshimart.xyz/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank">Toshimart</a> ·
-    <a href="/litepaper">Litepaper</a>
+<section class="tokenomics" id="tokenomics">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Tokenomics</div><h2>Simple, transparent, on-chain</h2></div>
+    <div class="stat-grid">
+      <div class="stat-box reveal"><div class="num">1B</div><div class="cap">Total supply</div></div>
+      <div class="stat-box reveal"><div class="num">100%</div><div class="cap">LP locked</div></div>
+      <div class="stat-box reveal"><div class="num">0/0</div><div class="cap">Buy / sell tax</div></div>
+      <div class="stat-box reveal"><div class="num">333</div><div class="cap">NFT collection</div></div>
+    </div>
   </div>
-  <div class="footer-meta">© 2026 Neko on Base · Zenshin Clan</div>
-  <p class="disclaimer">$NEKO is a meme coin created for entertainment purposes only. It has no intrinsic value, makes no promises of financial return, and should not be considered an investment. Cryptocurrency trading involves significant risk. Always do your own research (DYOR) before making any financial decisions. Not financial advice.</p>
+</section>
+
+<footer id="join">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">The Community</div><h2>Join the Clan</h2></div>
+    <div class="footer-top">
+      <div class="logo"><span class="mark">刀</span> Neko the Samurai</div>
+      <div class="socials">
+        <a href="https://x.com/NekoTheSamurai" target="_blank" rel="noopener" title="X">X</a>
+        <a href="https://t.me/toshimart" target="_blank" rel="noopener" title="Telegram">TG</a>
+        <a href="https://discord.gg/yKreTaD6Ua" target="_blank" rel="noopener" title="Discord">DC</a>
+        <a href="https://warpcast.com/toshibase" target="_blank" rel="noopener" title="Warpcast">WC</a>
+      </div>
+    </div>
+    <div class="footer-legal">
+      $NEKO is a meme coin created for entertainment purposes only. It has no intrinsic value, makes no promises of financial return, and should not be considered an investment. Cryptocurrency trading involves significant risk. Always do your own research (DYOR) before making any financial decisions. Not financial advice.
+    </div>
+  </div>
 </footer>
 
 <script>
-// ---- petals ----
-const petalCount = 14;
-const petalsWrap = document.getElementById('petals');
-const petals = [];
-for(let i=0;i<petalCount;i++){
-  const p = document.createElement('div');
-  p.className='petal';
-  const left = Math.random()*100;
-  const size = 10+Math.random()*14;
-  p.style.left = left+'vw';
-  p.style.width = size+'px';
-  p.style.height = size+'px';
-  p.dataset.speed = (0.3+Math.random()*0.9).toFixed(2);
-  p.dataset.driftAmp = (20+Math.random()*40).toFixed(0);
-  p.dataset.driftSpeed = (0.0008+Math.random()*0.0012).toFixed(5);
-  p.dataset.phase = (Math.random()*Math.PI*2).toFixed(2);
-  petalsWrap.appendChild(p);
-  petals.push(p);
-}
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-let lastScroll = window.scrollY;
-function animateFrame(t){
-  const scrollY = window.scrollY;
-  // background wave parallax
-  document.getElementById('waveBg').style.transform = `translateY(${scrollY*0.15}px)`;
-  // hero portrait parallax (bold)
-  const heroP = document.getElementById('heroPortrait');
-  if(heroP) heroP.style.transform = `translateY(${scrollY*0.35}px) scale(${Math.max(0.85,1-scrollY*0.0004)})`;
-  const loreP = document.getElementById('lorePortrait');
-  if(loreP){
-    const rect = loreP.getBoundingClientRect();
-    const offset = (window.innerHeight - rect.top) * 0.08;
-    loreP.style.transform = `translateY(${-offset}px)`;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion) {
+    const field = document.getElementById('petal-field');
+    const count = 18;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (10 + Math.random() * 10) + 's';
+      p.style.animationDelay = (Math.random() * 12) + 's';
+      p.style.width = p.style.height = (10 + Math.random() * 10) + 'px';
+      field.appendChild(p);
+    }
+
+    const portrait = document.getElementById('parallax-portrait');
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 10;
+      const y = (e.clientY / window.innerHeight - 0.5) * 10;
+      portrait.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+    });
   }
-  // katana dividers rotate/slide on scroll
-  ['katana1','katana2','katana3'].forEach((id,i)=>{
-    const el = document.getElementById(id);
-    if(!el) return;
-    const rect = el.getBoundingClientRect();
-    const progress = (window.innerHeight - rect.top) / window.innerHeight;
-    const rot = (progress*10-3) * (i%2===0?1:-1);
-    const slide = (progress*60-30);
-    el.style.transform = `translateX(${slide}px) rotate(${rot}deg)`;
-  });
-  // petals fall + drift, loop
-  petals.forEach(p=>{
-    const speed = parseFloat(p.dataset.speed);
-    let top = parseFloat(p.dataset.top || -40);
-    top += speed*1.4 + scrollY*0.00001;
-    if(top > window.innerHeight+40) top = -40;
-    p.dataset.top = top;
-    const amp = parseFloat(p.dataset.driftAmp);
-    const dspeed = parseFloat(p.dataset.driftSpeed);
-    const phase = parseFloat(p.dataset.phase);
-    const drift = Math.sin(t*dspeed + phase)*amp;
-    p.style.transform = `translate(${drift}px, ${top}px) rotate(${t*0.02+phase*40}deg)`;
-  });
-  requestAnimationFrame(animateFrame);
-}
-requestAnimationFrame(animateFrame);
-
-// ---- reveal on scroll ----
-const revealEls = document.querySelectorAll('.reveal');
-const io = new IntersectionObserver((entries)=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){ entry.target.classList.add('in'); }
-  });
-},{threshold:0.15});
-revealEls.forEach(el=>io.observe(el));
-
-// ---- CA copy ----
-const caPill = document.getElementById('caPill');
-const caFull = '0x28973c4ef9ae754b076a024996350d3b16a38453';
-caPill.addEventListener('click',()=>{
-  navigator.clipboard.writeText(caFull).then(()=>{
-    document.getElementById('caCopiedTxt').textContent = ' Copied ✓';
-    setTimeout(()=>{ document.getElementById('caCopiedTxt').textContent=''; },1800);
-  });
-});
 </script>
 
 </body>
