@@ -188,7 +188,7 @@
     </div>
     <div class="nav-cta">
       <a class="btn-ghost" href="https://opensea.io/collection/neko-shogun" target="_blank" rel="noopener">OpenSea</a>
-      <a class="btn-ghost" href="https://YOUR_MERCH_STORE_URL_HERE" target="_blank" rel="noopener">Merch</a>
+      <a class="btn-ghost" href="https://neko-the-samurai-shop.fourthwall.com" target="_blank" rel="noopener">Merch</a>
       <a class="btn-solid" href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" rel="noopener">Buy $NEKO</a>
     </div>
   </div>
