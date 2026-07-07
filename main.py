@@ -618,7 +618,7 @@ HTML_TEMPLATE = '''
     <li><a href="#join" onclick="closeMenu()">🐱 Clan</a></li>
     <li><a href="/litepaper" target="_blank" class="nav-whitepaper" onclick="closeMenu()">📄 Litepaper</a></li>
     <li><a href="https://opensea.io/collection/neko-shogun" target="_blank" class="nav-buy" style="border-color:#2081e2;color:#2081e2;background:rgba(32,129,226,.08);" onclick="closeMenu()">🌊 OpenSea</a></li>
-    <li><a href="https://neko-the-samurai-shop.fourthwall.com/collections/all" target="_blank" rel="noopener noreferrer" class="nav-buy" style="border-color:#c89b3c;color:#e8c06a;background:rgba(200,155,60,.08);" onclick="closeMenu()">🛍️ Merch</a></li>
+    <li><a href="https://neko-the-samurai-shop.fourthwall.com/" target="_blank" rel="noopener noreferrer" class="nav-buy" style="border-color:#c89b3c;color:#e8c06a;background:rgba(200,155,60,.08);" onclick="closeMenu()">🛍️ Merch</a></li>
 </li>
     <li><a href="https://app.uniswap.org/explore/tokens/base/0x28973c4ef9ae754b076a024996350d3b16a38453" target="_blank" class="nav-buy" onclick="closeMenu()">Buy $NEKO</a></li>
   </ul>
