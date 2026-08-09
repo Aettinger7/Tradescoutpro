@@ -68,17 +68,17 @@ PRICES_TEMPLATE = '''
     }
 
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(7,5,10,.92);
-      border-bottom: 1px solid rgba(200,155,60,.25);
-      backdrop-filter: blur(12px);
-    }
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(7,5,10,.92);
+  border-bottom: 1px solid rgba(200,155,60,.25);
+  backdrop-filter: blur(12px);
+}
 
     .nav-logo {
       font-family: 'Shippori Mincho B1', serif;
