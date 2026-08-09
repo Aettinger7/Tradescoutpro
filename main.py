@@ -34,6 +34,17 @@ PRICES_TEMPLATE = '''
       overflow-x: hidden;
     }
 
+    /* Background image */
+    .bg-image {
+      position: fixed;
+      inset: 0;
+      background: url('https://i.ibb.co/TqwJXCfZ/Toshimart-Crew.jpg') center center / cover no-repeat;
+      opacity: 0.18;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Cherry blossom petals */
     .sakura {
       position: fixed;
       inset: 0;
@@ -223,6 +234,8 @@ PRICES_TEMPLATE = '''
   </style>
 </head>
 <body>
+
+  <div class="bg-image"></div>
 
   <div class="sakura" id="sakura"></div>
 
