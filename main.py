@@ -3,6 +3,134 @@ import datetime
 
 app = Flask(__name__)
 
+PRICES_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Price Tracker | Neko the Samurai</title>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #07050a;
+      --deep: #0f0b14;
+      --panel: #13101a;
+      --crimson: #7a0012;
+      --red: #b01020;
+      --gold: #c89b3c;
+      --gold-lt: #e8c06a;
+      --cream: #ede4cc;
+      --muted: #7a6e60;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      min-height: 100vh;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(7,5,10,.97);
+      border-bottom: 1px solid rgba(200,155,60,.2);
+    }
+    .nav-logo {
+      font-family: 'Shippori Mincho B1', serif;
+      font-size: 1rem; font-weight: 800;
+      color: var(--gold); text-decoration: none; letter-spacing: .15em;
+    }
+    .back-link {
+      font-family: 'Shippori Mincho B1', serif;
+      color: var(--gold); text-decoration: none; font-size: .85rem;
+      letter-spacing: .1em;
+    }
+    .back-link:hover { color: var(--gold-lt); }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 100px 20px 60px;
+    }
+    h1 {
+      font-family: 'Shippori Mincho B1', serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      text-align: center;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 40px;
+      letter-spacing: .15em;
+      font-size: .9rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(200,155,60,.18);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .card h2 {
+      font-family: 'Shippori Mincho B1', serif;
+      font-size: 1.1rem;
+      padding: 14px 18px;
+      background: rgba(0,0,0,.3);
+      border-bottom: 1px solid rgba(200,155,60,.12);
+      color: var(--gold-lt);
+    }
+    iframe {
+      width: 100%;
+      height: 420px;
+      border: none;
+      display: block;
+    }
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: .8rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(200,155,60,.1);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">NEKO ⚔</a>
+    <a href="/" class="back-link">← Back to Main Site</a>
+  </nav>
+
+  <div class="container">
+    <h1>⚔ Live Price Tracker ⚔</h1>
+    <p class="subtitle">$NEKO · Zenshin Clan · Bushido on Base</p>
+
+    <div class="grid">
+      <div class="card">
+        <h2>$NEKO · Neko the Samurai</h2>
+        <iframe src="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e?embed=1&theme=dark&trades=0&info=0"></iframe>
+      </div>
+
+      <div class="card">
+        <h2>$TOSHI · Toshi the Emperor</h2>
+        <iframe src="https://dexscreener.com/base/0x4b0Aaf3EBb163dd45F663b38b6d93f6093EBC2d3?embed=1&theme=dark&trades=0&info=0"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Prices are live from DexScreener on Base · Always DYOR<br>
+    Bushido is our path · $NEKO is a memecoin
+  </footer>
+</body>
+</html>
+'''
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en">
