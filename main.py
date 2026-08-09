@@ -189,90 +189,74 @@ PRICES_TEMPLATE = '''
   { address: "0x9a9de07629ef283c2d700efd3958f59b7d528453", symbol: "MOTO" }
 ];
 
-    async function loadPrices() {
-      const grid = document.getElementById("grid");
-      grid.innerHTML = "";
+async function loadPrices() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
-      for (const token of tokens) {
-        try {
-          const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${token.address}`);
-          const data = await res.json();
-          const pair = data.pairs && data.pairs[0];
+  for (const token of tokens) {
+    try {
+      const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${token.address.toLowerCase()}`);
+      const data = await res.json();
 
-          if (!pair) {
-            grid.innerHTML += createEmptyCard(token.address);
-            continue;
-          }
-
-          const price = parseFloat(pair.priceUsd || 0);
-          const change = parseFloat(pair.priceChange?.h24 || 0);
-          const volume = pair.volume?.h24 || 0;
-          const liquidity = pair.liquidity?.usd || 0;
-          const mcap = pair.fdv || pair.marketCap || 0;
-          const name = pair.baseToken?.name || "Unknown";
-          const symbol = pair.baseToken?.symbol || token.symbol || "???";
-          const logo = pair.info?.imageUrl || null;
-
-          grid.innerHTML += `
-            <div class="card">
-              <div class="card-header">
-                ${logo 
-                  ? `<img src="${logo}" class="logo" alt="${symbol}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
-                  : ''
-                }
-                <div class="logo-fallback" style="${logo ? 'display:none' : 'display:flex'}">⚔</div>
-                <div class="token-info">
-                  <h3>${name}</h3>
-                  <span>$${symbol}</span>
-                </div>
-              </div>
-              <div class="price">$${formatPrice(price)}</div>
-              <div class="change ${change >= 0 ? 'up' : 'down'}">
-                ${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}% (24h)
-              </div>
-              <div class="stats">
-                <div>Volume 24h<span>$${formatNumber(volume)}</span></div>
-                <div>Liquidity<span>$${formatNumber(liquidity)}</span></div>
-                <div>Market Cap<span>$${formatNumber(mcap)}</span></div>
-                <div>Chain<span>Base</span></div>
-              </div>
-            </div>
-          `;
-        } catch (err) {
-          grid.innerHTML += createEmptyCard(token.address);
-        }
+      // Get the best pair (highest liquidity)
+      let pair = null;
+      if (data.pairs && data.pairs.length > 0) {
+        pair = data.pairs.sort((a, b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0))[0];
       }
-    }
 
-    function formatPrice(num) {
-      if (num < 0.0001) return num.toFixed(8);
-      if (num < 0.01) return num.toFixed(6);
-      if (num < 1) return num.toFixed(4);
-      return num.toFixed(2);
-    }
+      if (!pair) {
+        grid.innerHTML += createEmptyCard(token.address, token.symbol);
+        continue;
+      }
 
-    function formatNumber(num) {
-      if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
-      if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
-      if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
-      return num.toFixed(0);
-    }
+      const price = parseFloat(pair.priceUsd || 0);
+      const change = parseFloat(pair.priceChange?.h24 || 0);
+      const volume = pair.volume?.h24 || 0;
+      const liquidity = pair.liquidity?.usd || 0;
+      const mcap = pair.fdv || pair.marketCap || 0;
+      const name = pair.baseToken?.name || "Unknown";
+      const symbol = pair.baseToken?.symbol || token.symbol || "???";
+      const logo = pair.info?.imageUrl || null;
 
-    function createEmptyCard(address) {
-      return `
+      grid.innerHTML += `
         <div class="card">
           <div class="card-header">
-            <div class="logo-fallback">⚔</div>
+            ${logo 
+              ? `<img src="${logo}" class="logo" alt="${symbol}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
+              : ''
+            }
+            <div class="logo-fallback" style="${logo ? 'display:none' : 'display:flex'}">⚔</div>
             <div class="token-info">
-              <h3>Unknown Token</h3>
-              <span>${address.slice(0,6)}...${address.slice(-4)}</span>
+              <h3>${name}</h3>
+              <span>$${symbol}</span>
             </div>
           </div>
-          <div class="price">No data</div>
-          <div class="change">—</div>
+          <div class="price">$${formatPrice(price)}</div>
+          <div class="change ${change >= 0 ? 'up' : 'down'}">
+            ${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}% (24h)
+          </div>
+          <div class="stats">
+            <div>Volume 24h<span>$${formatNumber(volume)}</span></div>
+            <div>Liquidity<span>$${formatNumber(liquidity)}</span></div>
+            <div>Market Cap<span>$${formatNumber(mcap)}</span></div>
+            <div>Chain<span>Base</span></div>
+          </div>
         </div>
       `;
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML += createEmptyCard(token.address, token.symbol);
     }
+  }
+}
+
+function createEmptyCard(address, symbol = "") {
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div class="logo-fallback">⚔</div>
+        <div class="token-info">
+          <h3>${symbol}
 
     loadPrices();
     // Refresh every 30 seconds
