@@ -179,7 +179,6 @@ PRICES_TEMPLATE = '''
   </footer>
 
 <script>
-  // We use the exact pair addresses for NEKO and KOBI so they always load
   const tokens = [
     { 
       name: "Neko the Samurai", 
@@ -206,33 +205,27 @@ PRICES_TEMPLATE = '''
 
     for (const token of tokens) {
       try {
-        let url;
-        if (token.type === "pair") {
-          url = `https://api.dexscreener.com/latest/dex/pairs/base/${token.pair}`;
-        } else {
-          url = `https://api.dexscreener.com/latest/dex/tokens/${token.address}`;
-        }
+        let url = token.type === "pair" 
+          ? `https://api.dexscreener.com/latest/dex/pairs/base/${token.pair}`
+          : `https://api.dexscreener.com/latest/dex/tokens/${token.address}`;
 
         const res = await fetch(url);
         const data = await res.json();
 
-        let pair = null;
-        if (token.type === "pair") {
-          pair = data.pair;
-        } else if (data.pairs && data.pairs.length > 0) {
-          pair = data.pairs.sort((a, b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0))[0];
-        }
+        let pair = token.type === "pair" ? data.pair : (data.pairs ? data.pairs[0] : null);
 
         if (!pair) {
           grid.innerHTML += createEmptyCard(token);
           continue;
         }
 
-        const price = parseFloat(pair.priceUsd || 0);
-        const change = parseFloat(pair.priceChange?.h24 || 0);
-        const volume = pair.volume?.h24 || 0;
-        const liquidity = pair.liquidity?.usd || 0;
-        const mcap = pair.fdv || pair.marketCap || 0;
+        // Get price safely
+        let price = parseFloat(pair.priceUsd) || parseFloat(pair.priceNative) || 0;
+        let change = parseFloat(pair.priceChange?.h24) || 0;
+        let volume = pair.volume?.h24 || 0;
+        let liquidity = pair.liquidity?.usd || 0;
+        let mcap = pair.fdv || pair.marketCap || 0;
+
         const name = pair.baseToken?.name || token.name || "Unknown";
         const symbol = pair.baseToken?.symbol || token.symbol || "???";
         const logo = pair.info?.imageUrl || null;
@@ -250,14 +243,14 @@ PRICES_TEMPLATE = '''
                 <span>$${symbol}</span>
               </div>
             </div>
-            <div class="price">$${formatPrice(price)}</div>
+            <div class="price">${price > 0 ? '$' + formatPrice(price) : 'Price unavailable'}</div>
             <div class="change ${change >= 0 ? 'up' : 'down'}">
-              ${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}% (24h)
+              ${change !== 0 ? (change >= 0 ? '▲' : '▼') + ' ' + Math.abs(change).toFixed(2) + '% (24h)' : '—'}
             </div>
             <div class="stats">
-              <div>Volume 24h<span>$${formatNumber(volume)}</span></div>
-              <div>Liquidity<span>$${formatNumber(liquidity)}</span></div>
-              <div>Market Cap<span>$${formatNumber(mcap)}</span></div>
+              <div>Volume 24h<span>${volume > 0 ? '$' + formatNumber(volume) : '—'}</span></div>
+              <div>Liquidity<span>${liquidity > 0 ? '$' + formatNumber(liquidity) : '—'}</span></div>
+              <div>Market Cap<span>${mcap > 0 ? '$' + formatNumber(mcap) : '—'}</span></div>
               <div>Chain<span>Base</span></div>
             </div>
           </div>
@@ -270,7 +263,7 @@ PRICES_TEMPLATE = '''
   }
 
   function formatPrice(num) {
-    if (num === 0) return "0.00";
+    if (num < 0.0000001) return num.toExponential(2);
     if (num < 0.0001) return num.toFixed(8);
     if (num < 0.01) return num.toFixed(6);
     if (num < 1) return num.toFixed(4);
@@ -278,7 +271,6 @@ PRICES_TEMPLATE = '''
   }
 
   function formatNumber(num) {
-    if (!num) return "0";
     if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
     if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
     if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
@@ -291,18 +283,18 @@ PRICES_TEMPLATE = '''
         <div class="card-header">
           <div class="logo-fallback">⚔</div>
           <div class="token-info">
-            <h3>${token.symbol || token.name || "Unknown"}</h3>
-            <span>${token.pair ? token.pair.slice(0,6) + "..." : (token.address ? token.address.slice(0,6) + "..." : "")}</span>
+            <h3>${token.name || token.symbol || "Unknown"}</h3>
+            <span>$${token.symbol || ""}</span>
           </div>
         </div>
-        <div class="price">No data</div>
+        <div class="price">No live data</div>
         <div class="change">—</div>
       </div>
     `;
   }
 
   loadPrices();
-  setInterval(loadPrices, 45000);
+  setInterval(loadPrices, 60000);
 </script>
 </body>
 </html>
