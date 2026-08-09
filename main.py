@@ -322,26 +322,26 @@ PRICES_TEMPLATE = '''
     }
 
     const tokens = [
-      { 
-        name: "Neko the Samurai", 
-        symbol: "NEKO", 
-        pair: "0xb91f6f222d0eba27e552344157b8a98daa60df9e",
-        type: "pair"
-      },
-      { 
-        name: "Kobi", 
-        symbol: "KOBI", 
-        pair: "0xbacc84ad5b1b0f609f54f20b258ae6a3fa2164f2",
-        type: "pair"
-      },
-      { address: "0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4", symbol: "TOSHI", type: "token" },
-      { address: "0xcd339bd74fb792a134d6750b1bda04833a0a8453", symbol: "", type: "token" },
-      { address: "0x4798f71719c2ec8e405610f0f886692f97ef8453", symbol: "NFTWIZ", type: "token" },
-      { address: "0x8d760f4fda919a8e9f38237ee003fe8ff0ca9ef7", symbol: "", type: "token" },
-      { address: "0x9a9de07629ef283c2d700efd3958f59b7d528453", symbol: "MOTO", type: "token" },
-      { address: "0xcA5c7a459bECAAC1f2b5eE28bB8A29875B1a37A6", symbol: "Birb", type: "token" },
-      { address: "0x48f17c65ffec1a60b9141450f0cae97c6a1c8453", symbol: "SpaceWolf", type: "token" }
-    ];
+  { 
+    name: "Neko the Samurai", 
+    symbol: "NEKO", 
+    pair: "0xb91f6f222d0eba27e552344157b8a98daa60df9e",
+    type: "pair"
+  },
+  { 
+    name: "Kobi", 
+    symbol: "KOBI", 
+    pair: "0xbacc84ad5b1b0f609f54f20b258ae6a3fa2164f2",
+    type: "pair"
+  },
+  { address: "0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4", symbol: "TOSHI", type: "token" },
+  { address: "0xcd339bd74fb792a134d6750b1bda04833a0a8453", symbol: "", type: "token" },
+  { address: "0x4798f71719c2ec8e405610f0f886692f97ef8453", symbol: "NFTWIZ", type: "token" },
+  { address: "0x8d760f4fda919a8e9f38237ee003fe8ff0ca9ef7", symbol: "", type: "token" },
+  { address: "0x9a9de07629ef283c2d700efd3958f59b7d528453", symbol: "MOTO", type: "token" },
+  { address: "0xcA5c7a459bECAAC1f2b5eE28bB8A29875B1a37A6", symbol: "", type: "token" },
+  { address: "0x48f17c65ffec1a60b9141450f0cae97c6a1c8453", symbol: "", type: "token" }
+];
 
     async function loadPrices() {
       const grid = document.getElementById("grid");
@@ -371,7 +371,7 @@ PRICES_TEMPLATE = '''
 
           const name = pair.baseToken?.name || token.name || "Unknown";
           const symbol = pair.baseToken?.symbol || token.symbol || "???";
-          const logo = pair.info?.imageUrl || null;
+          const logo = pair?.info?.imageUrl || token.logo || null;
 
           grid.innerHTML += `
             <div class="card">
