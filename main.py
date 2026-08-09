@@ -80,6 +80,26 @@ PRICES_TEMPLATE = '''
   backdrop-filter: blur(12px);
 }
 
+.toshi-btn {
+  font-family: 'Shippori Mincho B1', serif;
+  background: linear-gradient(135deg, #c89b3c, #a67c2d);
+  color: #0a0805;
+  padding: 8px 22px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(200, 155, 60, 0.25);
+}
+
+.toshi-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(200, 155, 60, 0.4);
+  background: linear-gradient(135deg, #e8c06a, #c89b3c);
+}
+
     .nav-logo {
       font-family: 'Shippori Mincho B1', serif;
       font-size: 1.1rem;
