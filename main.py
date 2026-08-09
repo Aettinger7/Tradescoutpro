@@ -180,14 +180,14 @@ PRICES_TEMPLATE = '''
 
   <script>
     const tokens = [
-      { address: "0x28973c4ef9ae754b076a024996350d3b16a38453", symbol: "NEKO" },
-      { address: "0xAC1Bd2486aAf3B5C0fc3Fd868558b082a531B2B4", symbol: "TOSHI" },
-      { address: "0xBf4fe28Ce51824d3a57269bC3ddfE6FB4Da78453", symbol: "" },
-      { address: "0xcD339bD74fB792a134d6750B1BDA04833a0A8453", symbol: "" },
-      { address: "0x4798F71719c2eC8e405610f0F886692F97Ef8453", symbol: "" },
-      { address: "0x8d760f4fdA919A8e9F38237ee003fe8ff0ca9eF7", symbol: "" },
-      { address: "0x9a9de07629EF283c2d700eFD3958f59B7d528453", symbol: "MOTO" }
-    ];
+  { address: "0x28973c4ef9ae754b076a024996350d3b16a38453", symbol: "NEKO" },
+  { address: "0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4", symbol: "TOSHI" },
+  { address: "0xbf4fe28ce51824d3a57269bc3ddfe6fb4da78453", symbol: "" },
+  { address: "0xcd339bd74fb792a134d6750b1bda04833a0a8453", symbol: "" },
+  { address: "0x4798f71719c2ec8e405610f0f886692f97ef8453", symbol: "NFTWIZ" },
+  { address: "0x8d760f4fda919a8e9f38237ee003fe8ff0ca9ef7", symbol: "" },
+  { address: "0x9a9de07629ef283c2d700efd3958f59b7d528453", symbol: "MOTO" }
+];
 
     async function loadPrices() {
       const grid = document.getElementById("grid");
