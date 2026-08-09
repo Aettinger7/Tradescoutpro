@@ -421,20 +421,26 @@ PRICES_TEMPLATE = '''
     }
 
     function createEmptyCard(token) {
-      return `
-        <div class="card">
-          <div class="card-header">
-            <div class="logo-fallback">⚔</div>
-            <div class="token-info">
-              <h3>${token.name || token.symbol || "Unknown"}</h3>
-              <span>$${token.symbol || ""}</span>
-            </div>
-          </div>
-          <div class="price">Waiting for volume</div>
-          <div class="change">—</div>
+  const logo = token.logo || null;
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        ${logo 
+          ? `<img src="${logo}" class="logo" alt="${token.symbol || ''}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
+          : ''
+        }
+        <div class="logo-fallback" style="${logo ? 'display:none' : 'display:flex'}">⚔</div>
+        <div class="token-info">
+          <h3>${token.name || token.symbol || "Unknown"}</h3>
+          <span>$${token.symbol || ""}</span>
         </div>
-      `;
-    }
+      </div>
+      <div class="price">Waiting for volume</div>
+      <div class="change">—</div>
+    </div>
+  `;
+}
 
     loadPrices();
     setInterval(loadPrices, 60000);
