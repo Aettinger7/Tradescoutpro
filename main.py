@@ -316,7 +316,7 @@ PRICES_TEMPLATE = '''
       { address: "0x4798f71719c2ec8e405610f0f886692f97ef8453", symbol: "NFTWIZ", type: "token" },
       { address: "0x8d760f4fda919a8e9f38237ee003fe8ff0ca9ef7", symbol: "", type: "token" },
       { address: "0x9a9de07629ef283c2d700efd3958f59b7d528453", symbol: "MOTO", type: "token" },
-      { address: "0xcA5c7a459bECAAC1f2b5eE28bB8A29875B1a37A6", symbol: "", type: "token" }
+      { address: "0xcA5c7a459bECAAC1f2b5eE28bB8A29875B1a37A6", symbol: "Birb", type: "token" }
     ];
 
     async function loadPrices() {
