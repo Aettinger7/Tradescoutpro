@@ -49,13 +49,13 @@ PRICES_TEMPLATE = '''
     }
     .back-link:hover { color: var(--gold-lt); }
     .container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 100px 20px 60px;
     }
     h1 {
       font-family: 'Shippori Mincho B1', serif;
-      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-size: clamp(2rem, 5vw, 2.8rem);
       text-align: center;
       color: var(--gold);
       margin-bottom: 8px;
@@ -69,35 +69,92 @@ PRICES_TEMPLATE = '''
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
     }
     .card {
       background: var(--panel);
       border: 1px solid rgba(200,155,60,.18);
-      border-radius: 4px;
-      overflow: hidden;
+      border-radius: 8px;
+      padding: 20px;
+      transition: border-color .25s, transform .2s;
     }
-    .card h2 {
+    .card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(200,155,60,.1);
+      border: 1px solid rgba(200,155,60,.3);
+      object-fit: cover;
+    }
+    .logo-fallback {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(200,155,60,.15);
+      border: 1px solid rgba(200,155,60,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+    .token-info h3 {
       font-family: 'Shippori Mincho B1', serif;
       font-size: 1.1rem;
-      padding: 14px 18px;
-      background: rgba(0,0,0,.3);
-      border-bottom: 1px solid rgba(200,155,60,.12);
-      color: var(--gold-lt);
+      color: var(--cream);
     }
-    iframe {
-      width: 100%;
-      height: 420px;
-      border: none;
+    .token-info span {
+      font-size: .8rem;
+      color: var(--gold);
+    }
+    .price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold-lt);
+      margin-bottom: 6px;
+    }
+    .change {
+      font-size: .9rem;
+      margin-bottom: 16px;
+    }
+    .change.up { color: #4ade80; }
+    .change.down { color: #f87171; }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+    .stats div span {
       display: block;
+      color: var(--cream);
+      font-size: .9rem;
+      margin-top: 2px;
+    }
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-size: 1.1rem;
     }
     footer {
       text-align: center;
-      padding: 30px 20px;
+      padding: 40px 20px;
       font-size: .8rem;
       color: var(--muted);
       border-top: 1px solid rgba(200,155,60,.1);
+      margin-top: 40px;
     }
   </style>
 </head>
@@ -109,25 +166,118 @@ PRICES_TEMPLATE = '''
 
   <div class="container">
     <h1>⚔ Live Price Tracker ⚔</h1>
-    <p class="subtitle">$NEKO · Zenshin Clan · Bushido on Base</p>
+    <p class="subtitle">Zenshin Clan · Bushido on Base</p>
 
-    <div class="grid">
-      <div class="card">
-        <h2>$NEKO · Neko the Samurai</h2>
-        <iframe src="https://dexscreener.com/base/0xb91f6f222d0eba27e552344157b8a98daa60df9e?embed=1&theme=dark&trades=0&info=0"></iframe>
-      </div>
-
-      <div class="card">
-        <h2>$TOSHI · Toshi the Emperor</h2>
-        <iframe src="https://dexscreener.com/base/0x4b0Aaf3EBb163dd45F663b38b6d93f6093EBC2d3?embed=1&theme=dark&trades=0&info=0"></iframe>
-      </div>
+    <div id="grid" class="grid">
+      <div class="loading">Loading live prices...</div>
     </div>
   </div>
 
   <footer>
-    Prices are live from DexScreener on Base · Always DYOR<br>
+    Live data from DexScreener · Always DYOR<br>
     Bushido is our path · $NEKO is a memecoin
   </footer>
+
+  <script>
+    const tokens = [
+      { address: "0x28973c4ef9ae754b076a024996350d3b16a38453", symbol: "NEKO" },
+      { address: "0xAC1Bd2486aAf3B5C0fc3Fd868558b082a531B2B4", symbol: "TOSHI" },
+      { address: "0xBf4fe28Ce51824d3a57269bC3ddfE6FB4Da78453", symbol: "" },
+      { address: "0xcD339bD74fB792a134d6750B1BDA04833a0A8453", symbol: "" },
+      { address: "0x4798F71719c2eC8e405610f0F886692F97Ef8453", symbol: "" },
+      { address: "0x8d760f4fdA919A8e9F38237ee003fe8ff0ca9eF7", symbol: "" },
+      { address: "0x9a9de07629EF283c2d700eFD3958f59B7d528453", symbol: "MOTO" }
+    ];
+
+    async function loadPrices() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+
+      for (const token of tokens) {
+        try {
+          const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${token.address}`);
+          const data = await res.json();
+          const pair = data.pairs && data.pairs[0];
+
+          if (!pair) {
+            grid.innerHTML += createEmptyCard(token.address);
+            continue;
+          }
+
+          const price = parseFloat(pair.priceUsd || 0);
+          const change = parseFloat(pair.priceChange?.h24 || 0);
+          const volume = pair.volume?.h24 || 0;
+          const liquidity = pair.liquidity?.usd || 0;
+          const mcap = pair.fdv || pair.marketCap || 0;
+          const name = pair.baseToken?.name || "Unknown";
+          const symbol = pair.baseToken?.symbol || token.symbol || "???";
+          const logo = pair.info?.imageUrl || null;
+
+          grid.innerHTML += `
+            <div class="card">
+              <div class="card-header">
+                ${logo 
+                  ? `<img src="${logo}" class="logo" alt="${symbol}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
+                  : ''
+                }
+                <div class="logo-fallback" style="${logo ? 'display:none' : 'display:flex'}">⚔</div>
+                <div class="token-info">
+                  <h3>${name}</h3>
+                  <span>$${symbol}</span>
+                </div>
+              </div>
+              <div class="price">$${formatPrice(price)}</div>
+              <div class="change ${change >= 0 ? 'up' : 'down'}">
+                ${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}% (24h)
+              </div>
+              <div class="stats">
+                <div>Volume 24h<span>$${formatNumber(volume)}</span></div>
+                <div>Liquidity<span>$${formatNumber(liquidity)}</span></div>
+                <div>Market Cap<span>$${formatNumber(mcap)}</span></div>
+                <div>Chain<span>Base</span></div>
+              </div>
+            </div>
+          `;
+        } catch (err) {
+          grid.innerHTML += createEmptyCard(token.address);
+        }
+      }
+    }
+
+    function formatPrice(num) {
+      if (num < 0.0001) return num.toFixed(8);
+      if (num < 0.01) return num.toFixed(6);
+      if (num < 1) return num.toFixed(4);
+      return num.toFixed(2);
+    }
+
+    function formatNumber(num) {
+      if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
+      if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
+      if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+      return num.toFixed(0);
+    }
+
+    function createEmptyCard(address) {
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div class="logo-fallback">⚔</div>
+            <div class="token-info">
+              <h3>Unknown Token</h3>
+              <span>${address.slice(0,6)}...${address.slice(-4)}</span>
+            </div>
+          </div>
+          <div class="price">No data</div>
+          <div class="change">—</div>
+        </div>
+      `;
+    }
+
+    loadPrices();
+    // Refresh every 30 seconds
+    setInterval(loadPrices, 30000);
+  </script>
 </body>
 </html>
 '''
