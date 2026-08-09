@@ -616,6 +616,7 @@ HTML_TEMPLATE = '''
     <li><a href="#lore" onclick="closeMenu()">📜 Lore</a></li>
     <li><a href="#art" onclick="closeMenu()">🖼 Gallery</a></li>
     <li><a href="#join" onclick="closeMenu()">🐱 Clan</a></li>
+    <li><a href="/prices" onclick="closeMenu()">⚔ Price Tracker</a></li>
     <li><a href="/litepaper" target="_blank" class="nav-whitepaper" onclick="closeMenu()">📄 Litepaper</a></li>
     <li><a href="https://opensea.io/collection/neko-shogun" target="_blank" class="nav-buy" style="border-color:#2081e2;color:#2081e2;background:rgba(32,129,226,.08);" onclick="closeMenu()">🌊 OpenSea</a></li>
     <li><a href="https://neko-the-samurai-shop.fourthwall.com/" target="_blank" rel="noopener noreferrer" class="nav-buy" style="border-color:#c89b3c;color:#e8c06a;background:rgba(200,155,60,.08);" onclick="closeMenu()">🛍️ Merch</a></li>
