@@ -934,7 +934,10 @@ HTML_TEMPLATE = '''
 def index():
     last_update = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
     return render_template_string(HTML_TEMPLATE, last_update=last_update)
-
+@app.route('/prices')
+def prices():
+    return render_template_string(PRICES_TEMPLATE)
+  
 @app.route('/litepaper')
 def litepaper():
     return send_from_directory('static', 'neko_litepaper.pdf', mimetype='application/pdf')
