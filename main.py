@@ -141,27 +141,48 @@ PRICES_TEMPLATE = '''
       transition: all 0.3s ease;
     }
 
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(to right, transparent, var(--gold), transparent);
-      opacity: 0.6;
-    }
+    .card {
+  background: 
+    linear-gradient(145deg, rgba(19,16,26,0.92), rgba(15,11,20,0.95)),
+    url('https://i.ibb.co/TqwJXCfZ/Toshimart-Crew.jpg');
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(200, 155, 60, 0.35);
+  border-radius: 14px;
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s ease;
+  box-shadow: 0 0 0 1px rgba(200,155,60,0.1);
+}
 
-    .card:hover {
-      border-color: var(--gold);
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(122,0,18,.25);
-    }
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(200,155,60,0.08), transparent 40%);
+  pointer-events: none;
+  border-radius: 14px;
+}
 
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 18px;
-    }
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  opacity: 0.7;
+}
+
+.card:hover {
+  border-color: var(--gold);
+  transform: translateY(-6px);
+  box-shadow: 
+    0 15px 35px rgba(122, 0, 18, 0.3),
+    0 0 20px rgba(200, 155, 60, 0.15);
+}
 
     .logo, .logo-fallback {
       width: 52px;
