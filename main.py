@@ -261,17 +261,12 @@ PRICES_TEMPLATE = '''
   <div class="sakura" id="sakura"></div>
 
   <nav>
-    <a href="/" class="nav-logo">NEKO ⚔</a>
-    <nav>
   <a href="/" class="nav-logo">NEKO ⚔</a>
-  
-  <div style="display: flex; gap: 20px; align-items: center;">
-    <a href="https://toshimart.xyz" target="_blank" class="back-link">Toshimart</a>
-    <a href="/" class="back-link">← Back to Main Site</a>
-  </div>
+
+  <a href="https://toshimart.xyz" target="_blank" class="toshi-btn">Toshimart</a>
+
+  <a href="/" class="back-link">← Back to Main Site</a>
 </nav>
-    <a href="/" class="back-link">← Back to Main Site</a>
-  </nav>
 
   <div class="container">
     <h1>⚔ Live Price Tracker ⚔</h1>
