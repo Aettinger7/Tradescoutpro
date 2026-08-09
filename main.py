@@ -179,14 +179,25 @@ PRICES_TEMPLATE = '''
   </footer>
 
 <script>
+  // We use the exact pair addresses for NEKO and KOBI so they always load
   const tokens = [
-    { address: "0x28973c4ef9ae754b076a024996350d3b16a38453", symbol: "NEKO" },
-    { address: "0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4", symbol: "TOSHI" },
-    { address: "0xbf4fe28ce51824d3a57269bc3ddfe6fb4da78453", symbol: "" },
-    { address: "0xcd339bd74fb792a134d6750b1bda04833a0a8453", symbol: "" },
-    { address: "0x4798f71719c2ec8e405610f0f886692f97ef8453", symbol: "NFTWIZ" },
-    { address: "0x8d760f4fda919a8e9f38237ee003fe8ff0ca9ef7", symbol: "" },
-    { address: "0x9a9de07629ef283c2d700efd3958f59b7d528453", symbol: "MOTO" }
+    { 
+      name: "Neko the Samurai", 
+      symbol: "NEKO", 
+      pair: "0xb91f6f222d0eba27e552344157b8a98daa60df9e",
+      type: "pair"
+    },
+    { 
+      name: "Kobi", 
+      symbol: "KOBI", 
+      pair: "0xbacc84ad5b1b0f609f54f20b258ae6a3fa2164f2",
+      type: "pair"
+    },
+    { address: "0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4", symbol: "TOSHI", type: "token" },
+    { address: "0xcd339bd74fb792a134d6750b1bda04833a0a8453", symbol: "", type: "token" },
+    { address: "0x4798f71719c2ec8e405610f0f886692f97ef8453", symbol: "NFTWIZ", type: "token" },
+    { address: "0x8d760f4fda919a8e9f38237ee003fe8ff0ca9ef7", symbol: "", type: "token" },
+    { address: "0x9a9de07629ef283c2d700efd3958f59b7d528453", symbol: "MOTO", type: "token" }
   ];
 
   async function loadPrices() {
@@ -195,12 +206,20 @@ PRICES_TEMPLATE = '''
 
     for (const token of tokens) {
       try {
-        const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${token.address}`);
+        let url;
+        if (token.type === "pair") {
+          url = `https://api.dexscreener.com/latest/dex/pairs/base/${token.pair}`;
+        } else {
+          url = `https://api.dexscreener.com/latest/dex/tokens/${token.address}`;
+        }
+
+        const res = await fetch(url);
         const data = await res.json();
 
         let pair = null;
-        if (data.pairs && data.pairs.length > 0) {
-          // Sort by highest liquidity
+        if (token.type === "pair") {
+          pair = data.pair;
+        } else if (data.pairs && data.pairs.length > 0) {
           pair = data.pairs.sort((a, b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0))[0];
         }
 
@@ -214,7 +233,7 @@ PRICES_TEMPLATE = '''
         const volume = pair.volume?.h24 || 0;
         const liquidity = pair.liquidity?.usd || 0;
         const mcap = pair.fdv || pair.marketCap || 0;
-        const name = pair.baseToken?.name || "Unknown";
+        const name = pair.baseToken?.name || token.name || "Unknown";
         const symbol = pair.baseToken?.symbol || token.symbol || "???";
         const logo = pair.info?.imageUrl || null;
 
@@ -244,7 +263,7 @@ PRICES_TEMPLATE = '''
           </div>
         `;
       } catch (err) {
-        console.error("Error loading token:", token.address, err);
+        console.error(err);
         grid.innerHTML += createEmptyCard(token);
       }
     }
@@ -272,8 +291,8 @@ PRICES_TEMPLATE = '''
         <div class="card-header">
           <div class="logo-fallback">⚔</div>
           <div class="token-info">
-            <h3>${token.symbol || "Unknown"}</h3>
-            <span>${token.address.slice(0,6)}...${token.address.slice(-4)}</span>
+            <h3>${token.symbol || token.name || "Unknown"}</h3>
+            <span>${token.pair ? token.pair.slice(0,6) + "..." : (token.address ? token.address.slice(0,6) + "..." : "")}</span>
           </div>
         </div>
         <div class="price">No data</div>
@@ -282,9 +301,8 @@ PRICES_TEMPLATE = '''
     `;
   }
 
-  // Start loading
   loadPrices();
-  setInterval(loadPrices, 45000); // refresh every 45 seconds
+  setInterval(loadPrices, 45000);
 </script>
 </body>
 </html>
