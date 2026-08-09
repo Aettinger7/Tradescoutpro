@@ -23,142 +23,209 @@ PRICES_TEMPLATE = '''
       --cream: #ede4cc;
       --muted: #7a6e60;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       background: var(--ink);
       color: var(--cream);
       font-family: 'Zen Kaku Gothic New', sans-serif;
       min-height: 100vh;
+      overflow-x: hidden;
     }
+
+    .sakura {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .petal {
+      position: absolute;
+      top: -20px;
+      background: radial-gradient(ellipse, rgba(220,40,60,.85), rgba(176,16,32,.35));
+      border-radius: 60% 0 60% 0;
+      animation: fall linear infinite;
+      opacity: 0;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.8; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
       padding: 1rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(7,5,10,.97);
-      border-bottom: 1px solid rgba(200,155,60,.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(7,5,10,.92);
+      border-bottom: 1px solid rgba(200,155,60,.25);
+      backdrop-filter: blur(12px);
     }
+
     .nav-logo {
       font-family: 'Shippori Mincho B1', serif;
-      font-size: 1rem; font-weight: 800;
-      color: var(--gold); text-decoration: none; letter-spacing: .15em;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--gold);
+      text-decoration: none;
+      letter-spacing: .18em;
     }
+
     .back-link {
       font-family: 'Shippori Mincho B1', serif;
-      color: var(--gold); text-decoration: none; font-size: .85rem;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: .9rem;
       letter-spacing: .1em;
+      transition: color .25s;
     }
     .back-link:hover { color: var(--gold-lt); }
+
     .container {
+      position: relative;
+      z-index: 1;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 100px 20px 60px;
+      padding: 110px 20px 80px;
     }
+
     h1 {
       font-family: 'Shippori Mincho B1', serif;
-      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-size: clamp(2.2rem, 5vw, 3rem);
       text-align: center;
       color: var(--gold);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      letter-spacing: .05em;
     }
+
     .subtitle {
       text-align: center;
       color: var(--muted);
-      margin-bottom: 40px;
-      letter-spacing: .15em;
-      font-size: .9rem;
+      margin-bottom: 50px;
+      letter-spacing: .2em;
+      font-size: .95rem;
+      text-transform: uppercase;
     }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
+      gap: 24px;
     }
+
     .card {
-      background: var(--panel);
-      border: 1px solid rgba(200,155,60,.18);
-      border-radius: 8px;
-      padding: 20px;
-      transition: border-color .25s, transform .2s;
+      background: linear-gradient(145deg, #13101a, #0f0b14);
+      border: 1px solid rgba(200,155,60,.22);
+      border-radius: 10px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
     }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      opacity: 0.6;
+    }
+
     .card:hover {
       border-color: var(--gold);
-      transform: translateY(-3px);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(122,0,18,.25);
     }
+
     .card-header {
       display: flex;
       align-items: center;
       gap: 14px;
       margin-bottom: 18px;
     }
-    .logo {
-      width: 48px;
-      height: 48px;
+
+    .logo, .logo-fallback {
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
-      background: rgba(200,155,60,.1);
-      border: 1px solid rgba(200,155,60,.3);
+      border: 1px solid rgba(200,155,60,.35);
       object-fit: cover;
     }
+
     .logo-fallback {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: rgba(200,155,60,.15);
-      border: 1px solid rgba(200,155,60,.3);
+      background: rgba(200,155,60,.12);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
     }
+
     .token-info h3 {
       font-family: 'Shippori Mincho B1', serif;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: var(--cream);
+      margin-bottom: 2px;
     }
+
     .token-info span {
-      font-size: .8rem;
+      font-size: .85rem;
       color: var(--gold);
+      letter-spacing: .05em;
     }
+
     .price {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 700;
       color: var(--gold-lt);
       margin-bottom: 6px;
     }
+
     .change {
       font-size: .9rem;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
     .change.up { color: #4ade80; }
     .change.down { color: #f87171; }
+
     .stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
       font-size: .8rem;
       color: var(--muted);
     }
+
     .stats div span {
       display: block;
       color: var(--cream);
-      font-size: .9rem;
-      margin-top: 2px;
+      font-size: .95rem;
+      margin-top: 3px;
     }
-    .loading {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--muted);
-      font-size: 1.1rem;
-    }
+
     footer {
       text-align: center;
       padding: 40px 20px;
-      font-size: .8rem;
+      font-size: .85rem;
       color: var(--muted);
-      border-top: 1px solid rgba(200,155,60,.1);
-      margin-top: 40px;
+      border-top: 1px solid rgba(200,155,60,.12);
+      margin-top: 60px;
+      position: relative;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
+
+  <div class="sakura" id="sakura"></div>
+
   <nav>
     <a href="/" class="nav-logo">NEKO ⚔</a>
     <a href="/" class="back-link">← Back to Main Site</a>
@@ -169,7 +236,9 @@ PRICES_TEMPLATE = '''
     <p class="subtitle">Zenshin Clan · Bushido on Base</p>
 
     <div id="grid" class="grid">
-      <div class="loading">Loading live prices...</div>
+      <div style="grid-column: 1 / -1; text-align:center; padding:40px; color:var(--muted);">
+        Loading live prices...
+      </div>
     </div>
   </div>
 
@@ -178,124 +247,139 @@ PRICES_TEMPLATE = '''
     Bushido is our path · $NEKO is a memecoin
   </footer>
 
-<script>
-  const tokens = [
-    { 
-      name: "Neko the Samurai", 
-      symbol: "NEKO", 
-      pair: "0xb91f6f222d0eba27e552344157b8a98daa60df9e",
-      type: "pair"
-    },
-    { 
-      name: "Kobi", 
-      symbol: "KOBI", 
-      pair: "0xbacc84ad5b1b0f609f54f20b258ae6a3fa2164f2",
-      type: "pair"
-    },
-    { address: "0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4", symbol: "TOSHI", type: "token" },
-    { address: "0xcd339bd74fb792a134d6750b1bda04833a0a8453", symbol: "", type: "token" },
-    { address: "0x4798f71719c2ec8e405610f0f886692f97ef8453", symbol: "NFTWIZ", type: "token" },
-    { address: "0x8d760f4fda919a8e9f38237ee003fe8ff0ca9ef7", symbol: "", type: "token" },
-    { address: "0x9a9de07629ef283c2d700efd3958f59b7d528453", symbol: "MOTO", type: "token" }
-  ];
+  <script>
+    // Cherry blossoms
+    const sakura = document.getElementById('sakura');
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      const size = 7 + Math.random() * 9;
+      p.style.cssText = `
+        left: ${Math.random() * 100}%;
+        width: ${size}px;
+        height: ${size * 1.3}px;
+        animation-duration: ${8 + Math.random() * 12}s;
+        animation-delay: ${Math.random() * 10}s;
+      `;
+      sakura.appendChild(p);
+    }
 
-  async function loadPrices() {
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
+    const tokens = [
+      { 
+        name: "Neko the Samurai", 
+        symbol: "NEKO", 
+        pair: "0xb91f6f222d0eba27e552344157b8a98daa60df9e",
+        type: "pair"
+      },
+      { 
+        name: "Kobi", 
+        symbol: "KOBI", 
+        pair: "0xbacc84ad5b1b0f609f54f20b258ae6a3fa2164f2",
+        type: "pair"
+      },
+      { address: "0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4", symbol: "TOSHI", type: "token" },
+      { address: "0xcd339bd74fb792a134d6750b1bda04833a0a8453", symbol: "", type: "token" },
+      { address: "0x4798f71719c2ec8e405610f0f886692f97ef8453", symbol: "NFTWIZ", type: "token" },
+      { address: "0x8d760f4fda919a8e9f38237ee003fe8ff0ca9ef7", symbol: "", type: "token" },
+      { address: "0x9a9de07629ef283c2d700efd3958f59b7d528453", symbol: "MOTO", type: "token" }
+    ];
 
-    for (const token of tokens) {
-      try {
-        let url = token.type === "pair" 
-          ? `https://api.dexscreener.com/latest/dex/pairs/base/${token.pair}`
-          : `https://api.dexscreener.com/latest/dex/tokens/${token.address}`;
+    async function loadPrices() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
 
-        const res = await fetch(url);
-        const data = await res.json();
+      for (const token of tokens) {
+        try {
+          let url = token.type === "pair" 
+            ? `https://api.dexscreener.com/latest/dex/pairs/base/${token.pair}`
+            : `https://api.dexscreener.com/latest/dex/tokens/${token.address}`;
 
-        let pair = token.type === "pair" ? data.pair : (data.pairs ? data.pairs[0] : null);
+          const res = await fetch(url);
+          const data = await res.json();
 
-        if (!pair) {
-          grid.innerHTML += createEmptyCard(token);
-          continue;
-        }
+          let pair = token.type === "pair" ? data.pair : (data.pairs ? data.pairs[0] : null);
 
-        // Get price safely
-        let price = parseFloat(pair.priceUsd) || parseFloat(pair.priceNative) || 0;
-        let change = parseFloat(pair.priceChange?.h24) || 0;
-        let volume = pair.volume?.h24 || 0;
-        let liquidity = pair.liquidity?.usd || 0;
-        let mcap = pair.fdv || pair.marketCap || 0;
+          if (!pair) {
+            grid.innerHTML += createEmptyCard(token);
+            continue;
+          }
 
-        const name = pair.baseToken?.name || token.name || "Unknown";
-        const symbol = pair.baseToken?.symbol || token.symbol || "???";
-        const logo = pair.info?.imageUrl || null;
+          let price = parseFloat(pair.priceUsd) || 0;
+          let change = parseFloat(pair.priceChange?.h24) || 0;
+          let volume = pair.volume?.h24 || 0;
+          let liquidity = pair.liquidity?.usd || 0;
+          let mcap = pair.fdv || pair.marketCap || 0;
 
-        grid.innerHTML += `
-          <div class="card">
-            <div class="card-header">
-              ${logo 
-                ? `<img src="${logo}" class="logo" alt="${symbol}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
-                : ''
-              }
-              <div class="logo-fallback" style="${logo ? 'display:none' : 'display:flex'}">⚔</div>
-              <div class="token-info">
-                <h3>${name}</h3>
-                <span>$${symbol}</span>
+          const name = pair.baseToken?.name || token.name || "Unknown";
+          const symbol = pair.baseToken?.symbol || token.symbol || "???";
+          const logo = pair.info?.imageUrl || null;
+
+          grid.innerHTML += `
+            <div class="card">
+              <div class="card-header">
+                ${logo 
+                  ? `<img src="${logo}" class="logo" alt="${symbol}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">`
+                  : ''
+                }
+                <div class="logo-fallback" style="${logo ? 'display:none' : 'display:flex'}">⚔</div>
+                <div class="token-info">
+                  <h3>${name}</h3>
+                  <span>$${symbol}</span>
+                </div>
+              </div>
+              <div class="price">${price > 0 ? '$' + formatPrice(price) : 'Waiting for volume'}</div>
+              <div class="change ${change >= 0 ? 'up' : 'down'}">
+                ${change !== 0 ? (change >= 0 ? '▲' : '▼') + ' ' + Math.abs(change).toFixed(2) + '% (24h)' : '—'}
+              </div>
+              <div class="stats">
+                <div>Volume 24h<span>${volume > 0 ? '$' + formatNumber(volume) : '—'}</span></div>
+                <div>Liquidity<span>${liquidity > 0 ? '$' + formatNumber(liquidity) : '—'}</span></div>
+                <div>Market Cap<span>${mcap > 0 ? '$' + formatNumber(mcap) : '—'}</span></div>
+                <div>Chain<span>Base</span></div>
               </div>
             </div>
-            <div class="price">${price > 0 ? '$' + formatPrice(price) : 'Price unavailable'}</div>
-            <div class="change ${change >= 0 ? 'up' : 'down'}">
-              ${change !== 0 ? (change >= 0 ? '▲' : '▼') + ' ' + Math.abs(change).toFixed(2) + '% (24h)' : '—'}
-            </div>
-            <div class="stats">
-              <div>Volume 24h<span>${volume > 0 ? '$' + formatNumber(volume) : '—'}</span></div>
-              <div>Liquidity<span>${liquidity > 0 ? '$' + formatNumber(liquidity) : '—'}</span></div>
-              <div>Market Cap<span>${mcap > 0 ? '$' + formatNumber(mcap) : '—'}</span></div>
-              <div>Chain<span>Base</span></div>
-            </div>
-          </div>
-        `;
-      } catch (err) {
-        console.error(err);
-        grid.innerHTML += createEmptyCard(token);
+          `;
+        } catch (err) {
+          console.error(err);
+          grid.innerHTML += createEmptyCard(token);
+        }
       }
     }
-  }
 
-  function formatPrice(num) {
-    if (num < 0.0000001) return num.toExponential(2);
-    if (num < 0.0001) return num.toFixed(8);
-    if (num < 0.01) return num.toFixed(6);
-    if (num < 1) return num.toFixed(4);
-    return num.toFixed(2);
-  }
+    function formatPrice(num) {
+      if (num < 0.0000001) return num.toExponential(2);
+      if (num < 0.0001) return num.toFixed(8);
+      if (num < 0.01) return num.toFixed(6);
+      if (num < 1) return num.toFixed(4);
+      return num.toFixed(2);
+    }
 
-  function formatNumber(num) {
-    if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
-    if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
-    if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
-    return Math.round(num).toString();
-  }
+    function formatNumber(num) {
+      if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
+      if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
+      if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+      return Math.round(num).toString();
+    }
 
-  function createEmptyCard(token) {
-    return `
-      <div class="card">
-        <div class="card-header">
-          <div class="logo-fallback">⚔</div>
-          <div class="token-info">
-            <h3>${token.name || token.symbol || "Unknown"}</h3>
-            <span>$${token.symbol || ""}</span>
+    function createEmptyCard(token) {
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div class="logo-fallback">⚔</div>
+            <div class="token-info">
+              <h3>${token.name || token.symbol || "Unknown"}</h3>
+              <span>$${token.symbol || ""}</span>
+            </div>
           </div>
+          <div class="price">Waiting for volume</div>
+          <div class="change">—</div>
         </div>
-        <div class="price">No live data</div>
-        <div class="change">—</div>
-      </div>
-    `;
-  }
+      `;
+    }
 
-  loadPrices();
-  setInterval(loadPrices, 60000);
-</script>
+    loadPrices();
+    setInterval(loadPrices, 60000);
+  </script>
 </body>
 </html>
 '''
